@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crypto Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #fff;
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+   .container {
+      width: 100%;
+      max-width: 400px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      background-color: #1e1e1e;
+      gap: 16px;
+    }
+    .graph-section {
+      background-color: #121212;
+      border-radius: 16px;
+      padding: 12px;
+      margin-top: 10%;
+    }
+    .graph-section canvas {
+      width: 100%;
+      height: 120px !important;
+    }
+    .exchange-rate {
+      text-align: center;
+      font-size: 14px;
+    }
+    .currency-box {
+      margin-top: 15px;    
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #2b2b2b;
+      padding: 35px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+  .currency-box input {
+      background: none;
+      border: none;      
+      color: white;
+      font-size: 24px;
+      width: 100px;
+    }
+  input[type="number"] {
+     border: none;
+     font-size: 20px;
+     outline: none;
+  }
+    .currency-select {
+      display: flex;
+      align-items: center;
+    }
+    .currency-select select {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      margin-left: 8px;
+      outline: none;
+    }
+    .currency-select img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .details {
+      display: flex;
+      justify-content: space-between;
+      background-color:#2b2b2b;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      font-size: 10px;
+      color: #ccc;
+    }
+    .send-btn {
+      margin-top: 20px;
+      background-color: #a5ff4d;
+      color: black;
+      font-size: 20px;
+      border: none;
+      padding: 15px;
+      border-radius: 30px;
+      width: 100%;
+      cursor: none;
+    }    
+   .switch {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+  .switch button {
+      background: none;
+      border: none;
+      color: #9acd32;
+      font-size: 35px;
+      cursor: pointer;
+    }
+    
+   .back-buttons svg {
+      width: 20px;
+      height: 20px;
+      stroke: #7af25d;
+    }    
+    
+   .headers {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .back-buttons {
+      background: #2b2b2bd4;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+    }
+
+    .track-referrals {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    
+     <div class="headers">
+     <div class="back-buttons" onclick="window.history.go(-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+     <a href="page-track.html" style="text-decoration: none;"><div class="track-referrals" style="color: #ffff;">Track referrals</div></a>
+    </div>
+    
+  <div>
+    <div class="graph-section">
+      <canvas id="priceChart"></canvas>
+      <div class="exchange-rate" id="exchangeRate">Loading...</div>
+    </div>
+
+    <div class="currency-box">
+      <input type="number" id="fromAmount" value="1">
+      <div class="currency-select">
+        <img id="fromLogo" src="" alt="From">
+        <select id="fromCurrency"></select>
+      </div>
+    </div>
+
+    <div class="currency-box">
+      <input type="number" id="toAmount" readonly>
+      <div class="currency-select">
+        <img id="toLogo" src="us-dollar.png" alt="To">
+        <select disabled>
+          <option>USD</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="details">
+      <div>
+        Includes fees
+        <strong id="feeAmount">0.00 USD</strong>
+      </div>
+      <div>
+        Should arrive
+        <strong>immediately</strong>
+      </div>
+    </div>
+  </div>
+
+  <button class="send-btn">Send</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const fromCurrencySelect = document.getElementById('fromCurrency');
+  const fromAmount = document.getElementById('fromAmount');
+  const toAmount = document.getElementById('toAmount');
+  const exchangeRateText = document.getElementById('exchangeRate');
+  const fromLogo = document.getElementById('fromLogo');
+  const feeAmount = document.getElementById('feeAmount');
+
+  const COINS = [
+    'bitcoin', 'ethereum', 'tether', 'bnb', 'solana', 'xrp', 'dogecoin', 'cardano', 'shiba-inu', 'avalanche',
+    'tron', 'polkadot', 'chainlink', 'litecoin', 'polygon', 'bitcoin-cash', 'stellar', 'uniswap', 'cosmos',
+    'vechain', 'algorand', 'filecoin', 'aptos', 'hbar', 'render-token', 'tezos', 'mina-protocol', 'arweave',
+    'aave', 'flow', 'immutable-x', 'fantom', 'theta-token', 'icp', 'rocket-pool', 'gala'
+  ];
+
+  let prices = {};
+  let chart;
+
+  async function loadCryptoData() {
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COINS.join(',')}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    prices = {};
+    fromCurrencySelect.innerHTML = '';
+
+    data.forEach(coin => {
+      prices[coin.id] = { price: coin.current_price, logo: coin.image };
+
+      const option = document.createElement('option');
+      option.value = coin.id;
+      option.textContent = coin.symbol.toUpperCase();
+      fromCurrencySelect.appendChild(option);
+    });
+
+    updateUI();
+    loadChart(fromCurrencySelect.value);
+  }
+
+  async function loadChart(coinId) {
+    const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=30`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const labels = data.prices.map(p => new Date(p[0]).toLocaleDateString());
+    const pricesData = data.prices.map(p => p[1]);
+
+    if (chart) chart.destroy();
+
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: pricesData,
+          borderColor: '#a5ff4d',
+          borderWidth: 2,
+          fill: false,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { display: false }, y: { display: false } }
+      }
+    });
+  }
+
+  function updateUI() {
+    const fromCoin = fromCurrencySelect.value;
+    const fromValue = parseFloat(fromAmount.value) || 0;
+
+    const rate = prices[fromCoin].price;
+    const feeRate = 0.5 / 100;
+    const fee = fromValue * rate * feeRate;
+    const finalAmount = (fromValue * rate) - fee;
+
+    fromLogo.src = prices[fromCoin].logo;
+    toAmount.value = finalAmount.toFixed(2);
+    feeAmount.textContent = fee.toFixed(2) + ' USD';
+    exchangeRateText.textContent = `1 ${fromCoin.toUpperCase()} = ${rate.toFixed(2)} USD`;
+  }
+
+  fromCurrencySelect.addEventListener('change', () => {
+    updateUI();
+    loadChart(fromCurrencySelect.value);
+  });
+
+  fromAmount.addEventListener('input', updateUI);
+
+  loadCryptoData();
+</script>
+<script src="disable-zoom.js"></script>
+ </body>
+</html>

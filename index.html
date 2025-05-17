@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crypto Wallet Slider</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+   body {
+      background-color: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      width: 100vw;
+      height: 100%;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+    }
+
+    .header {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lang-btn {
+      background-color: transparent;
+      border: 2px solid #444;
+      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      padding: 5px;
+      cursor: none;
+    }
+
+    .lang-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .signin-btn {
+      color: white;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border-radius: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      background-color: #1a1a1a;
+      cursor: none;
+    }
+
+      .slider-container {
+      position: relative;
+      width: 100vw;
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .slider {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 400vw; /* 4 slides × 100vw each */
+    }
+
+    .slide {
+      width: 100vw;
+      flex-shrink: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-content {
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .wallet-video {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+   
+    .title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #444;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      width: 18px;
+      background-color: white;
+      border-radius: 10px;
+    }
+
+    .btn {
+      width: 90%;
+      max-width: 320px;
+      height: 48px;
+      margin: 8px auto;
+      border-radius: 14px;
+      font-size: 1rem;
+      text-align: center;
+      border: none;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+    }
+
+    .btn.demo {
+      background-color: #a259ff;
+      color: white;
+    }
+
+    .btn.create {
+      background-color: #1a1a1a;
+      color: white;
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.4);
+    }
+
+    .btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <button class="lang-btn">
+      <img src="profile.png" alt="Language" />
+    </button>
+    <a href="page-login.html" class="signin-btn">Log in</a>
+  </div>
+
+  <div class="slider-container">
+    <div class="slider" id="slider">
+      <div class="slide">
+        <div class="slide-content">
+          <video class="wallet-video" src="animated_sign_in.mp4" autoplay muted loop playsinline></video>
+          <div class="title">Instant Transactions</div>
+          <div class="subtitle">Send and receive funds<br/>in real-time securely with no hidden fees.</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-content">
+          <video class="wallet-video" src="animated_sign_in_2.mp4" autoplay muted loop playsinline></video>
+          <div class="title">Secure multicurrency wallet</div>
+          <div class="subtitle">Store crypto and withdraw<br/>any time any way</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-content">
+          <video class="wallet-video" src="animated_sign_in_3.mp4" autoplay muted loop playsinline></video>
+          <div class="title">Passive income up to 14% annually</div>
+          <div class="subtitle">Choose your teams <br/>and store BTC, ETH, USDT and other coin with profit</div>
+        </div>
+      </div>
+      <div class="slide">
+        <div class="slide-content">
+          <video class="wallet-video" src="animated_sign_in_4.mp4" autoplay muted loop playsinline></video>
+          <div class="title">One of the largest mining app in the world.</div>
+          <div class="subtitle">Mine over 45 coins with <br/>daily withdrawals.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+
+  <a href="index-wallet.html" class="btn demo">View in demo mode</a>
+  <a href="page-sign up.html" class="btn create" style="margin-bottom: 5%;">Create an account</a>
+
+  <script>
+    const slider = document.getElementById('slider');
+    const pagination = document.getElementById('pagination');
+    const totalSlides = slider.children.length;
+    let currentSlide = 0;
+
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (i === 0) dot.classList.add('active');
+      pagination.appendChild(dot);
+    }
+
+    const dots = pagination.querySelectorAll('.dot');
+
+    function goToSlide(index) {
+      slider.style.transform = `translateX(-${index * 100}vw)`;
+      dots.forEach(dot => dot.classList.remove('active'));
+      dots[index].classList.add('active');
+    }
+
+    setInterval(() => {
+      currentSlide = (currentSlide + 1) % totalSlides;
+      goToSlide(currentSlide);
+    }, 4000);
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>
