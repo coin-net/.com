@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+    // Check if the user has already signed up
+  const isSignedUp = localStorage.getItem('signup-success') === 'true';
+  const userEmail = localStorage.getItem('userEmail');
+  const userUsername = localStorage.getItem('userUsername');
+  const userPassword = localStorage.getItem('userPassword');
+
+  // If user has signed up and data exists, redirect to homepage
+  if (isSignedUp && (userEmail || userUsername) && userPassword) {
+    window.location.href = 'index-wallet.html';
+  }
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Create a PIN</title>
+</head>
+<body style="background: #000000;">
+<script src="disable-zoom.js"></script>
+</body>
+</html>

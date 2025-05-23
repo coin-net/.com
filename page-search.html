@@ -1,0 +1,392 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Search crypto</title>
+
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+<link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png">
+</head>
+<body class="theme-light">
+    
+    <div class="back-button" onclick="history.back()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"> <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<style>
+    .back-button {
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  background-color: transparent;
+  color: #000000;
+  padding: 8px 14px;  
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: none;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.back-button:hover {
+  background-color: transparent;
+}
+
+ svg {
+  width: 20px;
+  height: 20px;
+  stroke: #000000;
+    }    
+</style>
+
+<style>
+     .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      width: 100%;
+      padding: 0px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h3 {
+      margin-bottom: 15px;
+      text-align: center;
+      color: #111;
+    }
+
+    #search {
+      width: 100%;
+      height: 50px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 5px;            
+      background: none;
+    }
+
+    #search::placeholder {
+      color: #888;
+      font-size: 50px;   
+    }
+
+    .crypto-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .crypto-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      padding: 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      cursor: none;
+      color: inherit;
+      transition: background-color 0.2s ease;      
+    }
+
+    .crypto-item:hover {
+      background-color: transparent;
+      cursor: none;
+    }
+
+    .coin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-info img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .coin-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .coin-name {
+      font-weight: bold;
+      font-size: 16px;
+      color: #111;
+    }
+
+    .coin-symbol {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .price-details {
+      text-align: right;
+    }
+
+    .price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .positive {
+      color: green;
+    }
+
+    .negative {
+      color: red;
+    }
+</style>
+
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+
+<!-- Page Wrapper-->
+<div id="#">
+    
+<!-- Wallpaper Centered in Viewport -->
+  <div class="carousel">
+  <div class="slide pink">
+    <img src="ads 1.png" alt="Stablecoins" />
+    <div>
+      <p><strong>"Mine over 55 cryptocurrencies </strong> earn seamlessly from the comfort of your home.</p>
+      <a href="page-blockchain.html">Get started →</a>
+    </div>
+  </div>
+  <div class="slide yellow">
+    <img src="ads 2.png" alt="X Logo" />
+    <div>
+      <p><strong>Follow us on telegram</strong> for our latest updates.</p>
+      <a href="https://t.me/coin_net_channel">Follow now →</a>
+    </div>
+  </div>
+   <div class="slide pink">
+    <img src="ads 3.png" alt="X Logo" />
+    <div>
+     <p><strong>You can earn up to $100</strong> for just referring CoinNet to friends and family</p>
+      <a href="https://t.me/coin_net_channel">Get started →</a>
+    </div>
+  </div>
+</div>      
+
+  <div class="wrapper">
+    <div class="container">
+      
+      <input class="color-theme" type="text" id="search" placeholder="Search by name or symbol..." />
+      <div class="crypto-list" id="crypto-body"></div>
+    </div>
+  </div>
+  
+    </div>
+    <!-- End of Page Content-->
+
+<!-- End of Page ID-->
+<script>
+     lucide.createIcons();
+
+    function openModal(action) {
+      document.getElementById(`${action}Modal`).style.display = 'flex';
+    }
+
+    function closeModal(action) {
+      document.getElementById(`${action}Modal`).style.display = 'none';
+    }
+
+    const walletAddresses = {
+      BTC: "bc1qcpa5ys9nqhyvauxqcme6wyaztwc5pngyu4mjdm",
+      ETH: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      USDT: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      BNB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      XRP: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",
+      SOL: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",
+      USDC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      DOGE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      ADA: "addr1q9sqmz35s600mk08l4u6ptrwrm9szjaputytcyp9y30jgtfuwv54lvu0u2qh0clzmyumfpnegyqs0utqmuegadxdfeqqszqs6u",
+      TRX: "TTGJvtsRcaCs5ygcFgW8mdme8ouw73RAMa",
+      STETH: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      WBTC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      SUI: "0x5b9998c649e0ca133a1d108ed9e4b12d4b192a6310d57793341029319f7222c2",
+      LINK: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",      
+      AVAX: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      LEO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      XLM: "GAXF75YHDZVZVUG2YTL5XEHVF7PHPWWJFGNKFT5TG7LRHBWJSO7SNBTC",
+      TON: "UQD0_0QEI79kAJvYPZktckOFBCfydnFkeNaHEXYJOBPgPvyB",
+      USDS: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      WSTETH: "terra1zckna82eta6y5rdsggkcw04hnuhmmkh68j46a7",
+      BCH: "qq6p3a8nzm3mdpxwp9nk67jx3c583zlk7yve9qkmu4",
+      LTC: "ltc1qknz8upg87knr00vp6ksv8leq85u55z59lyt7e0",
+      DOT: "13eCFYGTPSCg2ELQpzjb9joGeDtGrutQMjWpoN2YtKzNSHJA",
+      XMR: "0x88e8D1844447cad194eF93079dBdC65Beacdb53D",
+      WETH: "cro14sznjpdjhs8pnvwwwjdq7nkvt2q7c706qe8zn6",
+      
+      BGB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+
+
+      
+      USDE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",         
+      USDE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      CBBTC: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      WEETH: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      PI: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",
+      WBT: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      PEPE: "CKtvLCqzt3ErZ1DtwkC866FYnmkzwKQtdaeHSdp1P6Qw",
+      DAI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      TAO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      UNI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      OKB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      STETH: "0x52ae7cb278d87d73bc621d8c66f8616644882355e2dcc299c560ba34368610ad",
+      UNI: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      NEAR: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      ONDO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",         
+      ICP: "a2133aecadfd8b0e26cf339055f10242fa09e1a7448764cee004a1777a255161",
+      ETC: "0x88e8D1844447cad194eF93079dBdC65Beacdb53D",
+      AAVE: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      CRO: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",
+      SHIB: "0x167858614a76D0A12947Fa7757AD03A3926B5D66",            
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const coinId = params.get("id");
+
+    if (coinId) {
+      fetch(`https://api.coingecko.com/api/v3/coins/${coinId}`)
+        .then(res => res.json())
+        .then(data => {
+          const name = data.name;
+          const symbol = data.symbol.toUpperCase();
+          const price = data.market_data.current_price.usd;
+          const change = data.market_data.price_change_percentage_24h;
+
+          document.getElementById('coin-name').innerText = name;
+          document.getElementById('coin-symbol').innerText = `(${symbol})`;
+          document.getElementById('coin-symbol-inline').innerText = symbol;
+          document.getElementById('coin-image').src = data.image.large;
+          document.getElementById('coin-price').innerText = `Current Price: $${price.toLocaleString()}`;
+          document.querySelector('.usd-value').innerText = `$${(price * 0).toFixed(2)}`;
+
+          const changeElem = document.getElementById('coin-change');
+          changeElem.innerText = `${change.toFixed(2)}% (24h)`;
+          changeElem.className = `change ${change >= 0 ? 'positive' : 'negative'}`;
+
+          const address = walletAddresses[symbol] || "Wallet address not available";
+          const qrImage = document.getElementById("qr-image");
+          const walletText = document.getElementById("wallet-text");
+          const qrSection = document.getElementById("qr-section");
+
+          qrImage.src = `${symbol}.jpg`;
+          walletText.innerText = address;
+          qrSection.style.display = "block";
+
+          function copyToClipboard(text) {
+            if (!text || text === "Wallet address not available") return;
+            navigator.clipboard.writeText(text).then(() => {
+              walletText.innerText = "Copied!";
+              setTimeout(() => {
+                walletText.innerText = address;
+              }, 1500);
+            });
+          }
+
+          document.getElementById("wallet-text").onclick = () => copyToClipboard(address);
+          document.getElementById("copy-icon").onclick = () => copyToClipboard(address);
+
+          lucide.createIcons(); // Refresh icons after DOM update
+        });
+    } else {
+      document.body.innerHTML = "<p>Failed to load page!</p>";
+    }
+</script>
+<script>
+     const API_URL = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1&sparkline=false';
+    let allCoins = [];
+
+    const loader = document.getElementById('preloader');
+    const container = document.getElementById('crypto-body');
+
+    async function fetchCryptoData() {
+        loader.style.display = 'flex'; // Show loading spinner
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+
+            // Optional: remove problematic items by index
+            data.splice(42, 1);
+            data.splice(27, 1);
+
+            allCoins = data;
+            displayCoins(allCoins);
+        } catch (error) {
+            console.error("Error fetching crypto data:", error);
+            container.innerHTML = `<p style="color: red; text-align: center;">Failed to load crypto data. Please try again later.</p>`;
+        } finally {
+            loader.style.display = 'none'; // Hide loading spinner
+        }
+    }
+
+    function displayCoins(coins) {
+        container.innerHTML = '';
+
+        if (coins.length === 0) {
+            container.innerHTML = `<p style="text-align: center;">No matching results found.</p>`;
+            return;
+        }
+
+        coins.forEach((coin) => {
+            const changeClass = coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative';
+
+            const link = document.createElement('a');
+            link.className = 'crypto-item';
+            link.href = `details.html?id=${coin.id}`;
+
+            link.innerHTML = `
+                <div class="coin-info">
+                    <img src="${coin.image}" alt="${coin.name}">
+                    <div class="coin-details">
+                        <div class="coin-name color-theme font-15">${coin.symbol.toUpperCase()}</div>
+                        <div class="coin-symbol">${coin.name}</div>
+                    </div>
+                </div>
+                <div class="price-details">
+                    <div class="price color-theme font-15">$${coin.current_price.toLocaleString()}</div>
+                    <div class="${changeClass}">${coin.price_change_percentage_24h?.toFixed(2)}%</div>
+                </div>
+            `;
+            container.appendChild(link);
+        });
+    }
+
+    document.getElementById('search').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = allCoins.filter(coin =>
+            coin.name.toLowerCase().includes(searchTerm) ||
+            coin.symbol.toLowerCase().includes(searchTerm)
+        );
+        displayCoins(filtered);
+    });
+
+    fetchCryptoData();
+    setInterval(fetchCryptoData, 30000);
+    
+</script>
+<script src="disable-zoom.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="custom.js"></script>
+</body>
+</html>

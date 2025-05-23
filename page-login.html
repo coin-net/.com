@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  // Check if the user has already signed up
+  const isSignedUp = localStorage.getItem('signup-success') === 'true';
+  const userEmail = localStorage.getItem('userEmail');
+  const userUsername = localStorage.getItem('userUsername');
+  const userPassword = localStorage.getItem('userPassword');
+
+  // If user has signed up and data exists, redirect to homepage
+  if (isSignedUp && (userEmail || userUsername) && userPassword) {
+    window.location.href = 'index-wallet.html';
+  }
+</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background-color: #0d0d0d;
+      color: #fff;
+    }
+
+    .login-screen {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+    }
+
+    .top {
+      flex: 0 0 auto;
+    }
+
+    .top h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .create-now {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .create-now a {
+      color: #a855f7;
+      text-decoration: none;
+      cursor: none;
+    }
+
+    .form-group {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .input {
+      width: 100%;
+      height: 48px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background-color: #1a1a1a;
+      color: white;
+      font-size: 16px;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: none;
+      color: #a855f7;
+      padding: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .forgot-password {
+      text-align: center;
+      color: #a855f7;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: none;
+    }
+
+    .buttons {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sign-in {
+      width: 100%;
+      background-color: #4c1d95;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: none;
+      position: relative;
+    }
+
+    .google {
+      width: 100%;
+      background-color: #1a1a1a;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .google img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .terms {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      line-height: 1.4;
+      margin-top: auto;
+    }
+
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(2px);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 1000;
+    }
+
+    .popup {
+      margin-top: -200px;
+      max-width: 90%;
+      width: 330px;
+      padding: 24px;
+      border-radius: 16px;
+      background-color: #1a1a1a;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+    }
+
+    .popup h2,
+    .popup h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .popup p {
+      font-size: 16px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+
+    @keyframes slideDown {
+      from {
+        margin-top: -200px;
+        opacity: 0;
+      }
+      to {
+        margin-top: 40px;
+        opacity: 1;
+      }
+    }
+
+    .popup-backdrop.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup-backdrop.show .popup {
+      animation: slideDown 0.35s ease forwards;
+    }
+
+    .popup.success h2,
+    .popup.success h3 {
+      color: #a855f7;
+    }
+
+    .popup.success {
+      border: 2px solid #a855f7;
+    }
+
+    .popup.error h2,
+    .popup.error h3 {
+      color: #ef4444;
+    }
+
+    .popup.error {
+      border: 2px solid #ef4444;
+    }
+
+    .create-now a,
+    .toggle-password,
+    .forgot-password,
+    .sign-in,
+    .google,
+    .terms a {
+      cursor: none;
+    }
+
+    .spinner {
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+ 
+  </style>
+</head>
+<body>
+  <div class="login-screen">
+  <div class="top">
+    <h1>Sign in to account</h1>
+    <p class="create-now">
+      New here?
+      <a href="page-sign up.html">Create now</a>
+    </p>
+  </div>
+
+  <div class="form-group">
+    <input type="text" id="email" placeholder="Username" class="input" />
+    <div class="password-wrapper">
+      <input type="password" name="password" placeholder="Password" id="password" class="input" required />
+      <button id="togglePassword" class="toggle-password" aria-label="Toggle Password Visibility" type="button">
+        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />
+        </svg>
+      </button>
+    </div>
+    <a href="https://wa.me/+639516173654?text=I%20seem%20to%20have%20forgotten%20my%20password%20and%20would%20like%20to%20retrieve%20a%20new%20one.." class="forgot-password">Forgot your password?</a>
+  </div>
+
+  <div class="buttons">
+    <button class="sign-in" id="signInBtn">Sign in</button>
+    <button class="google" id="googleBtn">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">
+      Sign in with Google
+    </button>
+  </div>
+
+  <p class="terms" style="margin-top: 35px;">
+    <a onclick="history.back()" style="cursor: none;">Back to previous page</a>
+  </p>
+</div>
+
+<div id="popupBackdrop" class="popup-backdrop">
+  <div id="popup" class="popup" role="alert" aria-live="polite" tabindex="-1">
+    <h4 id="popupTitle">Title</h4>
+    <p id="popupMessage"></p>
+  </div>
+</div>
+
+ <script>
+  const signBtn = document.getElementById('signInBtn');
+  const emailInput = document.getElementById('email'); // Used for username
+  const passwordInput = document.getElementById('password');
+  const popupBackdrop = document.getElementById('popupBackdrop');
+  const popup = document.getElementById('popup');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupMessage = document.getElementById('popupMessage');
+  const googleBtn = document.getElementById('googleBtn');
+
+  function showPopup(type, title, message) {
+    popup.className = `popup ${type}`;
+    popupTitle.innerHTML = title;
+    popupMessage.innerHTML = message;
+
+    // Set title color based on popup type
+    if (type === 'error') {
+      popupTitle.style.color = '#900006'; // Red
+    } else if (type === 'success') {
+      popupTitle.style.color = 'green'; // Green
+    } else {
+      popupTitle.style.color = 'inherit';
+    }
+
+    popupBackdrop.classList.add('show');
+    setTimeout(() => {
+      popupBackdrop.classList.remove('show');
+    }, 3000);
+  }
+
+  signBtn.addEventListener('click', () => {
+    const username = emailInput.value.trim(); // Keep id="email" but use as username
+    const pwd = passwordInput.value.trim();
+
+    if (!username || !pwd) {
+      showPopup('error', 'Missing Info', 'Please enter <strong>both</strong> username and password.');
+      return;
+    }
+
+    const storedUsername = localStorage.getItem('userUsername');
+    const storedPassword = localStorage.getItem('userPassword');
+
+    signBtn.disabled = true;
+    const originalText = signBtn.innerHTML;
+    signBtn.innerHTML = '<span class="spinner"></span>';
+
+    if (username === storedUsername && pwd === storedPassword) {
+      localStorage.setItem('loggedIn', 'true');
+      localStorage.setItem('loggedInUser', username);
+      showPopup('success', 'Success!', 'Redirecting… please wait');
+
+      setTimeout(() => {
+        window.location.href = 'index-waves.html';
+      }, 1500);
+    } else {
+      showPopup('error', 'Login Failed', 'Username or password is incorrect, or you haven’t signed up yet.');
+      signBtn.disabled = false;
+      signBtn.innerHTML = originalText;
+    }
+  });
+
+  document.getElementById('togglePassword').addEventListener('click', () => {
+    const isVisible = passwordInput.type === 'text';
+    passwordInput.type = isVisible ? 'password' : 'text';
+    document.getElementById('eyeIcon').innerHTML = isVisible
+      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />`
+      : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.032-3.368M6.63 6.63A9.954 9.954 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.032 4.368M3 3l18 18" />`;
+  });
+
+  googleBtn.addEventListener('click', () => {
+    showPopup(
+      'success',
+      `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" style="width:20px; vertical-align:middle; margin-right:8px;">`,
+      ' Please activate Google sign-up from your phone settings to continue.'
+    );
+  });
+</script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>
