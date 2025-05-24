@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  const isSignedUp = localStorage.getItem('signup-success') === 'true';
-  const userEmail = localStorage.getItem('userEmail');
-  const userUsername = localStorage.getItem('userUsername');
-  const userPassword = localStorage.getItem('userPassword');
-
-  if (isSignedUp && (userEmail || userUsername) && userPassword) {
-    window.location.replace('index-wallet.html');
-  }
-</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet"/>
@@ -356,7 +346,7 @@
       showPopup('success', 'Success!', 'Redirecting… please wait');
 
       setTimeout(() => {
-        window.location.href = 'index-waves.html';
+        window.location.href = 'loading.html';
       }, 1500);
     } else {
       showPopup('error', 'Login Failed', 'Username or password is incorrect, or you haven’t signed up yet.');
@@ -369,7 +359,7 @@
     const isVisible = passwordInput.type === 'text';
     passwordInput.type = isVisible ? 'password' : 'text';
     document.getElementById('eyeIcon').innerHTML = isVisible
-      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />`
+      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />`
       : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.032-3.368M6.63 6.63A9.954 9.954 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.956 9.956 0 01-4.032 4.368M3 3l18 18" />`;
   });
 
