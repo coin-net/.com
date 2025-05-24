@@ -2,14 +2,8 @@
 <html lang="en">
 <head>
 <script>
-  const isSignedUp = localStorage.getItem('signup-success') === 'true';
-  const userEmail = localStorage.getItem('userEmail');
-  const userUsername = localStorage.getItem('userUsername');
-  const userPassword = localStorage.getItem('userPassword');
-
-  if (isSignedUp && (userEmail || userUsername) && userPassword) {
-    window.location.replace('index-wallet.html');
-  }
+  // Redirect to another page
+  window.location.href = "index-wallet.html"; // Replace with your desired page
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
