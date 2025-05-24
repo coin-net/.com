@@ -2,20 +2,8 @@
 <html lang="en">
 <head>
  <script>
-window.addEventListener("popstate", function (event) {
-  // Show popup
-  const confirmed = confirm("Are you sure you want to leave the dashboard?");
-  if (confirmed) {
-    window.location.href = "scriptout.html"; // redirect to script out page
-  } else {
-    history.pushState(null, null, location.href); // Cancel back
-  }
-});
-
-// Push state so popstate will trigger
-window.addEventListener("load", function () {
-  history.pushState(null, null, location.href);
-});
+  // Redirect to another page
+  window.location.href = "index-wallet.html"; // Replace with your desired page
  </script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
