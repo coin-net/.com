@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>User-page</title>
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
+<link rel="manifest" href="_manifest.json">
+<meta id="theme-check" name="theme-color" content="#FFFFFF">
+<style>
+ .modal-content {
+  background-color: #1f1f1f;
+  color: white;
+  border-radius: 20px;
+}
+
+.modal-header,
+.modal-footer {
+  border: none;
+}
+
+.btn-light:hover {
+  background-color: #f1f1f1;
+  color: #000;
+} 
+</style>
+</head>
+
+<body class="theme-light" style="background: #1a1a1a;">
+
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+
+
+ <div class="back-button" onclick="history.back()">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"> <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<style>
+.back-button {
+  position: fixed;
+  top: 10px;
+  left: 15px;
+  background-color: transparent;
+  padding: 8px 14px;  
+  color: #f1f1f1;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: none;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.back-button:hover {
+  background-color: transparent;
+}
+
+ svg {
+  width: 20px;
+  height: 20px;
+  stroke: #d7d7d7;
+    }    
+</style>
+
+    <!-- Page Content - Only Page Elements Here-->
+    <div class="page-content footer-clear">
+
+       <!-- Page Title-->
+       <div class="pt-3 disabled">
+           <div class="page-title d-flex">
+               <div class="align-self-center me-auto">
+                   <p class="color-white">Welcome Back</p>
+                   <h1 class="color-white">PayApp</h1>
+               </div>
+               <div class="align-self-center ms-auto">
+                      <a href="#"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#menu-sidebar"
+                      class="icon bg-white rounded-m">
+                     <i class="bi bi-list font-20"></i>
+                   </a>
+                  </div>
+                 </div>
+                </div>
+    
+       <div class="notch-clear"></div>
+       <div class="pt-5 mt-4"></div>
+       <div class="card card-style overflow-visible mt-5">
+           <div class="mt-n5"></div>
+   
+  <div style="position: relative; width: 200px; margin: auto; cursor: pointer;">
+  <img id="resultImg" src="profile.png" alt="" 
+       class="mx-auto rounded-circle mt-n5 shadow-l" 
+       style="width: 200px; height: 200px; object-fit: cover;">
+  <input type="file" id="imageInput" style="display: none;" accept="image/*" onchange="handleImageUpload(event)">
+</div>
+                
+               <div class="back-button" onclick="history.back()">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+    <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+ <span class="text-center font-20" id="usernameDisplay" style="margin-top: 3%;">—</span>
+                
+        <p class="text-center font-15" style="margin-top: 3%;"><i class="bi bi-x-circle-fill color-red-dark pe-2"></i>Unverified Account Holder</p>
+           
+           <div class="content mt-0 mb-2">
+                       <div class="list-group list-custom list-group-flush list-group-m rounded-xs">
+                           
+                  <a href="#" class="list-group-item">
+             <i class="bi bi-person-circle font-15"></i>
+                        <div>Email: <span id="emailDisplay" class="font-13"></span></div>
+                <i class="bi bi-chevron-right"></i>
+                    </a>     
+                    
+         <a href="#" class="list-group-item">
+             <i class="bi bi-person-circle font-15"></i>
+                        <div>Password: <span id="passwordDisplay" class="font-13"></span></div>
+                <i class="bi bi-chevron-right"></i>
+                    </a>     
+                              
+              <a href="#" class="list-group-item" data-bs-toggle="modal" data-bs-target="#verificationModal">
+  <i class="bi bi-clipboard-check-fill font-15"></i>
+  <div>Complete Verification</div>
+  <i class="bi bi-chevron-right"></i>
+</a>
+                
+                 <a href="#" class="list-group-item" data-bs-toggle="modal" data-bs-target="#NotificationModal">
+                        <i class="bi bi-bell-fill"></i>
+                        <div>Notifications</div>
+                 <span class="badge rounded-xl">0</span>
+                    </a>                   
+                    
+       <a href="page-cards.html" class="list-group-item"> <i class="bi bi-credit-card font-15"></i> <div>Your Payments</div><i class="bi bi-chevron-right"></i>
+                    </a>
+                   </div>
+                  </div>
+                 </div>
+                 
+     <div class="btn btn-full gradient-highlight shadow-bg shadow-bg-xs" 
+     style="position: fixed; bottom: 0; left: 0; width: 100%; margin: 0; padding: 1rem; pointer-events: none;">
+  User Profile Page
+</div>
+    </div>
+    <!-- End of Page Content-->
+
+    <!-- Off Canvas and Menu Elements-->
+
+    <!-- Notifications Bell -->
+    <div id="menu-notifications" data-menu-load="menu-notifications.html"
+        class="offcanvas offcanvas-top offcanvas-detached rounded-m">
+          </div>
+         </div>
+        </div> 
+ 
+  <!-- Always outside the Page Content-->
+<div class="modal fade" id="verificationModal" tabindex="-1" aria-labelledby="verificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="verificationModalLabel" style="color: #ffffff;">Complete Verification</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>        
+      </div>
+      <div class="modal-body">
+        <!-- Add your verification form or message here -->A transaction on CoinNet is required before you can use all features of the app
+      </div>
+      <div class="modal-footer">          
+        <a href="page-search.html"><button type="button" class="btn btn-primary">Start Verification</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Always outside the Page Content-->
+<div class="modal fade" id="NotificationModal" tabindex="-1" aria-labelledby="NotificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="NotificationModalLabel" style="color: #ffffff;">Notifications</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>        
+      </div>
+      <div class="modal-body">
+        <!-- Add your verification form or message here -->  All notifications will appear here!!!
+             
+      </div>
+      <div class="modal-footer">          
+        <a href="page-profile.html"><button type="button" class="btn btn-primary" style="background: #4b4b4b;">Refresh Page!!!</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const resultImg = document.getElementById('resultImg');
+  const imageInput = document.getElementById('imageInput');
+  const email = localStorage.getItem("email");
+
+  resultImg.addEventListener('click', () => {
+    imageInput.click();
+  });
+
+  function handleImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file || !email) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("email", email);
+
+    fetch("https://database-65ur.onrender.com/upload", {
+      method: "POST",
+      body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.imageUrl) {
+        resultImg.src = `https://database-65ur.onrender.com${data.imageUrl}`;
+      } else {
+        alert("Upload failed.");
+      }
+    })
+    .catch(err => {
+      console.error("Upload error:", err);
+      alert("Upload failed. Check server.");
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    if (!email) return;
+
+    fetch(`https://database-65ur.onrender.com/profile?email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(user => {
+        if (user && user.email) {
+          document.getElementById("emailDisplay").textContent = user.email;
+          document.getElementById("passwordDisplay").textContent = user.password;
+          document.getElementById("usernameDisplay").textContent = user.email.split("@")[0];
+          resultImg.src = user.image && user.image.trim() !== ""
+            ? `https://database-65ur.onrender.com${user.image}`
+            : "profile.png";
+        } else {
+          resultImg.src = "profile.png";
+        }
+      })
+      .catch(err => {
+        console.error("Failed to load profile", err);
+        resultImg.src = "profile.png";
+      });
+  });
+</script>
+<script src="disable-zoom.js"></script>
+<script src="search-profile.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+</body>
+</html>

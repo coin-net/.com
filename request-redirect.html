@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sending Request...</title>
+</head>
+<body>
+  <p>Trying to open WhatsApp...</p>
+
+  <script>
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    const email = getParam('email');
+    const amount = getParam('amount');
+    const siteLink = "https://pay-coin-net.github.io/.com"; // your website link
+
+    const whatsappMessage = `Hi, ${email} is requesting $${amount} from CoinNet mobile app. Click the link to get started:\nVisit: ${siteLink}`;
+    const emailSubject = "Funds Request";
+    const emailBody = `Hi, ${email} is requesting $${amount} from CoinNet mobile app. Click the link to get started:\nVisit: ${siteLink}`;
+
+    const whatsappURL = `whatsapp://send?text=${encodeURIComponent(whatsappMessage)}`;
+    const mailtoURL = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+    // Try to open WhatsApp
+    const openWhatsApp = () => {
+      window.location = whatsappURL;
+
+      // Fallback to email after 2 seconds if WhatsApp didn't open
+      setTimeout(() => {
+        window.location = mailtoURL;
+      }, 2000);
+    };
+
+    if (email && amount) {
+      openWhatsApp();
+    } else {
+      alert("Missing email or amount.");
+    }
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>

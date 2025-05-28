@@ -1,0 +1,386 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PayApp - Finance, Banking, Wallet, Crypto Mobile PWA</title>
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="css2.css" rel="stylesheet">
+<link rel="manifest" href="_manifest.json">
+<meta id="theme-check" name="theme-color" content="#FFFFFF">
+<link rel="apple-touch-icon" sizes="180x180" href="app/icons/icon-192x192.png"></head>
+
+<body class="theme-light">
+
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+
+<!-- Page Wrapper-->
+<div id="page">
+    
+    <!-- Footer Bar -->
+    <div id="footer-bar" class="footer-bar-1 footer-bar-detached">
+        <a href="page-cards.html" class="active-nav"><i class="bi bi-wallet2"></i><span>Cards</span></a>
+        <a href="page-activity.html"><i class="bi bi-graph-up"></i><span>Activity</span></a>
+        <a href="index-waves.html" class="circle-nav-2"><i class="bi bi-house-fill"></i><span>Home</span></a>
+        <a href="page-blockchain.html"><i class="bi bi-minecart-loaded"></i><span>Blockchain</span></a>
+        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-sidebar"><i class="bi bi-three-dots"></i><span>More</span></a>
+    </div>
+
+    <!-- Page Content - Only Page Elements Here-->
+    <div class="page-content footer-clear">
+
+        <!-- Page Title-->
+        <div class="pt-3">
+            <div class="page-title d-flex">
+                <div class="align-self-center me-auto">
+                    <p class="color-highlight" style="margin-bottom: 0px;">Coin_net.com</p>
+                    <h5 class="color-theme">Cards</h5>
+                </div>
+                <div class="align-self-center ms-auto" style="margin-top: 5px;">
+                     <a href="#"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#menu-notifications"
+                    class="icon gradient-blue color-white shadow-bg shadow-bg-xs rounded-m" style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc; width: 35px; height: 35px;">
+                        <i class="bi bi-bell-fill font-17"></i>
+                    </a>
+            <!-- Page Title Dropdown Menu-->
+                    <div class="dropdown-menu">
+                        <div class="card card-style shadow-m mt-1 me-1">
+                            <div class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
+                                 <a href="https://wa.me/+639516173654?text=Hello,%20i20%would%20like%20to%20activate%20my%20ConiNet%20digital%20card." class="list-group-item"> <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
+                                    <strong class="font-13">Activate Card</strong>
+                                </a>
+                                <a href="page-activity.html" class="list-group-item">
+      <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
+                                    <strong class="font-13">Activity</strong>
+                                </a>
+                                <a href="page-profile.html" class="list-group-item"> <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
+                                    <strong class="font-13">Account</strong>
+                                </a>
+                               </div>
+                              </div>
+                             </div>
+                            </div>
+                           </div>
+                          </div>
+        
+        <!-- Card Stack - The Stack Height Below will be the card height-->
+        <div class="card-stack" data-stack-height="150">
+           
+            <!-- Card Open on Click-->
+            <div class="card-stack-click"></div>
+            
+            <!-- Card 1-->
+            <div class="card card-style bg-5" style="background: linear-gradient(135deg, #8e2de2, #000000, #8e2de2);">
+                <div class="card-top p-3">
+                    <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-card-more" class="icon icon-xxs bg-white color-black float-end" style="display: flex; justify-content: center; align-items: center;  border: 1px solid #ccc;"><i class="bi bi-three-dots font-18"></i></a>
+                </div>
+                
+                 <div class="card-center" style="position: absolute; top: 50%; left: 0px; transform: translateY(-50%);">
+                        <div class="px-3 py-2 rounded-end d-inline-block">
+                            <h2 class="font-13 my-n1">
+                                <a class="#" data-bs-toggle="collapse" href="#balance3" aria-controls="balance3" style="color: #ffff;">Main Balance</a>
+                            </h2>
+                            <div class="collapse" id="balance3"><h2 class="font-18" style="color: #ffff;">$0.00</h2></div>
+                        </div>
+                    </div>
+                <strong class="card-top no-click font-12 p-3 color-white font-monospace">Main Account</strong>
+                <strong class="card-bottom no-click p-3 text-start color-white font-monospace">1234 5678 **** ****</strong>
+                <strong class="card-bottom no-click p-3 text-end color-white font-monospace">08 / 2025</strong>
+                <div class="card-overlay bg-black opacity-50"></div>
+            </div>                        
+            
+            <!-- Card 2 -->
+            <div class="card card-style bg-7" style="background: linear-gradient(135deg, #000000, #ffffff, #000000);">
+                <div class="card-top p-3">
+                    <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-card-more" class="icon icon-xxs bg-white color-black float-end" style="display: flex; justify-content: center; align-items: center;  border: 1px solid #ccc;"><i class="bi bi-three-dots font-18"></i></a>
+                </div>
+                
+                   <div class="card-center" style="position: absolute; top: 50%; left: 0px; transform: translateY(-50%);">
+                        <div class="px-3 py-2 rounded-end d-inline-block">
+                            <h2 class="font-13 my-n1">
+                                <a class="#" data-bs-toggle="collapse" href="#balance1" aria-controls="balance1" style="color: #ffff;">Earnings Balance</a>
+                            </h2>
+                            <div class="collapse" id="balance1"><h2 class="font-18" style="color: #ffff;">$55.00</h2></div>
+                        </div>
+                    </div>
+                    
+                <strong class="card-top no-click font-12 p-3 color-white font-monospace">Earnings Account</strong>
+                <strong class="card-bottom no-click p-3 text-start color-white font-monospace">1234 5678 **** ****</strong>
+                <strong class="card-bottom no-click p-3 text-end color-white font-monospace">08 / 2025</strong>
+                <div class="card-overlay bg-black opacity-50"></div>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="card card-style bg-1" style="background: linear-gradient(135deg, #000000, #0c2195e4, #000000);">
+                <div class="card-top p-3">
+                    <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-card-more" class="icon icon-xxs bg-white color-black float-end" style="display: flex; justify-content: center; align-items: center;  border: 1px solid #ccc;"><i class="bi bi-three-dots font-18"></i></a>
+                </div>
+                 <div class="card-center" style="position: absolute; top: 50%; left: 0px; transform: translateY(-50%);">
+                        <div class="px-3 py-2 rounded-end d-inline-block">
+                            <h2 class="font-13 my-n1">
+                                <a class="#" data-bs-toggle="collapse" href="#balance2" aria-controls="balance2" style="color: #ffffff;">Savings Balance</a>
+                            </h2>
+                            <div class="collapse" id="balance2"><h2 class="font-18" style="color: #ffff;">$0.00</h2></div>
+                        </div>
+                    </div>
+                <strong class="card-top no-click font-12 p-3 color-white font-monospace">Savings Account</strong>
+                <strong class="card-bottom no-click p-3 text-start color-white font-monospace">1234 5678 **** ****</strong>
+                <strong class="card-bottom no-click p-3 text-end color-white font-monospace">08 / 2025</strong>
+                <div class="card-overlay bg-black opacity-50"></div>
+            </div>
+        </div>
+        
+        <!-- Card Stack Info Message / Hides when deployed -->
+        <h6 class="btn-stack-info color-theme opacity-80 text-center mt-n2 mb-3">Tap the Cards to Expand your Wallet</h6>
+        <!-- Card Stack Button / shows when deployed -->
+        <a href="#" class="disabled btn-stack-click btn mx-3 mb-4 btn-full gradient-highlight shadow-bg shadow-bg-xs">Close my Wallet</a>
+
+        <!-- Tabs-->
+        <div class="card card-style">
+            <div class="content mb-0">
+                
+                <!-- Tab Wrapper-->
+                <div class="tabs tabs-pill" id="tab-group-2">
+                    <!-- Tab Controls -->
+                    <div class="tab-controls rounded-m p-1">
+                        <a class="font-0 rounded-m" data-bs-toggle="collapse" href="#tab-4" aria-expanded="true">Settings</a>
+                        <a class="font-0 rounded-m" data-bs-toggle="collapse" href="#tab-5" aria-expanded="false">History</a>
+                        <a class="font-0 rounded-m" data-bs-toggle="collapse" href="#tab-x" aria-expanded="false">Currency</a>
+                    </div>
+                    
+                    <!-- Tab 1 -->
+                    <div class="mt-3"></div>
+                    <div class="collapse show" id="tab-4" data-bs-parent="#tab-group-2">
+                        <div class="list-group list-custom list-group-m list-group-flush rounded-xs px-1">
+                            <a href="#" class="list-group-item pe-2" data-trigger-switch="switch-5">
+                                <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-green color-white shadow-bg shadow-bg-xs rounded-xs bi bi-gear-fill"></i>
+                                <div><stronger>Use Online Payments</stronger><span>Use this card to pay online</span></div>
+                                <div class="form-switch ios-switch switch-green switch-s">
+                                    <input type="checkbox" class="ios-input" id="switch-5">
+                                    <label class="custom-control-label" for="switch-5"></label>
+                                </div>
+                            </a>
+                            <a href="#" class="list-group-item pe-2" data-trigger-switch="switch-51">
+                                <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-magenta color-white shadow-bg shadow-bg-xs rounded-xs bi bi-wifi"></i>
+                                <div><stronger> Use NFC Payments</stronger><span>Pay With Card Contactless</span></div>
+                                <div class="form-switch ios-switch switch-green switch-s">
+                                    <input type="checkbox" class="ios-input" id="switch-51" checked>
+                                    <label class="custom-control-label" for="switch-51"></label>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab 2-->
+                    <div class="collapse" id="tab-5" data-bs-parent="#tab-group-2">
+                        <div class="form-custom form-label form-border form-icon mt-0 mb-0">
+                            <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="bi bi-check-circle font-13"></i>
+                            <select class="form-select rounded-xs" id="c6" aria-label="Floating label select example">
+                                <option selected>Latest Activity</option>
+                                <option value="1">Last 30 Days</option>
+                                <option value="2">Last 90 Days</option>
+                                <option value="3">Last 6 Months</option>
+                            </select>
+                        </div>
+                        <div class="list-group list-custom list-group-m list-group-flush rounded-xs">
+                          
+                        </div>
+                    </div>
+                    
+                    <!-- Tab 3 -->
+             <div class="collapse" id="tab-x" data-bs-parent="#tab-group-2">
+    <!-- United States Dollar -->
+    <a href="page-activity.html" class="d-flex py-1">
+        <div class="align-self-center">
+            <span class="icon shadow-bg shadow-bg-s">
+                <img src="https://flagcdn.com/32x24/us.png" alt="United States Flag" style="height: 25px; width: 30px;">
+            </span>
+        </div>
+        <div class="align-self-center ps-1">
+            <h6 class="font-13">United States Dollar</br>(USD)</h6>
+        </div>
+        <div class="align-self-center ms-auto text-end">
+            <h5 id="usd-price" class="pt-1 mb-n1 color-blue-dark font-15">$0.00</h5>
+            <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+        </div>
+    </a>
+    <div class="divider my-2 opacity-50"></div>
+
+    <!-- Euro -->
+    <a href="page-activity.html" class="d-flex py-1">
+        <div class="align-self-center">
+            <span class="icon shadow-bg shadow-bg-s">
+                <img src="https://flagcdn.com/32x24/eu.png" alt="European Union Flag" style="height: 25px; width: 30px;">
+            </span>
+        </div>
+        <div class="align-self-center ps-1">
+            <h6 class="pt-1 mb-n1 font-13">Euro</br>(EUR)</h6>
+        </div>
+        <div class="align-self-center ms-auto text-end">
+            <h5 id="eur-price" class="pt-1 mb-n1 color-blue-dark font-15">€0.00</h5>
+            <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+        </div>
+    </a>
+    <div class="divider my-2 opacity-50"></div>
+
+    <!-- British Pound -->
+    <a href="page-activity.html" class="d-flex py-1">
+        <div class="align-self-center">
+            <span class="icon shadow-bg shadow-bg-s">
+                <img src="https://flagcdn.com/32x24/gb.png" alt="United Kingdom Flag" style="height: 25px; width: 30px;">
+            </span>
+        </div>
+        <div class="align-self-center ps-1">
+            <h6 class="pt-1 mb-n1 font-13">British Pound</br>(GBP)</h6>
+        </div>
+        <div class="align-self-center ms-auto text-end">
+            <h5 id="gbp-price" class="pt-1 mb-n1 color-green-dark font-15">£0.00</h5>
+            <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+        </div>
+    </a>
+    <div class="divider my-2 opacity-50"></div>
+
+    <!-- Japanese Yen -->
+    <a href="page-activity.html" class="d-flex py-1">
+        <div class="align-self-center">
+            <span class="icon shadow-bg shadow-bg-s">
+                <img src="https://flagcdn.com/32x24/jp.png" alt="Japan Flag" style="height: 25px; width: 30px;">
+            </span>
+        </div>
+        <div class="align-self-center ps-1">
+            <h6 class="pt-1 mb-n1 font-13">Japanese Yen</br>(JPY)</h6>
+        </div>
+        <div class="align-self-center ms-auto text-end">
+            <h5 id="jpy-price" class="pt-1 mb-n1 color-green-dark font-15">¥0.00</h5>
+            <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+        </div>
+    </a>
+    <div class="divider my-2 opacity-50"></div>
+
+    <!-- Nigerian Naira -->
+    <a href="page-activity.html" class="d-flex py-1">
+        <div class="align-self-center">
+            <span class="icon shadow-bg shadow-bg-s">
+                <img src="https://flagcdn.com/32x24/ng.png" alt="Nigeria Flag" style="height: 25px; width: 30px;">
+            </span>
+        </div>
+        <div class="align-self-center ps-1">
+            <h6 class="pt-1 mb-n1 font-13">Nigerian Naira</br>(NGN)</h6>
+        </div>
+        <div class="align-self-center ms-auto text-end">
+            <h6 id="ngn-price" class="pt-1 mb-n1 color-green-dark font-15">₦0.00</h6>
+            <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+        </div>
+    </a>
+    
+     <div class="divider my-2 opacity-50"></div>
+
+    <!-- Euro -->
+  <a href="page-activity.html" class="d-flex py-1">
+    <div class="align-self-center">
+        <span class="icon shadow-bg shadow-bg-s">
+            <img src="https://flagcdn.com/32x24/ae.png" alt="UAE Flag" style="height: 25px; width: 30px;">
+        </span>
+    </div>
+    <div class="align-self-center ps-1">
+        <h6 class="pt-1 mb-n1 font-13">UAE Dirham</br>(AED)</h6>
+    </div>
+    <div class="align-self-center ms-auto text-end">
+        <h5 id="aed-price" class="pt-1 mb-n1 color-blue-dark font-15">د.إ0.00</h5>
+        <p class="mb-0 font-11" style="color: #a60007;">Wallet empty</p>
+    </div>
+</a>
+    <div class="pb-3"></div>
+</div>
+                    <!-- End of Tabs-->
+                 </div>               
+                <!-- End of Tab Wrapper-->
+             </div>
+          </div>                
+        </div>
+    <!-- End of Page Content-->
+
+    <!-- Off Canvas and Menu Elements-->
+    <!-- Always outside the Page Content-->
+   <!-- Main Sidebar Menu -->
+ <div id="menu-sidebar"
+        data-menu-active="nav-pages"
+        data-menu-load="menu-sidebar.html"
+        class="offcanvas offcanvas-start offcanvas-detached rounded-m">
+  </div>
+   <!-- Card Menu More -->
+    <div id="menu-card-more" data-menu-load="menu-card-settings.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+
+  <!--Money Transfer Button Menu -->
+    <div id="menu-transfer" data-menu-load="menu-transfer.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+
+    <!-- Transfer Friends Menu -->
+    <div id="menu-friends-transfer" data-menu-load="menu-friends-transfer.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+
+    <!-- Request Button Menu -->
+    <div id="menu-request" data-menu-load="menu-request.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+
+    <!-- Exchange Button Menu -->
+    <div id="menu-exchange" data-menu-load="menu-exchange.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+
+    <!-- Notifications Bell -->
+    <div id="menu-notifications" data-menu-load="menu-notifications.html"
+        class="offcanvas offcanvas-top offcanvas-detached rounded-m">
+    </div>
+
+    <!-- Highlights Menu -->
+    <div id="menu-highlights"
+        data-menu-load="menu-highlights.html"
+        class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+    </div>
+	 </div>
+</div>
+
+<!-- online users request denied -->
+<div class="modal fade" id="online-users" tabindex="-1" aria-labelledby="online-usersLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-bottom: 0;">
+        <h5 class="modal-title" id="online-usersLabel" style="color: red; margin-bottom: 0;">Access Declined!!</h5>             
+      </div>
+      <div class="modal-body" style="padding-top: 0;">
+        Your transfer request was declined by <b style="color: #009f1c;">CoinNet</b> as this function is limited to validated accounts. To enable it, your account must have a minimum of one confirmed transaction on the blockchain ledger.
+      </div>
+    </div>
+    <style>
+      .modal-content {
+        background-color: #1f1f1f;
+        color: white;
+        border-radius: 20px;
+      }
+
+      .modal-header,
+      .modal-footer {
+        border: none;
+      }
+    </style>
+  </div>
+</div>
+<!-- End of Page ID-->
+<script src="delete-account.js"></script>
+<script src="disable-zoom.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="custom.js"></script>
+</body>

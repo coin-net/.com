@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Crypto Wallet Slider</title>
+
+<style>
+/* ======== Reset ======== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ======== Page ======== */
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  height: 100%;
+  background: #000;  
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ======== Header & CTAs ======== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+  padding: 16px 20px;
+}
+
+/* — language button — */
+.lang-btn {
+  width: 37px;
+  height: 37px;
+  background: transparent;
+  border: 2px solid #444;
+  border-radius: 20px;
+  overflow: hidden;
+  padding: 0;
+  cursor: none;
+}
+
+.lang-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* — sign-in button — */
+.signin-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  background: #1a1a1a;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: none;
+}
+
+/* ======== Slider layout ======== */
+.slider-container {
+  position: relative;
+  width: 100vw;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.slider {
+  display: flex;
+  width: 400vw;
+  transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.slide-content {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ======== Video & loading spinner ======== */
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.wallet-video {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  filter: brightness(0.7) contrast(1.1);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(162, 89, 255, 0.4);
+}
+
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.loading-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  border-radius: 12px;
+  transition: opacity 0.3s ease;
+  z-index: 3;
+}
+
+.loading-spinner::before {
+  content: "";
+  width: 36px;
+  height: 36px;
+  border: 4px solid transparent;
+  border-top-color: #a259ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ======== Text & buttons ======== */
+.title {
+  margin-bottom: 6px;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin-bottom: 16px;
+  line-height: 1.4;
+  font-size: 0.95rem;
+  color: #ccc;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 12px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #444;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  width: 18px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+  max-width: 320px;
+  height: 48px;
+  margin: 8px auto;
+  font-size: 1rem;
+  text-decoration: none;
+  border: none;
+  border-radius: 14px;
+  cursor: none;
+}
+
+.btn.demo   { background: #a259ff; color: #fff; }
+.btn.create { background: #1a1a1a; color: #fff; }
+
+.btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.4);
+}
+
+.btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(162, 89, 255, 0.5);
+}
+
+/* ======== Modal popup ======== */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 99;
+}
+
+.hidden { display: none; }
+
+.modal-box {
+  max-width: 280px;
+  padding: 24px 32px;
+  background: #1a1a1a;
+  color: #fff;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 0 12px #000;
+}
+
+.modal-text {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.modal-btn {
+  padding: 10px 24px;
+  font-weight: 600;
+  background: #a259ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: none;
+}
+
+.modal-btn:active { transform: scale(0.96); }
+
+.toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  transition: transform 0.3s cubic-bezier(.34, 1.56, .64, 1);
+  backdrop-filter: blur(8px);
+  background: rgba(30, 30, 30, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+  z-index: 999;
+  width: 90%;
+  max-width: 500px;
+}
+.toast.show {
+  transform: translateX(-50%) scale(1);
+}
+</style>
+</head>
+<body>
+
+<!-- Modal -->
+<div id="login-modal" class="modal hidden">
+  <div class="modal-box">
+    <p class="modal-text"><strong>Please log in</strong><br/>to view this function.</p>
+    <button id="modal-close" class="modal-btn">OK</button>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <button class="lang-btn"><img src="profile.png" alt="Language"/></button>
+  <a href="page-login.html" class="signin-btn">Log in</a>
+</div>
+
+<!-- Slides -->
+<div class="slider-container">
+  <div class="slider" id="slider">
+    <!-- Slide 1 -->
+    <div class="slide"><div class="slide-content">
+      <div class="video-wrapper">
+        <div class="loading-spinner"></div>
+        <video class="wallet-video" src="animated_sign_in.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="title">Instant Transactions</div>
+      <div class="subtitle">Send and receive funds<br/>in real-time securely with no hidden fees.</div>
+    </div></div>
+
+    <!-- Slide 2 -->
+    <div class="slide"><div class="slide-content">
+      <div class="video-wrapper">
+        <div class="loading-spinner"></div>
+        <video class="wallet-video" src="animated_sign_in_2.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="title">Secure multicurrency wallet</div>
+      <div class="subtitle">Store crypto and withdraw<br/>any time any way</div>
+    </div></div>
+
+    <!-- Slide 3 -->
+    <div class="slide"><div class="slide-content">
+      <div class="video-wrapper">
+        <div class="loading-spinner"></div>
+        <video class="wallet-video" src="animated_sign_in_3.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="title">Passive income up to 14% annually</div>
+      <div class="subtitle">Choose your teams<br/>and store BTC, ETH, USDT and other coins with profit</div>
+    </div></div>
+
+    <!-- Slide 4 -->
+    <div class="slide"><div class="slide-content">
+      <div class="video-wrapper">
+        <div class="loading-spinner"></div>
+        <video class="wallet-video" src="animated_sign_in_4.mp4" autoplay muted loop playsinline preload="auto"></video>
+        <div class="video-overlay"></div>
+      </div>
+      <div class="title">One of the largest mining apps in the world</div>
+      <div class="subtitle">Mine over 45 coins with<br/>daily withdrawals</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="pagination" id="pagination"></div>
+<a href="page-login.html" class="btn demo">Open Wallet</a>
+
+<!-- Toast Notification -->
+<div href="index-waves.html" id="toast" class="toast">Toast Message</div>
+
+<a href="page-sign up.html" class="btn create" style="margin-bottom:5%;">Create an account</a>
+
+<!-- Scripts -->
+<script>
+const slider=document.getElementById('slider');
+const pagination=document.getElementById('pagination');
+const totalSlides=slider.children.length;
+let current=0;
+for(let i=0;i<totalSlides;i++){
+  const d=document.createElement('div');d.className='dot'+(i?'' :' active');pagination.appendChild(d);
+}
+const dots=[...pagination.children];
+function go(idx){
+  slider.style.transform=`translateX(-${idx*100}vw)`;
+  dots.forEach(d=>d.classList.remove('active'));dots[idx].classList.add('active');
+}
+setInterval(()=>{current=(current+1)%totalSlides;go(current);},4000);
+
+document.querySelectorAll('.video-wrapper').forEach(wrapper => {
+  const video = wrapper.querySelector('video');
+  const spinner = wrapper.querySelector('.loading-spinner');
+
+  video.addEventListener('loadeddata', () => {
+    setTimeout(() => {
+      spinner.style.opacity = '0';
+      setTimeout(() => spinner.remove(), 300);
+    }, 18000);
+  });
+});
+
+const langBtn = document.querySelector('.lang-btn');
+const loginModal = document.getElementById('login-modal');
+const modalClose = document.getElementById('modal-close');
+
+langBtn.addEventListener('click', () => {
+  loginModal.classList.remove('hidden');
+});
+modalClose.addEventListener('click', () => {
+  loginModal.classList.add('hidden');
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') loginModal.classList.add('hidden');
+});
+</script>
+<script>
+    history.pushState(null, null, location.href);
+window.onpopstate = () => {
+  history.go(1); // Prevents back navigation
+};
+</script>
+<script src="disable-zoom.js"></script>
+</body>
+</html>

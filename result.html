@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">  
+<head>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Fiat Deposit</title>  
+  <style>  
+    body {  
+      background-color: #0f0f10;  
+      color: white;  
+      font-family: Arial, sans-serif;  
+      margin: 0;  
+      padding: 0;  
+      height: 100vh;  
+      display: flex;  
+      flex-direction: column;  
+    }  
+  
+    .header {  
+      display: flex;  
+      align-items: center;  
+      padding: 16px;  
+      background-color: transparent;  
+    }  
+  
+    .back-arrow {  
+      font-size: 24px;  
+      margin-right: 16px;  
+      cursor: pointer;  
+    }  
+  
+    .title {  
+      flex-grow: 1;  
+      font-size: 18px;  
+      font-weight: bold;  
+    }  
+  
+    .menu-icons {  
+      font-size: 20px;  
+    }  
+  
+    .content {  
+      flex-grow: 1;  
+      padding: 20px;  
+      overflow-y: auto;  
+      box-sizing: border-box;  
+    }  
+  
+    label {  
+      display: block;  
+      margin-bottom: 8px;  
+      font-size: 14px;  
+    }  
+  
+    .form-control {  
+      width: 100%;  
+      background-color: #2c2c2e;  
+      color: white;  
+      border: none;  
+      border-radius: 8px;  
+      padding: 12px;  
+      font-size: 16px;  
+      margin-bottom: 16px;  
+      box-sizing: border-box;  
+    }  
+  
+    .form-control:invalid {  
+      outline: 2px solid red;  
+    }  
+  
+    .footer {  
+      padding: 12px 20px;  
+      border-top: 1px solid #333;  
+      background-color: #0f0f10;  
+    }  
+  
+    .btn-continue {  
+      background-color: #f0a500;  
+      color: black;  
+      padding: 12px;  
+      text-align: center;  
+      border: none;  
+      width: 100%;  
+      font-size: 16px;  
+      font-weight: bold;  
+      border-radius: 8px;  
+      cursor: pointer;  
+    }  
+  
+    .btn-continue:disabled {  
+      background-color: #555;  
+      cursor: not-allowed;  
+    }  
+  
+    .error-message {  
+      color: red;  
+      font-size: 12px;  
+      margin-top: 8px;  
+      text-align: center;  
+    }  
+  
+    .service-footer {  
+      font-size: 10px;  
+      color: #aaa;  
+      text-align: center;  
+      padding: 10px;  
+    }  
+  
+    .service-footer a {  
+      color: #f0a500;  
+      text-decoration: none;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <div class="header">  
+    <div class="back-button" onclick="history.back()">  
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">  
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>  
+      </svg>  
+    </div>  
+    <style>  
+      .back-button {  
+        position: fixed;  
+        top: 5px;  
+        left: 15px;  
+        background-color: transparent;  
+        color: #ffffff;  
+        padding: 8px 14px;    
+        border-radius: 6px;  
+        font-size: 15px;  
+        cursor: none;  
+        z-index: 1000;  
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);  
+      }  
+      .back-button:hover {  
+        background-color: transparent;  
+      }  
+      svg {  
+        width: 20px;  
+        height: 20px;  
+        stroke: #ffffff;  
+      }      
+    </style>  
+  </div>  
+  
+  <div class="content" style="margin-top: 5%;">  
+    <label for="payment-method">Earnings :<p id="finalBalance" style="font-size: 18px;"></p></label> 
+    
+     
+    <select id="payment-method" class="form-control" onchange="updateFields()">  
+      <option value="">Payment Method</option>  
+      <option value="earnings">Earnings Wallet</option>  
+      <option value="bank">Bank Account</option>  
+      <option value="crypto">Crypto Wallet</option>  
+    </select>  
+  
+    <div id="dynamic-fields"></div>  
+    <div class="error-message" id="error-msg"></div>  
+  </div>  
+  
+  <div class="footer">  
+    <button class="btn-continue" id="submit-btn" disabled onclick="showError()">Continue</button>  
+  </div>  
+  
+  <div class="service-footer">  
+    The service is provided by UAB Onlychain Fintech Limited.<br/>  
+    Please read the <a href="#">UAB Onlychain Fintech Limited Privacy Policy</a>.  
+  </div>  
+  
+  <script>  
+    const paymentMethod = document.getElementById('payment-method');  
+    const dynamicFields = document.getElementById('dynamic-fields');  
+    const submitBtn = document.getElementById('submit-btn');  
+    const errorMsg = document.getElementById('error-msg');  
+  
+    function updateFields() {  
+      const method = paymentMethod.value;  
+      dynamicFields.innerHTML = "";  
+      errorMsg.textContent = "";  
+      submitBtn.disabled = true;  
+  
+      if (method === "earnings") {  
+        dynamicFields.innerHTML = `  
+          <label for="pin">Enter PIN</label>  
+          <input type="password" id="pin" class="form-control" maxlength="4" inputmode="numeric" pattern="\\d{4}" placeholder="4-digit PIN" oninput="validateForm()"/>  
+        `;  
+      } else if (method === "bank") {  
+        dynamicFields.innerHTML = `  
+          <label for="account">Account Number</label>  
+          <input type="text" id="account" class="form-control" inputmode="numeric" placeholder="Enter account number" oninput="validateForm()" />  
+          <label for="bank-name">Bank Name</label>  
+          <input type="text" id="bank-name" class="form-control" placeholder="Enter bank name" oninput="validateForm()"/>  
+        `;  
+      } else if (method === "crypto") {  
+        dynamicFields.innerHTML = `  
+          <label for="wallet">Wallet Address</label>  
+          <input type="text" id="wallet" class="form-control" placeholder="Enter wallet address" oninput="validateForm()" />  
+          <label for="crypto-select">Cryptocurrency</label>  
+          <select id="crypto-select" class="form-control" onchange="validateForm()">  
+            <option value="">Select Cryptocurrency</option>  
+          </select>  
+        `;  
+        loadCryptoOptions();  
+      }  
+    }  
+  
+    function validateForm() {  
+      const method = paymentMethod.value;  
+      let valid = false;  
+  
+      if (method === "earnings") {  
+        const pin = document.getElementById('pin')?.value;  
+        valid = /^\d{4}$/.test(pin);  
+      } else if (method === "bank") {  
+        const account = document.getElementById('account')?.value;  
+        const bank = document.getElementById('bank-name')?.value;  
+        valid = /^\d+$/.test(account) && bank.trim().length > 0;  
+      } else if (method === "crypto") {  
+        const wallet = document.getElementById('wallet')?.value;  
+        const coin = document.getElementById('crypto-select')?.value;  
+        valid = wallet.trim().length > 0 && coin.trim().length > 0;  
+      }  
+  
+      submitBtn.disabled = !valid;  
+      errorMsg.textContent = "";  
+    }  
+  
+    function showError() {  
+      errorMsg.textContent = "Your transfer request was declined by CoinNet as this function is limited to validated accounts. To enable it, your account must have a minimum of one confirmed transaction on the blockchain ledger. please run a transaction and try again.";  
+    }  
+  
+    function loadCryptoOptions() {  
+      const cryptoList = [  
+        { name: "Bitcoin", symbol: "BTC", logo: "https://cryptologos.cc/logos/bitcoin-btc-logo.png" },  
+        { name: "Ethereum", symbol: "ETH", logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png" },  
+        { name: "Tether", symbol: "USDT", logo: "https://cryptologos.cc/logos/tether-usdt-logo.png" },  
+        { name: "BNB", symbol: "BNB", logo: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png" },  
+        { name: "Solana", symbol: "SOL", logo: "https://cryptologos.cc/logos/solana-sol-logo.png" },  
+        { name: "XRP", symbol: "XRP", logo: "https://cryptologos.cc/logos/xrp-xrp-logo.png" },  
+        { name: "Cardano", symbol: "ADA", logo: "https://cryptologos.cc/logos/cardano-ada-logo.png" },  
+        { name: "Dogecoin", symbol: "DOGE", logo: "https://cryptologos.cc/logos/dogecoin-doge-logo.png" },  
+        { name: "Polkadot", symbol: "DOT", logo: "https://cryptologos.cc/logos/polkadot-new-dot-logo.png" },  
+        { name: "Avalanche", symbol: "AVAX", logo: "https://cryptologos.cc/logos/avalanche-avax-logo.png" },  
+        { name: "Litecoin", symbol: "LTC", logo: "https://cryptologos.cc/logos/litecoin-ltc-logo.png" },  
+        { name: "Shiba Inu", symbol: "SHIB", logo: "https://cryptologos.cc/logos/shiba-inu-shib-logo.png" },  
+        { name: "Tron", symbol: "TRX", logo: "https://cryptologos.cc/logos/tron-trx-logo.png" },  
+        { name: "Chainlink", symbol: "LINK", logo: "https://cryptologos.cc/logos/chainlink-link-logo.png" },  
+        { name: "Stellar", symbol: "XLM", logo: "https://cryptologos.cc/logos/stellar-xlm-logo.png" },  
+        { name: "Uniswap", symbol: "UNI", logo: "https://cryptologos.cc/logos/uniswap-uni-logo.png" },  
+        { name: "Monero", symbol: "XMR", logo: "https://cryptologos.cc/logos/monero-xmr-logo.png" },  
+        { name: "Bitcoin Cash", symbol: "BCH", logo: "https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png" },  
+        { name: "VeChain", symbol: "VET", logo: "https://cryptologos.cc/logos/vechain-vet-logo.png" },  
+        { name: "Filecoin", symbol: "FIL", logo: "https://cryptologos.cc/logos/filecoin-fil-logo.png" },  
+        { name: "Aave", symbol: "AAVE", logo: "https://cryptologos.cc/logos/aave-aave-logo.png" },  
+        { name: "EOS", symbol: "EOS", logo: "https://cryptologos.cc/logos/eos-eos-logo.png" },  
+        { name: "NEAR", symbol: "NEAR", logo: "https://cryptologos.cc/logos/near-protocol-near-logo.png" },  
+        { name: "Algorand", symbol: "ALGO", logo: "https://cryptologos.cc/logos/algorand-algo-logo.png" },  
+        { name: "Cosmos", symbol: "ATOM", logo: "https://cryptologos.cc/logos/cosmos-atom-logo.png" },  
+        { name: "The Graph", symbol: "GRT", logo: "https://cryptologos.cc/logos/the-graph-grt-logo.png" },  
+        { name: "Flow", symbol: "FLOW", logo: "https://cryptologos.cc/logos/flow-flow-logo.png" },  
+        { name: "Tezos", symbol: "XTZ", logo: "https://cryptologos.cc/logos/tezos-xtz-logo.png" },  
+        { name: "Dash", symbol: "DASH", logo: "https://cryptologos.cc/logos/dash-dash-logo.png" },  
+        { name: "IOTA", symbol: "MIOTA", logo: "https://cryptologos.cc/logos/iota-miota-logo.png" },  
+        { name: "Zcash", symbol: "ZEC", logo: "https://cryptologos.cc/logos/zcash-zec-logo.png" },  
+        { name: "PancakeSwap", symbol: "CAKE", logo: "https://cryptologos.cc/logos/pancakeswap-cake-logo.png" },  
+        { name: "SushiSwap", symbol: "SUSHI", logo: "https://cryptologos.cc/logos/sushiswap-sushi-logo.png" },  
+        { name: "THETA", symbol: "THETA", logo: "https://cryptologos.cc/logos/theta-theta-logo.png" },  
+        { name: "Maker", symbol: "MKR", logo: "https://cryptologos.cc/logos/maker-mkr-logo.png" },  
+        { name: "Kava", symbol: "KAVA", logo: "https://cryptologos.cc/logos/kava-kava-logo.png" }  
+      ];  
+      const select = document.getElementById("crypto-select");  
+      cryptoList.forEach(c => {  
+        const option = document.createElement("option");  
+        option.value = c.symbol;  
+        option.textContent = `${c.name} (${c.symbol})`;  
+        select.appendChild(option);  
+      });  
+    }  
+  </script>  
+  <script>
+        const params = new URLSearchParams(window.location.search);
+        const balance = params.get("balance");
+        document.getElementById("finalBalance").innerText = "$" + balance;
+ </script> 
+<script src="delete-account.js"></script>
+<script src="disable-zoom.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="custom.js"></script>
+</body>  
+</html>
