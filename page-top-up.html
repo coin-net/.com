@@ -17,41 +17,44 @@
       height: 100vh;
     }
 
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 90%;
-      height: 50px;
-      background-color: none;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
+   .header {
+     position: fixed; 
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 50px;
+     background-color: #0d0d0d;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 10px;
+     z-index: 1000;
+     box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+   }
 
-    .header-left, .header-right {
-      width: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    .header-left,
+    .header-center,
+    .header-right {
+    flex: 1;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+  }
 
-    .header-title-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
+    .header-left {
+       justify-content: flex-start;
+   }
 
-    .header-title-wrapper h2 {
-      margin: 0;
-      font-size: 20px;
-      white-space: nowrap;
-    }
+      .header-right {
+      justify-content: flex-end;
+   }
+
+     .header-center {
+     justify-content: center;
+     font-size: 18px;
+     font-weight: bold;
+     color: white;
+   }
 
     .container {
       padding: 100px 20px 100px;
@@ -70,7 +73,7 @@
     }
 
     select, input {
-      width: 50%;
+      width: 100%;
       height: 50px;
       padding: 16px;
       border: none;
@@ -179,21 +182,17 @@
 </head>
 <body>
 
-  <div class="header">
-    <div class="header-left" onclick="goBack()">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-
-    <div class="header-title-wrapper">
-      <h2>Main Wallet</h2>
-    </div>
-
-    <div class="header-right">
-      <a href="#" style="color: white; text-decoration: none; cursor: not-allowed;">❓</a>
-    </div>
+ <div class="header">
+  <div class="header-left">
+    <span onclick="goBack()" style="font-size: 24px; cursor: none;"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">  
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>  
+      </svg></span>
   </div>
+  <div class="header-title">Main Wallet</div>
+  <div class="header-right">
+    <span style="margin-right: 15%; font-size: 15px; cursor: none;">❓</span>
+  </div>
+</div>
 
   <div class="container">
             
