@@ -274,7 +274,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    const fromCurrencySelect = document.getElementById('fromCurrency');
+          const fromCurrencySelect = document.getElementById('fromCurrency');
     const fromAmount = document.getElementById('fromAmount');
     const toAmount = document.getElementById('toAmount');
     const exchangeRateText = document.getElementById('exchangeRate');
@@ -381,7 +381,7 @@
       const finalAmount = toAmount.value;
 
       document.getElementById('popupText').textContent =
-        `Your request to sell ${fromValue} ${selectedCurrency}, equivalent to approximately ${finalAmount} USD, has been declined due to insufficient funds in your account.`;
+        `Your request to exchange ${fromValue} ${selectedCurrency}, equivalent to approximately ${finalAmount} USD, has been declined due to insufficient funds in your account.`;
 
       document.getElementById('popupOverlay').style.display = 'flex';
     });
