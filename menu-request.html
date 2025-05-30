@@ -10,18 +10,32 @@
         </div>
         <div class="divider divider-margins mt-3"></div>
         <div class="content mt-0">
+
+            <!-- ✅ Full Name input added here -->
+            <div class="form-custom form-label form-icon">
+                <i class="bi bi-person-badge-fill font-14"></i>
+                <input type="text" class="form-control rounded-xs" id="fullname" name="fullname" placeholder="Your Full Name" required />
+                <span class="font-10">(required)</span>
+            </div>
+
+            <div class="pb-3"></div>
+
             <div class="form-custom form-label form-icon">
                 <i class="bi bi-person-circle font-14"></i>
                 <input type="email" class="form-control rounded-xs" id="c32" name="email" placeholder="Your Email" required />
                 <span class="font-10">(required)</span>
             </div>
+
             <div class="pb-3"></div>
+
             <div class="form-custom form-label form-icon">
                 <i class="bi bi-coin font-14"></i>
                 <input type="number" class="form-control rounded-xs" id="c43" name="amount" placeholder="Amount: 150.00" required />
                 <span class="font-10">( Currency: USD )</span>
             </div>
+
             <div class="pb-2"></div>
+
             <div class="form-check form-check-custom">
                 <input class="form-check-input" type="checkbox" name="terms" id="c2a" required>
                 <label class="form-check-label" for="c2a">I accept the Request <a href="#">Terms of Service</a></label>
@@ -29,6 +43,7 @@
                 <i class="is-unchecked color-green-dark font-14 bi bi-circle"></i>
             </div>
         </div>
+
         <div class="px-3 pb-3">
             <button type="submit" class="btn btn-full shadow-bg shadow-bg-s"
                 style="width: 100%; height: 50px; background: transparent; border-color: #ffffff; color: #ffffff;">
@@ -36,4 +51,4 @@
             </button>
         </div>
     </form>
-            </div>
+</div>
