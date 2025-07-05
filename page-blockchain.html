@@ -1,0 +1,626 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PayApp - Finance, Banking, Wallet, Crypto Mobile PWA</title>
+<link rel="stylesheet" type="text/css" href="bootstrap.css">
+<link rel="stylesheet" type="text/css" href="bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="style.css" rel="stylesheet">
+<link rel="manifest" href="_manifest.json">
+<meta id="theme-check" name="theme-color" content="#FFFFFF">
+</head>
+
+<body class="theme-light">
+
+<div id="preloader"><div class="spinner-border color-highlight" role="status"></div></div>
+
+<!-- Page Wrapper-->
+<div id="page">
+    
+      <!-- Footer Bar -->
+     <div id="footer-bar" class="footer-bar-1 footer-bar-detached">
+        <a href="page-cards.html" class="default-link"><i class="bi bi-wallet2"></i><span>Cards</span></a>
+        
+        <a href="page-activity.html" class="default-link"><i class="bi bi-graph-up"></i><span>Activity</span></a>
+        
+        <a href="index-wallet.html" class="default-link"><i class="bi bi-house-fill" style="color: #000000;"></i><span>Home</span></a>
+       
+        <a href="page-blockchain.html" class="default-link circle-nav-2"><i class="bi bi-minecart-loaded"></i><span>Blockchain</span></a>                        
+        
+        <a href="#" data-bs-toggle="offcanvas" data-bs-target="#menu-sidebar"><i class="bi bi-three-dots"></i><span>More</span></a>
+     </div>
+    
+    <!-- Page Content - Only Page Elements Here-->
+    <div class="page-content footer-clear">
+
+        <!-- Page Title-->
+        <div class="pt-3">
+            <div class="page-title d-flex">
+                <div class="align-self-center me-auto">
+                    <p style="margin-bottom: 0px; color: purple;">Coin_net.com</p>
+                    <h5 class="color-theme">Mining</h5>
+                </div>
+                <div class="align-self-center ms-auto" style="margin-top: 5px;">
+                   <a href="#"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#menu-notifications"
+                    class="icon color-white shadow-bg shadow-bg-xs rounded-m" style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc; width: 35px; height: 35px; background: none;">
+                        <i class="bi bi-bell-fill font-17 color-theme"></i>
+                    </a>
+            <!-- Page Title Dropdown Menu-->
+                    <div class="dropdown-menu">
+                        <div class="card card-style shadow-m mt-1 me-1">
+                            <div class="list-group list-custom list-group-s list-group-flush rounded-xs px-3 py-1">
+                              <a href="https://wa.me/+639516173654?text=Hello,%20i20%would%20like%20to%20activate%20my%20ConiNet%20digital%20card." class="list-group-item"> <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-green shadow-bg shadow-bg-xs color-white rounded-xs bi bi-credit-card"></i>
+                                    <strong class="font-13">Activate Card</strong>
+                                </a>
+                                <a href="page-activity.html" class="list-group-item">
+      <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-blue shadow-bg shadow-bg-xs color-white rounded-xs bi bi-graph-up"></i>
+                                    <strong class="font-13">Activity</strong>
+                                </a>
+                                <a href="page-profile.html" class="list-group-item"> <i style="display: flex; justify-content: center; align-items: center; border: 1px solid #ccc;" class="has-bg gradient-yellow shadow-bg shadow-bg-xs color-white rounded-xs bi bi-person-circle"></i>
+                                    <strong class="font-13">Account</strong>
+                                </a>
+                               </div>
+                              </div>
+                             </div>
+                            </div>
+                           </div>
+                          </div>
+
+
+<!-- Wallpaper Centered in Viewport -->
+  <div class="switches">
+    <div class="switch">
+      <span class="color-theme">Auto Save</span>
+      <input type="checkbox">
+    </div>
+    <div class="switch">
+      <span class="color-theme">Do Not Sleep</span>
+      <input type="checkbox">
+    </div>
+    <div class="switch">
+      <span class="color-theme">Blockchain</span>
+      <input type="checkbox" checked>
+    </div>
+   </div>
+    
+    <div class="wallpaper-wrapper" style="margin-top: 50px;">
+  <div class="wallpaper">
+    <div class="fan-container" id="fan">
+      <img src="fan.png" alt="fan.png"/>
+    </div>
+   </div>
+  </div>
+  
+<style>    
+     .switches {
+      display: flex;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      max-width: 100%;      
+      background: transparent;      
+      border-radius: 12px;
+      padding: 5px;
+      display: flex;
+      justify-content: space-around;
+   }
+
+    .switch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-wrap: wrap;    
+      font-size: 12px;
+    }
+
+    .switch input[type="checkbox"] {
+      appearance: none;
+      width: 40px;
+      height: 20px;
+      background: #ccc;
+      border-radius: 20px;
+      position: relative;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .switch input:checked {
+      background: purple;
+    }
+
+    .switch input::before {
+      content: '';
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: 0.3s;
+    }
+
+    .switch input:checked::before {
+      transform: translateX(20px);
+    }
+
+    .dial-container {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      margin-bottom: 20px;
+    }
+
+    .dial-base {
+      width: 100%;
+      height: 100%;
+      background: #eeeeee;
+      border-radius: 50%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dial-center {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dial-center img {
+      width: 50px;
+    }
+
+    .dial-pointer {
+      position: absolute;
+      width: 60px;
+      height: 10px;
+      background: #d6ff00;
+      border-radius: 10px;
+      top: 50%;
+      left: 50%;
+      transform-origin: left center;
+      transform: rotate(-135deg) translateX(-50%);
+      transition: transform 0.5s;
+    }
+
+    .dial-labels {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .dial-labels span {
+      position: absolute;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .dial-labels .label-off { top: 80%; left: 15%; }
+    .dial-labels .label-l { top: 60%; left: 5%; }
+    .dial-labels .label-m { top: 10%; left: 45%; }
+    .dial-labels .label-h { top: 60%; right: 5%; }
+    .dial-labels .label-on { top: 80%; right: 15%; }
+</style>
+
+  <div id="countdown">  
+    <div class="times" id="hours">00</div><span class="times-0">:</span>  
+    <div class="times" id="minutes">00</div><span class="times-0">:</span>  
+    <div class="times" id="seconds">00</div>  
+  </div>       
+
+  
+<style>
+  .wallpaper-wrapper {
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+  }
+
+  .wallpaper {
+    margin-top: 10%;
+    background-image: url('itc-.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 50%;
+    border: 5px solid purple;
+    display: flex;
+    justify-content: center;
+    align-items: center;    
+  }
+
+  .fan-container {
+    width: 95%;
+    height: 95%;
+  }
+
+  .fan-container.spin {
+    animation: spin 1.0s linear infinite;
+  }
+
+  .fan-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  #countdown {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    margin-top: 25%;
+    margin-bottom: 35px;
+    z-index: 1;    
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+    animation: glowing 1.3s ease-in-out infinite;
+  }
+
+  .times {
+    margin: 0 5px;
+    padding: 0.5rem 1rem;
+    background: rgba(52, 152, 219, 0.3);
+    border: 2px solid #2980b9;
+    border-radius: 8px;
+    min-width: 45px;
+    text-align: center;
+  }
+  
+   .times-0 {
+    margin: 0px;
+    padding: 0.5rem;
+    min-width: 0px;
+    text-align: center;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 1rem 0 3rem;
+  }
+
+  .controls button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    background-color: #1abc9c;
+    border: none;
+    border-radius: 35px;
+    color: #fff;
+  }
+
+  @media (max-width: 400px) {
+    #countdown {
+      font-size: 1.2rem;
+    }
+
+    .controls button {
+      width: 100%;
+    }
+
+    .wallpaper {
+      width: 50vw;
+      height: 50vw;
+    }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes glowing {
+    0%, 100% { text-shadow: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.7); }
+    50% { text-shadow: 0 0 20px rgba(0, 255, 0, 0.5), 0 0 40px rgba(0, 255, 0, 0.5); }
+  }
+ 
+       .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      width: 100%;
+      padding: 0px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h3 {
+      margin-bottom: 15px;
+      text-align: center;
+      color: #111;
+    }
+
+    #search {
+      width: 100%;
+      height: 50px;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 5px;            
+      background: none;
+      color: #111;
+    }
+
+    #search::placeholder {
+      color: #888;
+      font-size: 50px;   
+    }
+
+    .crypto-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .crypto-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: none;
+      padding: 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      cursor: none;
+      color: inherit;
+      transition: background-color 0.2s ease;
+    }
+
+    .crypto-item:hover {
+      background-color: #e0e0e0;
+      cursor: none;
+    }
+
+    .coin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-info img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .coin-details {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .coin-name {
+      font-weight: bold;
+      font-size: 16px;
+      color: #111;
+    }
+
+    .coin-symbol {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .price-details {
+      text-align: right;
+    }
+
+    .price {
+      font-size: 16px;
+      font-weight: bold;
+      color: #111;
+    }
+
+    .positive {
+      color: green;
+    }
+
+    .negative {
+      color: red;
+    }
+    
+</style>
+                   
+        <div class="content my-0 mt-n2 px-1">
+            <div class="d-flex">
+                <div class="align-self-center">
+                    <h3 class="font-16 mb-2">Watchlist</h3>
+                </div>
+                <div class="align-self-center ms-auto">
+                    <a href="page-search.html" class="font-15 pt-1">Receive</a>
+                </div>
+            </div>
+        </div>
+        <div class="card card-style">
+            <div class="content my-2">
+                <a href="#" class="d-flex">
+                    <div class="align-self-center w-25">
+                        <h4 class="pt-1 mb-n1 font-14">Earnings</h4>
+                        <h6 class="mb-0 opacity-50">Per 10 Minutes</h6>
+                    </div>
+                    <div class="align-self-center m-auto">
+                        <div id="chart-btc" class="chart mt-n5 pt-4 ms-n3"><!-- plugins/apex/apex-call.js --></div>
+                    </div>
+                    <div class="ms-auto">
+                        
+                         <h4 class="font-16"><span id="balance">$0.00</span></h4>
+                         
+                    </div>
+                </a>
+            </div>
+         
+            <div class="content my-2">
+                <a href="#" class="d-flex">
+                    <div class="align-self-center w-25">
+                        <h4 class="pt-1 mb-n1 font-14">Check-out</h4>
+                        <h6 class="mb-0 opacity-50">You have claimed</h6>
+                    </div>
+                    <div class="align-self-center m-auto">
+                        <div id="chart-eur" class="chart mt-n5 pt-4 ms-n3"><!-- plugins/apex/apex-call.js --></div>
+                    </div>
+                    <div class="ms-auto">
+                       
+                          <h4 class="mb-n1 pt-2 font-15 color-theme" id="displaySavedBalanceFive"></h4>
+                         
+                    </div>
+                </a>
+            </div>
+        </div>
+    
+    <div id="errorMessage" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.9);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    font-size: 16px;
+    z-index: 9999;
+    text-align: center;
+">
+    Minimum $10 required to proceed.
+</div>
+        
+<div class="content">  
+  <div class="row">  
+    <div class="col-6">  
+      <a href="#" id="toggleButton" onclick="toggleCountdown()" class="btn btn-full rounded-s shadow-bg shadow-bg-s" style="background: #000000;">Start</a>  
+    </div>  
+      
+    <div class="col-6">
+    <button id="checkoutBtn" class="btn btn-primary" class="btn btn-full rounded-s shadow-bg shadow-bg-s" style="background: purple; width: 100%;">Checkout</button>
+    </div>
+  </div>
+</div>
+ </div>
+ 
+    <!-- End of Page Content-->
+
+    <!-- Off Canvas and Menu Elements-->
+    <!-- Always outside the Page Content-->
+
+    <!-- Main Sidebar Menu -->
+ <div id="menu-sidebar"
+        data-menu-active="nav-pages"
+        data-menu-load="menu-sidebar.html"
+        class="offcanvas offcanvas-start offcanvas-detached rounded-m">
+  </div>
+	
+	<!-- Highlights Menu -->
+	<div id="menu-highlights"
+		data-menu-load="menu-highlights.html"
+		class="offcanvas offcanvas-bottom offcanvas-detached rounded-m">
+	</div>
+
+   <!-- Notifications Bell -->
+    <div id="menu-notifications" data-menu-load="menu-notifications.html"
+        class="offcanvas offcanvas-top offcanvas-detached rounded-m">
+    </div>
+</div>
+
+<!-- online users request denied -->
+<div class="modal fade" id="online-users" tabindex="-1" aria-labelledby="online-usersLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-bottom: 0;">
+        <h5 class="modal-title" id="online-usersLabel" style="color: red; margin-bottom: 0;">Access Declined!!</h5>             
+      </div>
+      <div class="modal-body" style="padding-top: 0;">
+        Your transfer request was declined by <b style="color: #009f1c;">CoinNet</b> as this function is limited to validated accounts. To enable it, your account must have a minimum of one confirmed transaction on the blockchain ledger.
+      </div>
+    </div>
+    <style>
+      .modal-content {
+        background-color: #1f1f1f;
+        color: white;
+        border-radius: 20px;
+      }
+
+      .modal-header,
+      .modal-footer {
+        border: none;
+      }
+      #movableImage {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 150px;
+  height: auto;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.2s ease;
+}
+
+#movableImage:active {
+  box-shadow: 0 0 20px #00ffcc;
+}
+    </style>
+  </div>
+  
+</div>
+
+<script src="delete-account.js"></script>
+<script src="disable-zoom.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+<script src="custom.js"></script>
+<script>
+document.getElementById("checkoutBtn").addEventListener("click", function () {
+    const balanceText = document.getElementById("balance").innerText.replace("$", "").trim();
+    const balance = parseFloat(balanceText);
+
+    if (balance < 10) {
+        const msg = document.getElementById("errorMessage");
+        msg.textContent = "Sorry, you must have mined at least $15 to redirect.";
+        msg.style.display = "block";
+
+        setTimeout(() => {
+            msg.style.display = "none";
+        }, 3000);
+    } else {
+        // ✅ Pass the valid balance to the next page via URL
+        window.location.href = `result.html?balance=${balance.toFixed(2)}`;
+    }
+});
+</script>
+<script>
+  const savedBalance = parseFloat(localStorage.getItem("userBalance")) || 0;
+  document.getElementById("displaySavedBalance").innerText = "$" + savedBalance.toFixed(2);
+</script>
+<script>
+     const savedBalanceOne = parseFloat(localStorage.getItem("userBalance")) || 0;
+  document.getElementById("displaySavedBalanceFive").innerText = "$" + savedBalanceOne.toFixed(2);
+</script>
+</body>
+</html>

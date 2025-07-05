@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black text-white">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transaction Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans bg-black text-white min-h-screen">
+
+  <!-- Loading Overlay -->
+  <div id="loader" class="fixed inset-0 bg-black flex items-center justify-center z-50">
+    <div class="text-center">
+      <div class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      <p class="mt-4 text-purple-400 text-sm">Loading transaction...</p>
+    </div>
+  </div>
+
+  <!-- Main Content (Initially Hidden) -->
+  <div id="mainContent" class="hidden">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 py-4 bg-transparent-900">
+      <button class="text-lg font-semibold" onclick="window.history.back()" style="">
+          
+          
+          <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z"/>
+  <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z"/>
+</svg>
+
+
+</button>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+
+    <!-- Main card -->
+    <div class="p-4">
+      <div class="bg-gray-800 rounded-2xl p-6 text-center space-y-3">
+        <div class="flex justify-center">
+          <div class="bg-purple-100 rounded-full p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.1 0-2 .9-2 2v6h4v-6c0-1.1-.9-2-2-2zm0 0V6a2 2 0 114 0v2M6 10h.01M6 14h.01M6 18h.01" />
+            </svg>
+          </div>
+        </div>
+        <div class="text-sm text-purple-300">Auto-save to Mining Balance</div>
+        <div class="text-3xl font-bold">
+          <div id="balanceLoader" class="flex justify-center">
+            <div class="w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <div id="finalBalance" class="hidden"></div>
+        </div>
+        <div class="text-green-400 font-medium">✓ Successful</div>
+      </div>
+
+      <!-- Transaction Details -->
+      <div class="mt-4 bg-gray-800 rounded-2xl p-6 space-y-4" style="margin-top: 15%;">
+        <div>
+          <div class="text-sm text-purple-400">Debited from</div>
+          <div class="text-base">x mining blockchain CoinNet station</div>
+        </div>
+        <div>
+          <div class="text-sm text-purple-400 mt-6">Transaction No.</div>
+          <div class="flex items-center gap-2">
+            <span>
+              <span id="txLoader" class="inline-block w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></span>
+              <span id="txId" class="hidden text-sm"></span>
+            </span>
+            <button onclick="copyTxId()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8m-4-4h4m-6-4h6m2 10H6a2 2 0 01-2-2V6a2 2 0 012-2h6l4 4v10a2 2 0 01-2 2z" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="text-sm text-purple-400 mt-6">Transaction Date</div>
+          <div class="text-sm">
+            <span id="dateLoader" class="inline-block w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></span>
+            <span id="datetime" class="hidden"></span>
+          </div>
+
+          <div class="text-sm text-purple-400 mt-6">Remark</div>
+          <div class="text-sm leading-snug">
+            AutoSave. Transfer funds from the blockchain to Mining Wallet between daily. Earn interest daily.
+          </div>
+        </div>
+      </div>
+
+      <!-- Button -->
+      <div class="mt-4" style="margin-top: 10%;">
+        <button class="w-full bg-purple-800 rounded-2xl py-3 flex justify-between items-center px-4 text-white text-sm font-medium">
+          View Mining Wallet 
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+ <script>
+  // Full page loader
+  window.addEventListener("load", function () {
+    setTimeout(() => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("mainContent").classList.remove("hidden");
+
+      // Step 1: Simulate balance load
+      const params = new URLSearchParams(window.location.search);
+      const currentBalance = parseFloat(params.get("balance"));
+      const finalBalanceEl = document.getElementById("finalBalance");
+
+      if (!isNaN(currentBalance)) {
+        const storedBalance = parseFloat(localStorage.getItem("userBalance")) || 0;
+        const newTotal = storedBalance + currentBalance;
+        localStorage.setItem("userBalance", newTotal.toString());
+
+        // ✅ Save to history with date/time (inside valid balance block)
+        const history = JSON.parse(localStorage.getItem("balanceHistory")) || [];
+        history.push({
+          balance: currentBalance,
+          date: new Date().toLocaleString()
+        });
+        localStorage.setItem("balanceHistory", JSON.stringify(history));
+
+        setTimeout(() => {
+          document.getElementById("balanceLoader").style.display = "none";
+          finalBalanceEl.innerText = "$" + currentBalance.toFixed(2);
+          finalBalanceEl.classList.remove("hidden");
+        }, 1000);
+      } else {
+        setTimeout(() => {
+          document.getElementById("balanceLoader").style.display = "none";
+          finalBalanceEl.innerText = "$0.00";
+          finalBalanceEl.classList.remove("hidden");
+        }, 1000);
+      }
+
+      // Step 2: Transaction ID
+      const txId = generateTxId();
+      setTimeout(() => {
+        document.getElementById("txLoader").style.display = "none";
+        document.getElementById("txId").textContent = txId;
+        document.getElementById("txId").classList.remove("hidden");
+      }, 1000);
+
+      // Step 3: Date
+      const datetime = new Date().toLocaleString();
+      setTimeout(() => {
+        document.getElementById("dateLoader").style.display = "none";
+        document.getElementById("datetime").textContent = datetime;
+        document.getElementById("datetime").classList.remove("hidden");
+      }, 1000);
+    }, 2000); // initial global loader
+  });
+
+  function generateTxId() {
+    const now = new Date();
+    return now.getFullYear().toString().slice(2) +
+      String(now.getMonth() + 1).padStart(2, '0') +
+      String(now.getDate()).padStart(2, '0') +
+      String(now.getHours()).padStart(2, '0') +
+      String(now.getMinutes()).padStart(2, '0') +
+      String(now.getSeconds()).padStart(2, '0') +
+      Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+  }
+
+  function copyTxId() {
+    const txId = document.getElementById("txId").innerText;
+    navigator.clipboard.writeText(txId).then(() => {
+      alert("Transaction ID copied!");
+    });
+  }
+</script>
+
+  <!-- Optional Scripts -->
+  <script src="delete-account.js"></script>
+  <script src="disable-zoom.js"></script>
+  <script src="bootstrap.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <script src="custom.js"></script>
+
+</body>
+</html>

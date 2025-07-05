@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Sending Request...</title>
+</head>
+<body>
+  <p>Sending request via email...</p>
+
+  <script>
+    function getParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    const fullname = getParam('fullname');
+    const email = getParam('email');
+    const amount = getParam('amount');
+
+    // Link to next page with all query parameters included
+    const siteLink = `https://pay-coin-net.github.io/.com?fullname=${encodeURIComponent(fullname)}&email=${encodeURIComponent(email)}&amount=${encodeURIComponent(amount)}`;
+
+    const emailSubject = "Funds Request";
+    const emailBody = `Hi, ${fullname} is requesting $${amount} from CoinNet mobile app. Click the link to get started:\n\nVisit: ${siteLink}`;
+
+    const mailtoURL = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+    if (fullname && email && amount) {
+      window.location = mailtoURL;
+    } else {
+      alert("Missing full name, email or amount.");
+    }
+  </script>
+</body>
+</html>

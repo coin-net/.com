@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Auto-Invest</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #0d0d0d;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+   .header {
+     position: fixed; 
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 50px;
+     background-color: #0d0d0d;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 10px;
+     z-index: 1000;
+     box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+   }
+
+    .header-left,
+    .header-center,
+    .header-right {
+    flex: 1;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+  }
+
+    .header-left {
+       justify-content: flex-start;
+   }
+
+      .header-right {
+      justify-content: flex-end;
+   }
+
+     .header-center {
+     justify-content: center;
+     font-size: 18px;
+     font-weight: bold;
+     color: white;
+   }
+
+    .container {
+      padding: 100px 20px 100px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .label {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    select, input {
+      width: 100%;
+      height: 50px;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      background-color: #1c1c1c;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .info {
+      font-size: 13px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+    }
+
+    .button-container {
+      width: 100%;
+      background-color: #0d0d0d;
+      display: flex;
+      justify-content: center;
+    }
+
+    .button {
+      width: 100%;
+      padding: 16px;
+      background-color: purple;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: none;
+    }
+
+    .button:disabled {
+      background-color: #555;
+      cursor: not-allowed;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ffffff;
+    }
+
+    .custom-dropdown {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-dropdown .selected {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #1c1c1c;
+      padding: 12px 16px;
+      border-radius: 10px;
+      cursor: none;
+    }
+
+    .custom-dropdown .selected img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+
+    .custom-dropdown .dropdown-list {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+    }
+
+    .custom-dropdown .dropdown-list.show {
+      display: block;
+    }
+
+    .custom-dropdown .dropdown-item {
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      cursor: none;
+    }
+
+    .custom-dropdown .dropdown-item img {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    .custom-dropdown .dropdown-item:hover {
+      background-color: #333;
+    }    
+   
+.custom-dropdown .dropdown-item img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* makes image perfectly round */
+  object-fit: cover;
+  border: 2px solid #333; /* optional: adds a border around each icon */
+}
+  </style>
+</head>
+<body>
+
+ <div class="header">
+  <div class="header-left">
+    <span onclick="goBack()" style="font-size: 24px; cursor: none;"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">  
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>  
+      </svg></span>
+  </div>
+  <div class="header-title">Main Wallet</div>
+  <div class="header-right">
+    <span style="margin-right: 15%; font-size: 15px; cursor: none;">❓</span>
+  </div>
+</div>
+
+  <div class="container">
+            
+    <div class="section">
+      <div class="label">Receive</div>
+      <div class="custom-dropdown">
+        <div class="selected" onclick="toggleDropdown()">
+          <img style="width: 30px; height: 30px; border-radius: 7.5px;" src="https://via.placeholder.com/24" alt="selected icon" />
+          <span id="selectedText">Select Coin</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M6 9l6 6 6-6" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="dropdown-list" id="dropdownList"></div>
+      </div>
+     <input type="hidden" id="crypto" data-symbol="">
+    </div>
+    
+     <div class="section">
+  <div class="label">Currency</div>
+  <div class="custom-dropdown" id="currencyDropdown">
+    <div class="selected" onclick="toggleCurrencyDropdown()">
+     <img src="https://flagcdn.com/w40/${currency.flag}.png" alt="${currency.code} Flag" style="width: 30px; height: 30px; border-radius: 7.5px;" />
+      <span id="selectedCurrencyText">United States Dollar (USD)</span>
+    </div>
+    <div class="dropdown-list" id="currencyDropdownList">
+      <!-- Currency options will be populated here -->
+    </div>
+  </div>
+  <input type="hidden" id="currency" value="USD"/>
+</div>
+
+    <div class="section" style="margin-bottom: 25%;">
+      <div class="label">Amount</div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <input style="height: 20px;" type="number" id="amount" placeholder="10 - 20,000" min="10" max="20000">
+      
+
+
+      </div>
+     <div class="info" id="priceInfo">1 BTC ≈ 109,393.06 USD</div>
+     
+     <div class="info" id="convertedFiat"></div>
+    </div>
+
+    <div class="section">
+      <div class="label">Main Wallet</div>
+      <div class="row">
+        <div>0 USD</div>
+        <button style="margin-left: auto; color: orange; background: none; border: none; cursor: none;">➕</button>
+      </div>
+    </div>
+    
+  </div>
+
+
+
+  <div class="button-container">
+    <button class="button" id="nextBtn" disabled>Next</button>
+  </div>
+
+<script>
+  const amountInput = document.getElementById('amount');
+const nextBtn = document.getElementById('nextBtn');
+const dropdownList = document.getElementById("dropdownList");
+const selectedText = document.getElementById("selectedText");
+const hiddenInput = document.getElementById("crypto");
+const currencySelect = document.getElementById("currency");
+const selectedCurrencyText = document.getElementById("selectedCurrencyText");
+const currencyDropdownList = document.getElementById("currencyDropdownList");
+
+let currentPrice = 0;
+
+const coinList = [
+  "bitcoin", 
+  "ethereum", 
+  "binancecoin", 
+  "solana", 
+  "cardano", 
+  "dogecoin", 
+  "avalanche-2", 
+  "polkadot", 
+  "matic-network",
+  "tron", 
+  "shiba-inu", 
+  "uniswap", 
+  "chainlink", 
+  "litecoin", 
+  "bitcoin-cash", 
+  "cosmos", 
+  "ethereum-classic", 
+  "filecoin",
+  "internet-computer", 
+  "hedera-hashgraph", 
+  "aptos", 
+  "arbitrum", 
+  "optimism", 
+  "elrond-erd-2",
+  "vechain", 
+  "decentraland", 
+  "tezos", 
+  "zcash"
+];
+
+const currencyList = [
+{ code: "USD", name: "United States Dollar", flag: "us" },
+{ code: "EUR", name: "Euro", flag: "eu" },
+{ code: "GBP", name: "British Pound", flag: "gb" },
+{ code: "JPY", name: "Japanese Yen", flag: "jp" },
+{ code: "NGN", name: "Nigerian Naira", flag: "ng" },
+{ code: "AED", name: "Emirati Dirham", flag: "ae" },
+{ code: "KWD", name: "Kuwaiti Dinar", flag: "kw" }
+  ];
+
+// Enable/disable next button & update converted amount when input changes
+amountInput.addEventListener('input', () => {
+  const value = parseFloat(amountInput.value);
+  nextBtn.disabled = !(value >= 0.00005 && value <= 20000);
+  updateFiatEquivalent();
+});
+
+// Toggle dropdowns
+function toggleDropdown() {
+  dropdownList.classList.toggle("show");
+}
+function toggleCurrencyDropdown() {
+  currencyDropdownList.classList.toggle("show");
+}
+
+// Close dropdown if clicking outside
+window.addEventListener("click", e => {
+  if (!e.target.closest(".custom-dropdown")) dropdownList.classList.remove("show");
+  if (!e.target.closest("#currencyDropdown")) currencyDropdownList.classList.remove("show");
+});
+
+// Update price display and converted fiat
+function updatePriceDisplay() {
+  const symbol = hiddenInput.value;
+  const currencyCode = currencySelect.value || "USD";
+  document.getElementById("priceInfo").innerText =
+    `1 ${symbol} ≈ ${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyCode}`;
+  updateFiatEquivalent();
+}
+
+// Update fiat equivalent display
+function updateFiatEquivalent() {
+  const cryptoAmount = parseFloat(amountInput.value);
+  const currencyCode = currencySelect.value || "USD";
+  if (!isNaN(cryptoAmount) && currentPrice > 0) {
+    const fiatAmount = cryptoAmount * currentPrice;
+    document.getElementById("convertedFiat").innerText =
+      `≈ ${fiatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyCode}`;
+  } else {
+    document.getElementById("convertedFiat").innerText = '';
+  }
+}
+
+// Load crypto prices in the selected fiat currency
+async function loadCoins(vsCurrency = 'USD') {
+  try {
+    const response = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinList.join(",")}`);
+    const data = await response.json();
+
+    dropdownList.innerHTML = "";
+
+    data.forEach(coin => {
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.innerHTML = `<img src="${coin.image}" alt="${coin.symbol}"><span>${coin.name} (${coin.symbol.toUpperCase()})</span>`;
+      item.onclick = () => {
+        selectedText.textContent = `${coin.name} (${coin.symbol.toUpperCase()})`;
+        document.querySelector(".selected img").src = coin.image;
+        hiddenInput.value = coin.symbol.toUpperCase();
+        currentPrice = coin.current_price;
+        updatePriceDisplay();
+        toggleDropdown();
+      };
+      dropdownList.appendChild(item);
+    });
+
+    // Default selection: Bitcoin
+    const defaultCoin = data.find(c => c.symbol.toLowerCase() === "btc");
+    if (defaultCoin) {
+      selectedText.textContent = `${defaultCoin.name} (${defaultCoin.symbol.toUpperCase()})`;
+      document.querySelector(".selected img").src = defaultCoin.image;
+      hiddenInput.value = defaultCoin.symbol.toUpperCase();
+      currentPrice = defaultCoin.current_price;
+      updatePriceDisplay();
+    }
+  } catch (error) {
+    console.error("Error loading coins:", error);
+  }
+}
+
+// Populate fiat currency dropdown
+function populateCurrencyDropdown() {
+  currencyDropdownList.innerHTML = "";
+
+  currencyList.forEach(currency => {
+    const item = document.createElement("div");
+    item.className = "dropdown-item";
+    item.innerHTML = `
+      <img src="https://flagcdn.com/w20/${currency.flag}.png" alt="${currency.code} Flag" />
+      <span>${currency.name} (${currency.code})</span>
+    `;
+    item.onclick = () => {
+      selectedCurrencyText.textContent = `${currency.name} (${currency.code})`;
+      document.querySelector("#currencyDropdown .selected img").src = `https://flagcdn.com/w20/${currency.flag}.png`;
+      currencySelect.value = currency.code;
+      toggleCurrencyDropdown();
+      loadCoins(currency.code); // reload crypto prices in new fiat
+    };
+    currencyDropdownList.appendChild(item);
+  });
+
+  const defaultCurrency = currencyList.find(c => c.code === "USD");
+  if (defaultCurrency) {
+    selectedCurrencyText.textContent = `${defaultCurrency.name} (${defaultCurrency.code})`;
+    document.querySelector("#currencyDropdown .selected img").src = `https://flagcdn.com/w20/${defaultCurrency.flag}.png`;
+    currencySelect.value = defaultCurrency.code;
+    loadCoins(defaultCurrency.code);
+  }
+}
+
+function goBack() {
+  window.history.back();
+}
+
+// Init
+populateCurrencyDropdown();
+
+// Go to next page
+nextBtn.addEventListener('click', () => {
+  if (!nextBtn.disabled) {
+    window.location.href = 'payment-card.html';
+  }
+});
+</script>  
+<script src="delete-account.js"></script>
+<script src="disable-zoom.js"></script>
+<script src="bootstrap.js"></script>
+<script src="bootstrap.min.js"></script>
+</body>
+</html>

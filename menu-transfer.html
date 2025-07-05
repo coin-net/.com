@@ -1,0 +1,63 @@
+<!-- menu-size will be the dimension of your menu. If you set it to smaller than your content it will scroll-->
+<div class="menu-size" style="height:400px;">
+    <form action="transfer-redirect.html" method="GET">
+        <div class="d-flex mx-3 mt-3 py-1">
+          <input type="hidden" name="source" value="form.html"/>
+            <div class="align-self-center">
+                <h3 class="mb-0">Transfer Funds</h3>
+            </div>
+            <div class="align-self-center ms-auto">
+                <a href="#" class="ps-4 shadow-0 me-n2" data-bs-dismiss="offcanvas"></a>
+            </div>
+        </div>
+
+        <div class="divider divider-margins mt-3"></div>
+
+        <div class="content mt-0">
+            <!-- Account Selection -->
+            <div class="form-custom form-label form-icon">
+                <i class="bi bi-wallet2 font-15"></i>
+                <select class="form-select rounded-xs" name="wallet" id="c6" aria-label="Floating label select example" required>
+                <option value="Main Account" selected>Mining Wallet</option>
+                    <option value="Savings Account">Savings Wallet</option>
+                   <option value="Company Account">Crypto Wallet</option>
+                </select>
+            </div>
+
+            <div class="pb-3"></div>
+
+ <div class="form-custom form-label form-icon">
+                <i class="bi bi-person-check font-15"></i>
+                <input type="text" name="bank" class="form-control rounded-xs" id="c3" placeholder="Bank_Name" required/>
+                <span class="font-10">(required)</span>
+            </div>
+            
+            <div class="pb-3"></div>
+              
+            <!-- ID Input -->
+            <div class="form-custom form-label form-icon">
+                <i class="bi bi-person-check font-15"></i>
+                <input type="number" name="account" class="form-control rounded-xs" id="c3" placeholder="Account Number" required/>
+                <span class="font-10">(required)</span>
+            </div>
+
+            <div class="pb-3"></div>
+
+            <!-- Amount Input -->
+            <div class="form-custom form-label form-icon">
+                <i class="bi bi-coin font-15"></i>
+                <input type="number" name="amount" class="form-control rounded-xs" id="c4" placeholder="Amount: 150.00" required />
+                <span class="font-10">( Currency: USD )</span>
+            </div>
+
+            <div class="pb-2"></div>
+        </div>
+
+        <div class="px-3 pb-3">
+            <button type="submit" class="btn btn-full shadow-bg shadow-bg-s color-them"
+                style="width: 100%; height: 50px; background: transparent; border-color: #ffffff; color: #ffffff;">
+                Transfer Funds
+            </button>
+        </div>
+    </form>
+          </div>

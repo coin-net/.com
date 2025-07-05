@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crypto Exchange</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      padding-bottom: 100px; /* Space for fixed button */
+    }
+
+    .headers {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 15px;
+    }
+
+    .back-buttons {
+      cursor: none;
+      width: 30px; 
+      height: 30px;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      border: 1px solid #fff;
+      border-radius: 20px;
+    }
+
+    .back-buttons svg {
+      width: 20px; 
+      height: 20px;
+      stroke: #fff;
+    }
+
+    .track-referrals {
+      font-weight: bold;
+      font-size: 1rem;
+      color: #fff;
+      cursor: none;
+    }
+
+    .graph-section {
+      position: relative;
+      height: 200px;
+      margin-top: 35px;
+      margin-bottom: 15px;
+    }
+
+    #priceChart {
+      width: 100%;
+      height: 100%;
+      background-color: #222;
+      border-radius: 8px;
+    }
+
+    .exchange-rate {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 0.9rem;
+      color: #a5ff4d;
+      font-weight: 600;
+    }
+
+    .currency-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 45px;
+      background: #222;
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .currency-box input[type="number"] {
+      flex: 1;
+      padding: 8px;
+      font-size: 1.3rem;
+      border-radius: 4px;
+      border: none;
+      height: 35px;
+      width: 10px;      
+      color: #ffffff;
+      background: none;      
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .currency-select {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background-color: #222;
+      padding: 8px;
+      border-radius: 4px;
+      height: 35px;
+      border: none;     
+      flex: 0;   
+      color: #ffffff;
+      background: none;
+    }
+
+    .currency-select img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      border-radius: 15px;
+    }
+
+    .currency-select select {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      cursor: none;
+      outline: none;
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      color: #ccc;
+    }
+
+    .details strong {
+      color: #fff;
+    }
+
+.fixed-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background: #121212;
+  padding: 0;
+  margin: 0;
+  z-index: 1000;
+}
+
+.send-btn {
+  width: 100vw;
+  height: 48px;
+  background-color: #a5ff4d;
+  border: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #121212;
+  cursor: none;
+  border-radius: 0;
+  display: block;
+  text-align: center;
+  border-radius: 50px;
+}
+
+    .send-btn:hover {
+      background-color: #8ccc39;
+    }
+
+    /* Popup styling (optional, from earlier) */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-box {
+      background: #1e1e1e;
+      padding: 25px;
+      border-radius: 12px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(165, 255, 77, 0.3);
+    }
+
+    .popup-box p {
+      margin: 0 0 15px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .popup-close {
+      background: #a5ff4d;
+      color: #121212;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .popup-close:hover {
+      background-color: #8ccc39;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="headers">
+    <div class="back-buttons" onclick="window.history.go(-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke="#fff">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <a href="page-track.html" style="text-decoration: none;">
+      <div class="track-referrals">Go Back</div>
+    </a>
+  </div>
+
+  <div>
+    <div class="graph-section">
+      <canvas id="priceChart"></canvas>
+      <div class="exchange-rate" id="exchangeRate">Loading...</div>
+    </div>
+
+    <div class="currency-box">
+      <input type="number" id="fromAmount" value="1" min="0" step="any"/>
+      <div class="currency-select">
+        <img id="fromLogo" src="" alt="From" />
+        <select id="fromCurrency"></select>
+      </div>
+    </div>
+
+    <div class="currency-box">
+      <input type="number" id="toAmount" readonly />
+      <div class="currency-select">
+        <img id="toLogo" src="us-dollar.png" alt="To" />    
+         USD
+      </div>
+    </div>
+
+    <div class="details">
+      <div>
+        Includes fees
+        <strong id="feeAmount">0.00 USD</strong>
+      </div>
+      <div>
+        Should arrive
+        <strong>immediately</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Send Button -->
+  <div class="fixed-footer">
+    <button class="send-btn">Exchange</button>
+  </div>
+
+  <!-- Optional Popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-box">
+      <p id="popupText">Processing your request...</p>
+      <button class="popup-close" onclick="closePopup()">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const fromCurrencySelect = document.getElementById('fromCurrency');
+    const fromAmount = document.getElementById('fromAmount');
+    const toAmount = document.getElementById('toAmount');
+    const exchangeRateText = document.getElementById('exchangeRate');
+    const fromLogo = document.getElementById('fromLogo');
+    const feeAmount = document.getElementById('feeAmount');
+
+    const COINS = [
+      'bitcoin', 'ethereum', 'tether', 'bnb', 'solana', 'xrp', 'dogecoin', 'cardano', 'shiba-inu', 'avalanche',
+      'tron', 'polkadot', 'chainlink', 'litecoin', 'polygon', 'bitcoin-cash', 'stellar', 'uniswap', 'cosmos',
+      'vechain', 'algorand', 'filecoin', 'aptos', 'hbar', 'render-token', 'tezos', 'mina-protocol', 'arweave',
+      'aave', 'flow', 'immutable-x', 'fantom', 'icp', 'rocket-pool', 'gala'
+    ];
+
+    let prices = {};
+    let chart;
+
+    async function loadCryptoData() {
+      const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${COINS.join(',')}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      prices = {};
+      fromCurrencySelect.innerHTML = '';
+
+      data.forEach(coin => {
+        prices[coin.id] = { price: coin.current_price, logo: coin.image };
+
+        const option = document.createElement('option');
+        option.value = coin.id;
+        option.textContent = coin.symbol.toUpperCase();
+        fromCurrencySelect.appendChild(option);
+      });
+
+      updateUI();
+      loadChart(fromCurrencySelect.value);
+    }
+
+    async function loadChart(coinId) {
+      const url = `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=usd&days=30`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      const labels = data.prices.map(p => new Date(p[0]).toLocaleDateString());
+      const pricesData = data.prices.map(p => p[1]);
+
+      if (chart) chart.destroy();
+
+      const ctx = document.getElementById('priceChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: pricesData,
+            borderColor: '#a5ff4d',
+            borderWidth: 2,
+            fill: false,
+            pointRadius: 0,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { display: false }, y: { display: false } }
+        }
+      });
+    }
+
+    function updateUI() {
+      const fromCoin = fromCurrencySelect.value;
+      const fromValue = parseFloat(fromAmount.value) || 0;
+
+      if (!prices[fromCoin]) return;
+
+      const rate = prices[fromCoin].price;
+      const feeRate = 0.5 / 100;
+      const fee = fromValue * rate * feeRate;
+      const finalAmount = (fromValue * rate) - fee;
+
+      fromLogo.src = prices[fromCoin].logo;
+      toAmount.value = finalAmount.toFixed(2);
+      feeAmount.textContent = fee.toFixed(2) + ' USD';
+      exchangeRateText.textContent = `1 ${fromCoin.toUpperCase()} = ${rate.toFixed(2)} USD`;
+    }
+
+    fromCurrencySelect.addEventListener('change', () => {
+      updateUI();
+      loadChart(fromCurrencySelect.value);
+    });
+
+    fromAmount.addEventListener('input', updateUI);
+
+    loadCryptoData();
+
+    document.querySelector('.send-btn').addEventListener('click', () => {
+      const fromValue = parseFloat(fromAmount.value);
+      if (isNaN(fromValue) || fromValue <= 0) {
+        alert("Please enter a valid amount.");
+        return;
+      }
+
+      const selectedCurrency = fromCurrencySelect.value.toUpperCase();
+      const finalAmount = toAmount.value;
+
+      document.getElementById('popupText').textContent =
+        `Your request to exchange ${fromValue} ${selectedCurrency}, equivalent to approximately ${finalAmount} USD, has been declined due to insufficient funds in your account.`;
+
+      document.getElementById('popupOverlay').style.display = 'flex';
+    });
+
+    function closePopup() {
+      document.getElementById('popupOverlay').style.display = 'none';
+    }
+  </script>
+  <script>
+// Block pinch-to-zoom only
+    document.addEventListener('touchmove', function (event) {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    }, { passive: false });
+
+    // Block double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = new Date().getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);      
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>
