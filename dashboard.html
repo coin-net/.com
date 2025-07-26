@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Debit Card</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #000000;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .top-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid white;
+    }
+
+    .top-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .greeting-text {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .card-container {
+      max-width: 400px;
+      margin: 0 auto 30px;
+    }
+
+    .debit-card {
+      background: #000000;
+      border-radius: 20px;
+      padding: 15px;
+      color: #fff;
+      position: relative;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
+    }
+
+    .card-balance {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .amount-large {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .amount-small {
+      font-size: 16px;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+
+    .toggle-icon {
+      width: 20px;
+      height: 20px;
+      cursor: none;
+      filter: invert(100%);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .label {
+      color: #aaa;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .bottom-logo {
+      width: 100%;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .bottom-logo img {
+      width: 180px;
+      height: 150px;
+    }
+
+    .mining-section {
+      max-width: 400px;
+      margin: 40px auto;
+    }
+
+    .tab-content p {
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+  .spinner {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+  </style>
+</head>
+<body>
+ 
+  <!-- Top Section: Avatar and Greeting -->
+  <a href="setting.html" style="cursor: none;">
+    <div class="top-header">
+      <div class="top-avatar">
+        <img id="userAvatarDisplay" src="default-avatar.png" alt="User Avatar" />
+      </div>
+  </a>
+      <div class="greeting-text">
+        <div id="greetingLine1">Good day</div>
+        <div id="greetingLine2">User</div>
+      </div>
+    </div>
+
+<!-- Debit Card Section -->
+<div class="card-container">
+  <div class="debit-card">
+
+    <!-- User Balance -->
+    <div class="card-balance chip">
+      <div id="balanceLoader" class="spinner"></div> <!-- Spinner shown initially -->
+      <span id="userBalance" style="display: none;">
+        <span class="amount-large">****</span>
+        <span class="amount-small"></span>
+      </span>
+      <img id="toggleBalance" class="toggle-icon" src="https://img.icons8.com/ios-filled/50/visible.png" alt="Toggle Balance" title="Show/Hide Balance"/>
+    </div>
+
+    <!-- User Details -->
+    <div class="card-footer">
+      <div>
+        <div class="label">Account Holder</div>
+        <div id="nameLoader" class="spinner"></div> <!-- Spinner shown initially -->
+        <div id="user_name_display" style="display: none;">John Doe</div> <!-- Actual content shown later -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Simulate loading delay
+    setTimeout(() => {
+      // Hide spinners
+      const balanceLoader = document.getElementById("balanceLoader");
+      const nameLoader = document.getElementById("nameLoader");
+      if (balanceLoader) balanceLoader.style.display = "none";
+      if (nameLoader) nameLoader.style.display = "none";
+
+      // Show actual content
+      const userBalance = document.getElementById("userBalance");
+      const userNameDisplay = document.getElementById("user_name_display");
+      if (userBalance) userBalance.style.display = "inline-block";
+      if (userNameDisplay) userNameDisplay.style.display = "block";
+    }, 2000); // Delay for 2 seconds
+  });
+</script>
+
+<div style="position: relative; display: flex; align-items: center; gap: 0px; margin-top: 20%; flex-direction: column; justify-content: center;">
+
+  <!-- Center Icon Circle -->
+  <a href="">
+    <div style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff; background: #000; display: flex; justify-content: center; align-items: center; color: #fff; cursor: none;">
+     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
+  <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+</svg>
+    </div>
+  </a>
+
+  <!-- Text directly under circle -->
+  <div style="color: #fff; font-size: 14px; margin-top: 4px; text-align: center;">
+    Withdraw 
+  </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const withdrawBtn = document.querySelector(".bi-box-arrow-right").closest("a");
+
+  withdrawBtn.addEventListener("click", async (e) => {
+    e.preventDefault(); // stop default link behavior
+
+    const balance = parseFloat(localStorage.getItem("userBalance") || "0.00");
+    const currency = JSON.parse(localStorage.getItem("preferredCurrency")) || { symbol: "$", code: "usd" };
+
+    if (balance > 0) {
+      try {
+        const converted = await convertCurrency(balance, currency.code.toLowerCase());
+        const message = `Your balance is ${currency.symbol}${converted} (${currency.code.toUpperCase()}). please complete your verification to be able to withdraw your money`;
+        showPopupWithButton(message, "verify.html");
+      } catch (err) {
+        showPopup("Failed to get balance. Please try again.");
+      }
+    } else {
+      showPopup("You have no available balance to withdraw.");
+    }
+  });
+
+  // Convert USD to preferred currency using CoinGecko API
+  async function convertCurrency(amount, toCurrencyCode) {
+    const res = await fetch("https://api.coingecko.com/api/v3/exchange_rates");
+    const data = await res.json();
+
+    const rate = data.rates[toCurrencyCode];
+    if (!rate) throw new Error("Currency not found");
+
+    const usdToBtc = 1 / data.rates["usd"].value;
+    const usdInBtc = amount * usdToBtc;
+    const finalAmount = usdInBtc * rate.value;
+
+    return finalAmount.toFixed(2);
+  }
+
+  // Text-only popup (no button)
+  function showPopup(text) {
+    const popup = document.createElement("div");
+    stylePopup(popup);
+    popup.innerText = text;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 3000);
+  }
+
+  // Popup with OK button + auto-close after 5 sec
+  function showPopupWithButton(text, redirectURL) {
+    const popup = document.createElement("div");
+    stylePopup(popup);
+
+    const msg = document.createElement("div");
+    msg.innerText = text;
+    msg.style.marginBottom = "12px";
+
+    const button = document.createElement("button");
+    button.innerText = "Okay";
+    button.style.padding = "8px 20px";
+    button.style.background = "#fff";
+    button.style.color = "#000";
+    button.style.border = "none";
+    button.style.borderRadius = "6px";
+    button.style.cursor = "pointer";
+
+    // Redirect if clicked
+    button.onclick = () => {
+      clearTimeout(autoClose); // prevent auto-close if clicked
+      popup.remove();
+      window.location.href = redirectURL;
+    };
+
+    popup.appendChild(msg);
+    popup.appendChild(button);
+    document.body.appendChild(popup);
+
+    // Auto-close popup after 5 seconds if not clicked
+    const autoClose = setTimeout(() => {
+      popup.remove();
+    }, 5000);
+  }
+
+  // Shared popup styling
+  function stylePopup(popup) {
+    popup.style.position = "fixed";
+    popup.style.bottom = "20%";
+    popup.style.left = "50%";
+    popup.style.transform = "translateX(-50%)";
+    popup.style.background = "#000";
+    popup.style.color = "#fff";
+    popup.style.padding = "20px";
+    popup.style.border = "1px solid #fff";
+    popup.style.borderRadius = "10px";
+    popup.style.fontSize = "14px";
+    popup.style.zIndex = "9999";
+    popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+    popup.style.textAlign = "center";
+    popup.style.minWidth = "250px";
+  }
+});
+</script>
+  <!-- Centered logo below card -->
+  <div class="bottom-logo">
+    <img src="log.png" alt="Card Logo">
+  </div>
+
+<style>
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding: 0 1rem;    
+  }
+
+.custom-btn {
+  font-weight: bold;
+  border: none;
+  cursor: none;
+  transition: background-color 0.2s, box-shadow 0.2s;  
+  box-shadow: 0 0 6px white;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+/* Active tab: white with black text */
+.tab-active {
+  background-color: #fff;
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 6px white;
+  padding: 10px 16px;
+  border-radius: 12px;
+}
+
+/* Inactive tab: dark gray with light text */
+.tab-inactive {
+  background-color: #333;
+  color: #aaa;
+}
+
+.counter {
+    font-size: 0.75rem;
+    background-color: #fff;
+    color: #000;
+    border-radius: 9999px;
+    padding: 2px 6px;
+    font-weight: bold;
+    margin-left: 6px;
+  }
+
+.icon-ring {
+    width: 72px;
+    height: 72px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2rem auto 1rem auto;
+  }
+
+.icon-ring svg {
+    width: 36px;
+    height: 36px;
+    stroke: white;
+  }
+
+.tab-section {
+    margin-top: 2rem;
+    padding: 1rem;
+  }
+
+.history-card {
+    background-color: #111;
+    box-shadow: 0 0 6px white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+.history-card .info {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+.info p {
+    margin: 0;
+  }
+
+.btn-offers {
+    display: inline-block;
+    background-color: #fff;
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    margin-top: 1rem;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+    transition: background-color 0.2s;
+  }
+
+.btn-offers:hover {
+    background-color: #ddd;
+  }
+  
+  
+  .font-semibold {
+  display: flex;
+  justify-content: center;  /* Horizontal center */
+  align-items: center;      /* Vertical center */
+  text-align: center;
+}
+
+  .big {
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .small {
+    font-size: 20px;
+    font-weight: 500;
+    opacity: 0.7;
+    vertical-align: top;
+  }
+</style>
+
+<!-- Tabs -->
+<div class="button-container">
+  <button id="activeTab" class="custom-btn tab-active" onclick="showTab('active')">
+    All Transactions <span class="counter" id="activeCount">0</span>
+  </button>    
+  <button id="completedTab" class="custom-btn tab-inactive" onclick="showTab('completed')">
+    My Cash-Out <span class="counter" id="completedCount">0</span>
+  </button>
+</div>
+
+<!-- Active Transactions Section -->
+<div id="activeContent" class="tab-section text-center">
+  <div class="icon-ring">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4-4H7m0 0l-3-3m3 3l3-3" />
+    </svg>
+  </div>
+  <p class="font-semibold text-lg">No Recent Transactions <span style="font-size: 35px;">!</span></p>
+  <p class="font-semibold text-gray-400 text-sm mt-1">Once you have made a transaction, you’ll see it here.</p>
+  <a href="receive.html" style="cursor: none; margin-bottom: 25px;" class="font-semibold btn-offers">Receive Crypto</a>
+</div>
+
+<!-- Completed Transactions Section -->
+<div id="completedContent" class="tab-section hidden">
+  <div id="historyTableContainer" class="w-full"></div>
+</div>
+
+<!-- Script -->
+<script>
+  function showTab(tab) {
+    const activeTab = document.getElementById("activeTab");
+    const completedTab = document.getElementById("completedTab");
+    const activeContent = document.getElementById("activeContent");
+    const completedContent = document.getElementById("completedContent");
+
+    if (tab === "active") {
+      activeTab.classList.add("tab-active");
+      activeTab.classList.remove("tab-inactive");
+      completedTab.classList.remove("tab-active");
+      completedTab.classList.add("tab-inactive");
+      activeContent.classList.remove("hidden");
+      completedContent.classList.add("hidden");
+    } else {
+      completedTab.classList.add("tab-active");
+      completedTab.classList.remove("tab-inactive");
+      activeTab.classList.remove("tab-active");
+      activeTab.classList.add("tab-inactive");
+      completedContent.classList.remove("hidden");
+      activeContent.classList.add("hidden");
+    }
+  }
+
+  // Load history from localStorage
+  const history = JSON.parse(localStorage.getItem("balanceHistory")) || [];
+  const historyContainer = document.getElementById("historyTableContainer");
+  document.getElementById("completedCount").textContent = history.length;
+
+  if (history.length === 0) {
+    historyContainer.innerHTML = `
+      <div class="text-center">
+        <div class="icon-ring">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <p class="font-semibold text-lg">No Verified Cash-Out</p>
+        <p class="font-semibold text-gray-400 text-sm mt-1">All verified cash-out transactions will be listed here.</p>
+      </div>
+    `;
+  } else {
+    history.forEach((item, index) => {
+      const entry = document.createElement("div");
+      entry.className = "history-card";
+
+      entry.innerHTML = `
+        <div class="info">
+          <p class="text-white text-sm font-semibold">${index + 1}</p>
+          <p class="text-white text-sm">$${parseFloat(item.balance).toFixed(2)}</p>
+          <p class="text-gray-400 text-xs" style="margin-left: 20px;">${item.date}</p>
+        </div>
+        <div>
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </div>
+      `;
+      historyContainer.appendChild(entry);
+    });
+  }
+</script>
+  
+  
+<!-- Floating and Draggable Tool -->
+<a href="cash-out.html" style="color: #ffffff;"><div id="draggableTool" style="
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 70px;
+  text-align: center;
+  z-index: 9999;
+  cursor: grab;
+  user-select: none;
+  animation: floatY 3s ease-in-out infinite;
+">
+ <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-discord" viewBox="0 0 16 16">
+  <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+</svg>
+  <div style="font-size: 12px; color: #ccc; margin-top: 5px;">Get Cash-Out</div>
+</div></a>
+
+<style>
+  @keyframes floatY {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+</style>
+
+<!-- Footer Section -->
+<div style="
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  font-family: 'Roboto', sans-serif;
+  pointer-events: none;
+  z-index: 999;
+">
+  © 2025 Official Blockchain — All rights reserved · Coin_net.com
+</div>
+
+  <!-- TAB Switch Script -->
+ <script>
+  // Show greeting + avatar + username
+  document.addEventListener("DOMContentLoaded", () => {
+    const username = localStorage.getItem('userUsername') || 'User';
+    const avatar = localStorage.getItem('userAvatar');
+    const hour = new Date().getHours();
+    let greeting = "Hello";
+
+    if (hour >= 5 && hour < 12) greeting = "Good morning";
+    else if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+    else greeting = "Good night";    
+
+    document.getElementById('greetingLine1').textContent = greeting;
+    document.getElementById('greetingLine2').textContent = username;
+    document.getElementById('user_name_display').textContent = username;
+
+    if (avatar) {
+      document.getElementById('userAvatarDisplay').src = avatar;
+    }
+  });
+
+  // Toggle balance show/hide with currency symbol and styled decimals
+  document.addEventListener("DOMContentLoaded", () => {
+    const balanceEl = document.getElementById("userBalance");
+    const toggleBtn = document.getElementById("toggleBalance");
+
+    const balance = localStorage.getItem("userBalance") || "0.00";
+    const currency = JSON.parse(localStorage.getItem("preferredCurrency")) || { symbol: "$" };
+
+    const [mainPart, decimalPart] = parseFloat(balance).toFixed(2).split(".");
+    let isVisible = false;
+
+    // Start hidden
+    balanceEl.innerHTML = `<span class="amount-large">****</span><span class="amount-small"></span>`;
+
+    toggleBtn.addEventListener("click", () => {
+      isVisible = !isVisible;
+      if (isVisible) {
+        balanceEl.innerHTML = `
+          <span class="amount-large">${currency.symbol}${mainPart}</span><span class="amount-small">.${decimalPart}</span>
+        `;
+        toggleBtn.src = "https://img.icons8.com/ios-filled/50/invisible.png";
+      } else {
+        balanceEl.innerHTML = `<span class="amount-large">****</span><span class="amount-small"></span>`;
+        toggleBtn.src = "https://img.icons8.com/ios-filled/50/visible.png";
+      }
+    });
+  });
+</script>
+
+<script>
+  const dragTarget = document.getElementById('draggableTool');
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  dragTarget.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - dragTarget.getBoundingClientRect().left;
+    offsetY = e.clientY - dragTarget.getBoundingClientRect().top;
+    dragTarget.style.cursor = 'grabbing';
+    dragTarget.style.animation = 'none'; // stop floating during drag
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+
+    const newX = e.clientX - offsetX;
+    const newY = e.clientY - offsetY;
+
+    dragTarget.style.left = `${newX}px`;
+    dragTarget.style.top = `${newY}px`;
+    dragTarget.style.bottom = 'auto';
+    dragTarget.style.right = 'auto';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      dragTarget.style.animation = 'floatY 3s ease-in-out infinite'; // resume floating
+    }
+    isDragging = false;
+    dragTarget.style.cursor = 'grab';
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const balanceEl = document.getElementById("userBalance");
+    const toggleBtn = document.getElementById("toggleBalance");
+
+    const savedBalance = parseFloat(localStorage.getItem("userBalance") || "0.00");
+    const savedCurrency = JSON.parse(localStorage.getItem("preferredCurrency") || "{}");
+
+    let userCode = "usd";
+    let userSymbol = "$";
+
+    if (savedCurrency.code && savedCurrency.symbol) {
+      userCode = savedCurrency.code.toLowerCase();
+      userSymbol = savedCurrency.symbol;
+    }
+
+    let convertedBalance = savedBalance;
+
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=${userCode}`);
+      const data = await res.json();
+      const rate = data.tether?.[userCode];
+
+      if (rate) {
+        convertedBalance = savedBalance * rate;
+      }
+    } catch (err) {
+      console.warn("Currency conversion failed. Using original balance.");
+    }
+
+    const formattedNumber = convertedBalance.toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+// Split at the first comma or if under 1k, keep entire number as small
+let bigPart = "", smallPart = "";
+const match = formattedNumber.match(/^(\d{1,3})([.,\d]*)$/);
+
+if (match) {
+  bigPart = match[1];          // e.g. "12"
+  smallPart = match[2];        // e.g. ",000.00"
+} else {
+  bigPart = formattedNumber;
+}
+
+const formattedBalance = `${userSymbol}<span class="big">${bigPart}</span><span class="small">${smallPart}</span>`;
+
+    let isVisible = false;
+
+    balanceEl.innerHTML = `<span class="amount-large">****</span>`;
+
+    toggleBtn.addEventListener("click", () => {
+      isVisible = !isVisible;
+      balanceEl.innerHTML = isVisible
+        ? `<span class="amount-large">${formattedBalance}</span>`
+        : `<span class="amount-large">****</span>`;
+
+      toggleBtn.src = isVisible
+        ? "https://img.icons8.com/ios-filled/50/invisible.png"
+        : "https://img.icons8.com/ios-filled/50/visible.png";
+    });
+  });
+</script>
+  <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+</body>
+</html>

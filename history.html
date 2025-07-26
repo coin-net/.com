@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Invited Friends</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #000000;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: flex-start;
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .back-button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #1e1e1e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+    }
+
+    .back-button svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ffffff;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-left: 16px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      margin-top: 80px;
+    }
+
+    .referral-image {
+      width: 180px;
+      margin-bottom: 24px;
+    }
+
+    .no-referrals {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #b3b3b3;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+ <div class="back-button" onclick="window.history.go(-1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="title">Invited friends</div>
+  </div>
+
+  <div class="content">
+    <img src="human.png" alt="Referral Megaphone" class="referral-image" />
+    <div class="no-referrals">No referrals yet</div>
+    <div class="description">
+      Sounds like a great time to get someone new on board
+    </div>
+  </div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+  <script>
+    function goBack() {
+      alert("Back button clicked! (Simulating navigation)");
+      // Replace with: window.history.back();
+    }
+  </script>
+<script src="disable-zoom.js"></script>
+</body>
+</html>

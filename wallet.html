@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>My Wallet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .asset {
+      width: 100%;
+      padding: 16px;
+      background-color: none;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      stroke: #ffffff;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden-balance {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Top bar -->
+  <div class="flex items-center justify-between p-4 bg-black rounded-b-xl">
+    <div class="header-left" onclick="goBack()">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+        <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+    </div>
+    <h2 class="text-lg font-semibold">My Wallet</h2>
+    <div>
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M17 20h5v-2a3 3 0 00-3-3h-2m-4 5v-6a2 2 0 012-2h4M3 8h10M3 12h6m-6 4h8"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Total Assets -->
+  <div class="px-4 mt-6">
+    <div class="flex items-center justify-between text-sm text-gray-300 mb-1">
+      <div class="flex items-center gap-2">
+        <span>Total Assets</span>
+        <button onclick="toggleBalances()" id="toggleIcon">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </button>
+      </div>
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 2a6 6 0 100 12A6 6 0 0010 2zM9 5a1 1 0 012 0v3a1 1 0 01-2 0V5zm1 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/>
+      </svg>
+    </div>
+    <div class="flex items-center gap-2 text-white text-sm" id="totalSpinner">
+      <div class="spinner"></div>
+      <span></span>
+    </div>
+    <div class="text-3xl font-bold hidden" id="totalBalance"><span id="displayCurrencySymbol" style="font-weight:600;"></span><span id="displayBalanceFive">0</span><span id="displayBalanceDecimals" class="text-sm align-top" style="font-size: 15px;">.00</span>
+    </div>    
+  </div>
+
+ <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currency = JSON.parse(localStorage.getItem("preferredCurrency"));
+    const displayEl = document.getElementById("displayCurrencySymbol");
+
+    if (currency && displayEl) {
+      displayEl.textContent = currency.symbol;
+    } else if (displayEl) {
+      displayEl.textContent = ""; // or fallback text like "—"
+    }
+  });
+</script>
+
+  <!-- Deposit promo -->
+  <div class="flex flex-col items-center justify-center mt-8 px-6">
+    <img src="wallet.png" alt="wallet" style="height: 35%; width: 35%;">
+    <p class="text-center text-sm font-medium mb-4">Deposit now and start your crypto journey with CoinNet!</p>
+    <a href="receive.html" class="bg-white text-black font-bold py-2 px-6 rounded-xl flex items-center gap-2">
+      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 14l5-5H5l5 5z"/></svg>        
+      Top-up 
+    </a>    
+  </div>
+
+  <!-- Account Section -->
+  <div class="asset px-4">
+    <div class="flex justify-between text-gray-400 text-sm mb-2">
+      <span class="font-semibold text-white">Account</span>
+      <span>Asset</span>
+    </div>
+
+    <!-- Crypto Balance -->
+    <div class="bg-black border border-white rounded-xl p-4 mb-3 flex justify-between items-center">
+      <div>
+        <div class="text-sm text-white">Crypto</div>
+        <div class="text-xs text-gray-400">
+          <div id="cryptoSpinner" class="flex gap-2 items-center">
+            <div class="spinner"></div><span></span>
+          </div>
+          <div id="cryptoBalance" class="hidden"><span style="font-weight:600; font-size:18px;">0.00000</span></div>
+        </div>
+      </div>
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+ </svg>
+    </div>
+
+   
+   <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+   <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const currencyData = JSON.parse(localStorage.getItem("preferredCurrency"));
+    const targetEl = document.getElementById("userCurrencySymbol");
+
+    if (currencyData && targetEl) {
+      targetEl.textContent = currencyData.symbol;
+    } else if (targetEl) {
+      targetEl.textContent = ""; // fallback if not set
+    }
+  });
+</script>
+    </div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    // Simulate loading
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.getElementById("totalSpinner").style.display = "none";
+        document.getElementById("totalBalance").classList.remove("hidden");
+
+        document.getElementById("cryptoSpinner").style.display = "none";
+        document.getElementById("cryptoBalance").classList.remove("hidden");
+
+        document.getElementById("receivedSpinner").style.display = "none";
+        document.getElementById("receivedBalance").classList.remove("hidden");
+
+        const savedBalance = parseFloat(localStorage.getItem("userBalance")) || 0;
+        document.getElementById("displayBalanceFive").innerText = savedBalance.toFixed(0);
+      }, 1500);
+    });
+
+    // Toggle balance visibility
+    let balancesVisible = true;
+    function toggleBalances() {
+      balancesVisible = !balancesVisible;
+      const items = ["totalBalance", "cryptoBalance", "receivedBalance"];
+      items.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.visibility = balancesVisible ? "visible" : "hidden";
+      });
+
+      const icon = document.getElementById("toggleIcon").querySelector("svg");
+      icon.innerHTML = balancesVisible
+        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7
+             -1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>`
+        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+             d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943
+              -9.542-7a10.038 10.038 0 013.042-4.442m3.977-2.21A9.99 9.99 0
+              0112 5c4.477 0 8.268 2.943 9.542 7a9.961 9.961 0 01-4.062 5.155M15
+              12a3 3 0 11-6 0 3 3 0 016 0z"/>
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+             d="M3 3l18 18"/>`;
+    }
+  </script>
+  <!-- Display User Received Balance -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const userBalanceRaw = parseFloat(localStorage.getItem("userBalance") || "0.00");
+  const currency = JSON.parse(localStorage.getItem("preferredCurrency") || "{}");
+
+  let userCode = "usd";
+  let userSymbol = "$";
+
+  if (currency.code && currency.symbol) {
+    userCode = currency.code.toLowerCase();
+    userSymbol = currency.symbol;
+  }
+
+  let converted = userBalanceRaw;
+
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=${userCode}`);
+    const data = await res.json();
+    const rate = data.tether?.[userCode];
+    if (rate) {
+      converted = userBalanceRaw * rate;
+    }
+  } catch (err) {
+    console.warn("Currency conversion failed, fallback to raw balance.");
+  }
+
+  const formatted = converted.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  const balanceParts = formatted.split(".");
+
+  // Update Total Assets
+  const currencyEl = document.getElementById("displayCurrencySymbol");
+  const balanceEl = document.getElementById("displayBalanceFive");
+  const decimalEl = document.getElementById("displayBalanceDecimals");
+
+  if (currencyEl) currencyEl.textContent = userSymbol;
+  if (balanceEl) balanceEl.textContent = balanceParts[0];
+  if (decimalEl) decimalEl.textContent = "." + (balanceParts[1] || "00");
+
+  // Update Mining Profit
+  const miniSymbol = document.getElementById("userCurrencySymbol");
+  const miniBalance = document.getElementById("userBalance");
+
+  if (miniSymbol) miniSymbol.textContent = userSymbol;
+  if (miniBalance) miniBalance.textContent = formatted;
+});
+</script>
+</body>
+</html>

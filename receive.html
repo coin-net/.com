@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Crypto Viewer</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    .search-box {
+      display: flex;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: #000;
+    }
+
+    .search-box input {
+      width: 90%;
+      padding: 15px;
+      font-size: 16px;
+      border: none;
+      margin-top: 5%;
+      border-radius: 50px;
+      background: #111;
+      color: #fff;
+      outline: none;
+    }
+
+    .coin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 700px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    .coin-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 15px;
+    }
+
+    .coin-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .coin-left img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+    }
+
+    .coin-symbol {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .coin-right {
+      text-align: right;
+    }
+
+    .coin-amount {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .coin-sub {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .crypto-detail {
+      display: none;
+      text-align: center;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    #priceDisplay {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+
+    #changeDisplay {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    #backBtn {
+      margin-top: 20px;
+      background: #222;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+    }
+
+    #coinLogo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+
+    #qrCode {
+      margin: 25px auto 10px;
+      width: 200px;
+      height: 200px;
+      border-radius: 16px;
+    }
+
+    .wallet-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .wallet-address {
+      font-size: 15px;
+      background: #111;
+      padding: 6px 12px;
+      border-radius: 8px;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: none;
+      border: none;
+      color: #fff;
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      padding: 12px 20px;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 15px;
+      display: none;
+      z-index: 1000;
+    }
+
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .bottom-note {
+      border: 1px solid white;
+      color: white;
+      padding: 12px 16px;
+      margin: 30px auto 20px;
+      max-width: 90%;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+      background: #111;
+    }
+    
+  #walletMessageBar {
+    position: fixed;
+    top: -60px; /* initially hidden above viewport */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 5px;
+    transition: top 0.4s ease, opacity 0.4s ease;
+    z-index: 9999;
+    opacity: 0;
+    display: none;
+    font-family: sans-serif;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+    
+    #priceChart {
+  width: 100% !important;
+  max-width: 600px;
+  height: 240px !important;
+  margin: 20px auto 30px;
+  display: block;
+}
+  </style>
+</head>
+<body>
+
+<div id="searchBox" class="search-box">
+  <input type="text" id="searchInput" placeholder="Search crypto...">
+</div>
+
+<div id="coinList" class="coin-list">Loading...</div>
+
+
+
+<div class="crypto-detail" id="cryptoDetail">
+  <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+    <img id="coinLogo" src="" alt="Logo" />
+    <div style="max-width: 85%; word-break: break-word;">
+      <h2 id="coinTitle" style="font-size: 20px; margin: 0; line-height: 1.3;">Crypto Name (SYM)</h2>
+    </div>
+  </div>
+
+  <div id="priceDisplay">$0.00</div>
+  <div id="changeDisplay" class="change-down">▼ 0.00% Today</div>
+  
+     <canvas id="priceChart"></canvas>
+
+  <!-- Action Buttons -->
+  <div style="display: flex; justify-content: center; gap: 55px; margin: 30px 0;">
+    <!-- Exchange -->
+                                          <a href="#" onclick="handleUnavailableAction('exchange')" style="text-decoration: none;">
+      <div style="text-align: center;">
+        <button style="width: 53px; height: 53px; border-radius: 50%; border: 2px solid #fff; background: transparent; color: #fff;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-currency-exchange" viewBox="0 0 16 16">
+  <path d="M0 5a5 5 0 0 0 4.027 4.905 6.5 6.5 0 0 1 .544-2.073C3.695 7.536 3.132 6.864 3 5.91h-.5v-.426h.466V5.05q-.001-.07.004-.135H2.5v-.427h.511C3.236 3.24 4.213 2.5 5.681 2.5c.316 0 .59.031.819.085v.733a3.5 3.5 0 0 0-.815-.082c-.919 0-1.538.466-1.734 1.252h1.917v.427h-1.98q-.004.07-.003.147v.422h1.983v.427H3.93c.118.602.468 1.03 1.005 1.229a6.5 6.5 0 0 1 4.97-3.113A5.002 5.002 0 0 0 0 5m16 5.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0m-7.75 1.322c.069.835.746 1.485 1.964 1.562V14h.54v-.62c1.259-.086 1.996-.74 1.996-1.69 0-.865-.563-1.31-1.57-1.54l-.426-.1V8.374c.54.06.884.347.966.745h.948c-.07-.804-.779-1.433-1.914-1.502V7h-.54v.629c-1.076.103-1.808.732-1.808 1.622 0 .787.544 1.288 1.45 1.493l.358.085v1.78c-.554-.08-.92-.376-1.003-.787zm1.96-1.895c-.532-.12-.82-.364-.82-.732 0-.41.311-.719.824-.809v1.54h-.005zm.622 1.044c.645.145.943.38.943.796 0 .474-.37.8-1.02.86v-1.674z"/>
+</svg>
+        </button>
+        <div style="margin-top: 8px; font-size: 14px;">Exchange</div>
+      </div>
+    </a>
+
+    <!-- Buy -->
+    <a href="#" onclick="openBuyPage()" style="text-decoration: none;">
+      <div style="text-align: center;">
+        <button style="width: 53px; height: 53px; border-radius: 50%; border: 2px solid #fff; background: transparent; color: #fff;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-database-fill-add" viewBox="0 0 16 16">
+  <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0M8 1c-1.573 0-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4s.875 1.755 1.904 2.223C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777C13.125 5.755 14 5.007 14 4s-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1"/>
+  <path d="M2 7v-.839c.457.432 1.004.751 1.49.972C4.722 7.693 6.318 8 8 8s3.278-.307 4.51-.867c.486-.22 1.033-.54 1.49-.972V7c0 .424-.155.802-.411 1.133a4.51 4.51 0 0 0-4.815 1.843A12 12 0 0 1 8 10c-1.573 0-3.022-.289-4.096-.777C2.875 8.755 2 8.007 2 7m6.257 3.998L8 11c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13h.027a4.55 4.55 0 0 1 .23-2.002m-.002 3L8 14c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16c.536 0 1.058-.034 1.555-.097a4.5 4.5 0 0 1-1.3-1.905"/>
+</svg>
+        </button>
+        <div style="margin-top: 8px; font-size: 14px;">Buy</div>
+      </div>
+    </a>
+
+    <!-- Sell -->
+   <a href="#" onclick="handleUnavailableAction('sell')" style="text-decoration: none;">
+      <div style="text-align: center;">
+        <button style="width: 53px; height: 53px; border-radius: 50%; border: 2px solid #fff; background: transparent; color: #fff;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-cash-coin" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8m5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0"/>
+  <path d="M9.438 11.944c.047.596.518 1.06 1.363 1.116v.44h.375v-.443c.875-.061 1.386-.529 1.386-1.207 0-.618-.39-.936-1.09-1.1l-.296-.07v-1.2c.376.043.614.248.671.532h.658c-.047-.575-.54-1.024-1.329-1.073V8.5h-.375v.45c-.747.073-1.255.522-1.255 1.158 0 .562.378.92 1.007 1.066l.248.061v1.272c-.384-.058-.639-.27-.696-.563h-.668zm1.36-1.354c-.369-.085-.569-.26-.569-.522 0-.294.216-.514.572-.578v1.1zm.432.746c.449.104.655.272.655.569 0 .339-.257.571-.709.614v-1.195z"/>
+  <path d="M1 0a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h4.083q.088-.517.258-1H3a2 2 0 0 0-2-2V3a2 2 0 0 0 2-2h10a2 2 0 0 0 2 2v3.528c.38.34.717.728 1 1.154V1a1 1 0 0 0-1-1z"/>
+  <path d="M9.998 5.083 10 5a2 2 0 1 0-3.132 1.65 6 6 0 0 1 3.13-1.567"/>
+</svg>
+        </button>
+        <div style="margin-top: 8px; font-size: 14px;">Sell</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- QR Code -->
+  <img id="qrCode" src="" alt="Not available to new users" />
+
+  <!-- Wallet Address -->
+  <div class="wallet-container">
+    <div id="walletAddress" class="wallet-address">Wallet Address</div>
+    <button class="copy-btn" onclick="copyWalletAddress()" title="Copy">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
+</svg>
+    </button>
+  </div>
+
+  <button id="backBtn">Back to List</button>
+  
+  
+ <div id="bottomNote" class="bottom-note">
+  Note: Please only send Bitcoin to this wallet address, any other would be lost.
+</div>
+</div>
+
+<div id="copyPopup" class="popup">Address copied!</div>
+
+<!-- Popups -->
+<div id="copyPopup" class="popup">Address copied!</div>
+<div id="walletMessageBar"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+ let allCoins = [];
+let chart;
+let userSymbol = "$";
+let userCode = "USD";
+let selectedCoin = null;
+
+const walletAddresses = {
+  BTC: "bc1qjlh6mm2alhzc48apjfdj0qjarq8x5n6m7s47hs",
+  ETH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  XRP: "rnaxa44rE1wQGLHLB2mJNqe1NHPbgMLXbp",
+  USDT: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  BNB: "bnb169uy2xq0h9ch00yhczrlepuenvmuxp8v9ggfq0",
+  SOL: "6UFAHvBuYpU6NtLSdKxvNbetmrHtLbrdoiaArWZeBNTx",
+  USDC: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  DOGE: "DTZy69PKrUh7u8cRGAQMQXiSsXnn3BdwJs",
+  ADA: "addr1qym784ave9ykp46kjn2aqj92s9ylfudhtrsevlrdewu2raczc2d5zvmxd9ayedpuatx5sca7asj5vrnkr0lm97lhvshsrx9hte",
+  TRX: "TLpEsEQseiUGfX1mgo8ZvaNP34jCHGGJo4",
+  WBTC: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  WSTETH: "terra13vurxllveu0flfpv3xtn9r75rm3ggs2s53ta4m",
+  SUI: "0x7a432dd6d84dd1af16b7b73a55e4cab75862041fab6bde8b3574eb91e6bf20f4",
+  LINK: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De", 
+  WBETH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  WEETH: "6UFAHvBuYpU6NtLSdKxvNbetmrHtLbrdoiaArWZeBNTx",
+  WETH: "0x386cefef57a58144fcc54b8cd2b3bef36b080b7ae5f15d6034bba130c307a637",
+  CBBTC: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  PI: "6UFAHvBuYpU6NtLSdKxvNbetmrHtLbrdoiaArWZeBNTx",
+  RSETH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  RETH: "6UFAHvBuYpU6NtLSdKxvNbetmrHtLbrdoiaArWZeBNTx",
+  LBTC: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  OSETH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  LSETH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+  METH: "0xfbA4dB0870e5CCcFc90199614c34d4f4807360De",
+};
+
+const saved = JSON.parse(localStorage.getItem("preferredCurrency") || "{}");
+if (saved.code && saved.symbol) {
+  userCode = saved.code.toUpperCase();
+  userSymbol = saved.symbol;
+}
+
+async function loadCoins() {
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${userCode}&order=market_cap_desc&per_page=100&page=1`);
+    const coins = await res.json();
+    allCoins = coins.filter(c => c.current_price >= 100);
+    renderCoins(allCoins);
+  } catch (err) {
+    document.getElementById("coinList").innerHTML = `<a href="setting.html" style="color:red; cursor: none;">Unsupported currency – click to change</a>`;
+  }
+}
+
+function renderCoins(coins) {
+  const container = document.getElementById("coinList");
+  container.innerHTML = "";
+  coins.forEach(coin => {
+    const item = document.createElement("div");
+    item.className = "coin-item";
+    item.innerHTML = `
+      <div class="coin-left">
+        <img src="${coin.image}" />
+        <div>
+          <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+          <div class="coin-sub">${userSymbol}${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+        </div>
+      </div>
+      <div class="coin-right">
+        <div class="coin-amount">${userSymbol}0.00</div>
+        <div class="coin-sub">${userSymbol}0.00</div>
+      </div>`;
+    item.onclick = () => loadCryptoDetail(coin);
+    container.appendChild(item);
+  });
+}
+
+async function loadCryptoDetail(coin) {
+  selectedCoin = coin;
+  document.getElementById("coinList").style.display = "none";
+  document.getElementById("searchBox").style.display = "none";
+  document.getElementById("cryptoDetail").style.display = "block";
+
+  const symbol = coin.symbol.toUpperCase();
+  document.getElementById("coinTitle").textContent = `${coin.name} (${symbol})`;
+  document.getElementById("coinLogo").src = coin.image;
+  document.getElementById("priceDisplay").textContent = `${userSymbol}${coin.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  document.getElementById("qrCode").src = `${symbol.toLowerCase()}.jpg`;
+  document.getElementById("walletAddress").textContent = walletAddresses[symbol] || "Unavailable";
+  document.getElementById("bottomNote").textContent = `Note: Please only send ${coin.name} to this wallet address, any other would be lost.`;
+
+  const change = coin.price_change_percentage_24h;
+  const changeElem = document.getElementById("changeDisplay");
+  changeElem.textContent = `${change >= 0 ? "▲" : "▼"} ${Math.abs(change).toFixed(2)}% Today`;
+  changeElem.className = change >= 0 ? "change-up" : "change-down";
+
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/coins/${coin.id}/market_chart?vs_currency=${userCode}&days=1`);
+    const data = await res.json();
+    const prices = data.prices.map(p => p[1]);
+    const labels = data.prices.map(p => new Date(p[0]).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+
+    if (chart) chart.destroy();
+
+    requestAnimationFrame(() => {
+      const ctx = document.getElementById("priceChart").getContext("2d");
+      chart = new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            data: prices,
+            borderColor: "#fff",
+            pointRadius: 0,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { display: false },
+            y: { display: false }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+
+      // Resize after render to ensure visibility
+      setTimeout(() => chart.resize(), 50);
+    });
+
+  } catch (err) {
+    console.error("Chart error:", err);
+  }
+}
+
+function openBuyPage() {
+  if (!selectedCoin) return;
+  const name = selectedCoin.name;
+  const symbol = selectedCoin.symbol.toUpperCase();
+  const logo = selectedCoin.image.split("/").pop();
+  const price = selectedCoin.current_price;
+  const url = `buy-details.html?name=${name}&symbol=${symbol}&logo=${logo}&price=${price}`;
+  window.location.href = url;
+}
+
+function copyWalletAddress() {
+  navigator.clipboard.writeText(document.getElementById("walletAddress").textContent).then(() => {
+    const popup = document.getElementById("copyPopup");
+    popup.style.display = "block";
+    setTimeout(() => popup.style.display = "none", 2000);
+  });
+}
+
+function handleUnavailableAction(action) {
+  if (!selectedCoin) return;
+
+  const bar = document.getElementById("walletMessageBar");
+  bar.textContent = `Please credit your wallet with ${selectedCoin.name} to enable ${action}`;
+  bar.style.display = "block";
+
+  // Force a reflow before animating
+  void bar.offsetHeight;
+
+  // Slide in
+  bar.style.top = "20px";
+  bar.style.opacity = "1";
+
+  // Slide out after 3s
+  setTimeout(() => {
+    bar.style.top = "-60px";
+    bar.style.opacity = "0";
+
+    setTimeout(() => {
+      bar.style.display = "none";
+    }, 400); // Wait for transition to complete
+  }, 3000);
+}
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  const val = e.target.value.toLowerCase();
+  const filtered = allCoins.filter(c => c.name.toLowerCase().includes(val) || c.symbol.toLowerCase().includes(val));
+  renderCoins(filtered);
+});
+
+document.getElementById("backBtn").onclick = () => {
+  document.getElementById("cryptoDetail").style.display = "none";
+  document.getElementById("coinList").style.display = "flex";
+  document.getElementById("searchBox").style.display = "flex";
+};
+
+loadCoins();
+</script>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+</body>
+</html>
