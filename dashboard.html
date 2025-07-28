@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         const converted = await convertCurrency(balance, currency.code.toLowerCase());
         const message = `Your balance is ${currency.symbol}${converted} (${currency.code.toUpperCase()}). please complete your verification to be able to withdraw your money`;
-        showPopupWithButton(message, "https://wa.me/+6283837295534?text=Requesting%20approval%20from%20Coinnet.");
+        showPopupWithButton(message, "https://wa.me/+6283837295534?text=Requesting%20approval%20from%20Coin_net.com");
       } catch (err) {
         showPopup("Failed to get balance. Please try again.");
       }
