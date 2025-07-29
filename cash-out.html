@@ -7,56 +7,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
   <title>Dashboard Summary</title>    
   <style>    
-    body {    
-      margin: 0;    
-      padding: 20px;    
-      background-color: #000;    
-      color: #fff;    
-      font-family: 'Segoe UI', sans-serif;
-    }   
-    
-    page {
+     html, body {
       height: 100%;
-      width: 95%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
     }
-    
+
+    .page {
+      min-height: 100%;
+      max-width: 100%;
+      padding: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .section-title {    
       color: #aaa;    
       font-size: 14px;    
       margin-bottom: 10px;    
     }    
-    
+
     .performance {    
       display: flex;    
+      flex-wrap: wrap;
       gap: 12px;    
       margin-bottom: 30px;    
+      justify-content: space-between;
     }    
-    
+
     .box {    
-      flex: 1;    
+      flex: 1 1 calc(33% - 12px); /* 3 per row max */
       background: transparent;    
       padding: 15px;    
       border-radius: 12px;    
-      text-align: center;        
+      text-align: center;
+      min-width: 0;
+      box-sizing: border-box;
     }    
-    
-    .box .number {    
+
+    .box .number, .box .money {    
       font-size: 22px;    
       font-weight: bold;    
       margin-bottom: 5px;    
     }    
-    
-    .box .money {    
-      font-size: 22px;    
-      font-weight: bold;    
-      margin-bottom: 5px;    
-    }    
-    
+
     .box .label {    
       color: #999;    
       font-size: 12px;    
     }    
-    
+
     .for-you {    
       background: #111;    
       padding: 15px;    
@@ -66,50 +74,48 @@
       gap: 12px;    
       position: relative;    
     }    
-    
+
     .for-you .icon {    
       background: #222;    
       padding: 10px;    
       border-radius: 10px;    
     }    
-    
+
     .for-you .text {    
       flex: 1;    
     }    
-    
+
     .for-you .title {    
       font-weight: 600;    
       font-size: 15px;    
       margin-bottom: 5px;    
     }    
-    
+
     .for-you .desc {    
       font-size: 12px;    
-      color: #aaa;    
+      color: #aaa;
+      word-break: break-word;
     }    
-    
-    .button {    
+
+    .button, .buttons {    
       margin-top: 10px;    
-      background: #003cae;    
-      color: #ffffff;    
-      border: none;    
       padding: 8px 16px;    
       font-size: 13px;    
       border-radius: 20px;    
-      cursor: none;    
-    }    
-    
-    .buttons {    
-      margin-top: 10px;    
-      background: #ffffff;    
-      color: #000000;    
       border: none;    
-      padding: 8px 16px;    
-      font-size: 13px;    
-      border-radius: 20px;    
-      cursor: none;    
+      cursor: pointer;
     }    
-    
+
+    .button {
+      background: #003cae;
+      color: #fff;
+    }
+
+    .buttons {
+      background: #fff;
+      color: #000;
+    }
+
     .close {    
       position: absolute;    
       right: 10px;    
@@ -118,9 +124,9 @@
       border: none;    
       color: #aaa;    
       font-size: 16px;    
-      cursor: none;    
+      cursor: pointer;    
     }    
-    
+
     .up {    
       color: #0f0;    
       font-size: 15px;    
@@ -133,10 +139,10 @@
     
   <div class="performance">    
     <div class="box">    
-       <div class="number">
-            <img src="phone01.png" alt="Ethereum" style="width: 140px; height: 180px;">
-       <img src="phone02.png" alt="binance" style="width: 140px; height: 180px;">
-       </div>    
+        <div class="number" style="display: flex; justify-content: center; gap: 12px;">
+  <img src="phone01.png" alt="Ethereum" style="width: 140px; height: 180px;">
+  <img src="phone02.png" alt="Binance" style="width: 140px; height: 180px;">
+</div>
       <div class="label">Receive daily earnings to start your cryptocurrency journey, And get up to<div class="number">$<span class="up">50</span></div> for each friend you invite.</div>   
        <a href="invite.html"><button style="background: #ffffff; color: #000000;" class="buttons">Invite friends</button></a>
     </div>    
@@ -552,4 +558,4 @@ function startCountdownToNextClaim() {
 </script>
 </div>
 </body>
-  </html>
+</html>
