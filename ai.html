@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatGPT Interactive UI Clone</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+  }
+
+  body {
+    background-color: #000000;
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top bar */
+  .top-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background: transparent;
+  }
+
+  .menu-btn, .circle-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: #111;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    cursor: none;
+  }
+
+  .upgrade-btn {
+    background-color: #2E205C;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: none;
+  }
+
+  /* Chat container */
+  .chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .message {
+    max-width: 80%;
+    padding: 0.8rem 1rem;
+    border-radius: 20px;
+    line-height: 1.4;
+  }
+
+  .user {
+    background-color: #2a2a2a;
+    align-self: flex-end;
+  }
+
+  .bot {
+    background-color: #1a1a1a;
+    align-self: flex-start;
+  }
+
+  /* Center content */
+  .center-content {
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  .center-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .action-buttons button {
+    background-color: #111;
+    border: 1px solid #222;
+    color: white;
+    border-radius: 30px;
+    padding: 0.9rem 1.4rem;
+    font-size: 1rem;
+    cursor: none;
+    transition: background 0.3s;
+  }
+
+  .action-buttons button:hover {
+    background-color: #1a1a1a;
+  }
+
+  /* Bottom chat bar */
+  .bottom-bar {
+    width: 95%;
+    background-color: #111;
+    border-radius: 30px;
+    margin: 1rem auto;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+
+  .bottom-bar input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 1rem;
+    padding-left: 0.5rem;
+  }
+
+  .bottom-left, .bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .plus-btn, .voice-btn {
+    background-color: #2A2A2A;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .voice-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .notice-bar {
+  width: 95%;
+  margin: 0 auto -0.5rem auto;
+  background-color: #1a1a1a;
+  color: #ffcc00;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-radius: 20px;
+  border: 1px solid #333;
+  line-height: 1.4;
+}
+</style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button class="menu-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-anthropic" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M9.218 2h2.402L16 12.987h-2.402zM4.379 2h2.512l4.38 10.987H8.82l-.895-2.308h-4.58l-.896 2.307H0L4.38 2.001zm2.755 6.64L5.635 4.777 4.137 8.64z"/>
+      </svg>
+    </button>
+    <button class="upgrade-btn">Coinnet.com</button>
+    <button class="circle-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Chat container -->
+  <div class="chat-container" id="chatContainer">
+    <div class="center-content" id="welcome">
+      <h1>What can I help with?</h1>
+      <h8>How can one invest with CoinNet?</h8>
+      <h8>About CoinNet?</h8>
+      <h8>Top investment platform to invest?</h8>     
+      <h8>What is portfolio in coinnet?</h8>
+    </div>
+  </div>
+
+<!-- Important notice -->
+  <div class="notice-bar">
+    <!-- Outline warning triangle (24x24) -->
+   <strong>Important:</strong> Use keywords like ‘Coinnet.com’ or ‘Coinnet’ when requesting app details for accuracy.
+  </div>
+
+  <!-- Bottom chat bar -->
+  <div class="bottom-bar">
+    <div class="bottom-left">
+      <button class="plus-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-anthropic" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M9.218 2h2.402L16 12.987h-2.402zM4.379 2h2.512l4.38 10.987H8.82l-.895-2.308h-4.58l-.896 2.307H0L4.38 2.001zm2.755 6.64L5.635 4.777 4.137 8.64z"/>
+        </svg>
+      </button>
+    </div>
+    <input type="text" id="userInput" placeholder="Ask ChatGPT">
+    <div class="bottom-right">
+      <button class="voice-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" class="bi bi-send-check-fill" viewBox="0 0 16 16">
+          <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 1.59 2.498C8 14 8 13 8 12.5a4.5 4.5 0 0 1 5.026-4.47zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+          <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-1.993-1.679a.5.5 0 0 0-.686.172l-1.17 1.95-.547-.547a.5.5 0 0 0-.708.708l.774.773a.75.75 0 0 0 1.174-.144l1.335-2.226a.5.5 0 0 0-.172-.686"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_KEY = "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"; // Replace with your key
+const chatContainer = document.getElementById("chatContainer");
+const input = document.getElementById("userInput");
+
+// --- Custom predefined topics ---
+const topics = [
+  {
+    question: "How can one invest with CoinNet?",
+    answer: "(1) Visit the Official Website: Navigate to the CoinNet official site to download the mobile application. Ensure that you are using the correct and verified web address https://www-coin-web.github.io/.com (2) Create Your Account: Install the app and complete the registration process to set up your secure user dashboard. (3) Access Your Account Settings: Once logged in, tap on your profile icon to open your account settings. (4) Purchase Shares: Select the “Buy Shares” option. Browse the list of available companies and choose the one you would like to invest in. (5) Complete Your Payment: Follow the on-screen instructions to make your payment and confirm your investment."
+  },
+  {
+    question: "About CoinNet?",
+    answer: "Coin Net Inc. is a U.S. based investment platform that offers digital access to equity shares in major global corporations. By combining innovative financial tools with real-time profit distribution, Coin Net empowers users to build wealth securely and transparently."
+  },
+  {
+    question: "Is CoinNet legit?",
+    answer: "Yes! Coin Net Inc is a United States based digital investment and asset management company, today announced the continued growth of its global investment platform designed to make wealth creation accessible to everyone. Through its secure and user-friendly online system, Coin Net enables individuals and institutional investors to purchase shares in leading global corporations such as Amazon, Apple, and Tesla, while earning profits every hour based on the performance and value of their investments."
+  },
+    {
+    question: "What is portfolio in coinnet?",
+    answer: "A portfolio represents a small introductory balance provided by CoinNet to allow new users to become familiar with the platform and observe how the investment process operates. The purpose of this introductory balance is to help users build confidence and gain a practical understanding of the mobile application before making additional financial commitments. This portfolio balance becomes eligible for withdrawal only after the user has completed at least one verified investment transaction within the CoinNet platform. Upon initiating a withdrawal following such a transaction, 10% of the remaining portfolio balance will be transferred to the user’s registered local bank account. This policy is intended to ensure that portfolio distributions are made only to active platform participants rather than to individuals who have not engaged in any investment activity."
+  },
+  {
+    question: "Top investment platform to invest",
+    answer: "(1) Tesla (TSLA): Tesla is a publicly traded company known for its innovations in electric vehicles and clean energy. Investment returns depend on market performance and are subject to change based on stock market conditions. (2) CoinNet: CoinNet is a digital investment platform used by various online investors. As with all online investment services, individuals should verify licensing, platform security, and terms of use before investing. (3) Coinbase: Coinbase is a widely recognized cryptocurrency exchange that allows users to buy, sell, and store digital assets. While it is a regulated platform, cryptocurrency investments are highly volatile and carry significant risk. (4) Amazon (AMZN): Amazon is a major global e-commerce and technology company. As with any publicly traded stock, returns depend on market conditions and company performance. Some users may experience delays or variations in expected payouts depending on their investment type and provider."
+  },
+];
+
+// --- Helper: Add messages to chat ---
+function addMessage(text, sender) {
+  const msg = document.createElement("div");
+  msg.classList.add("message", sender);
+  msg.textContent = text;
+
+  // Enable editing only for user messages
+  if (sender === "user") {
+    msg.addEventListener("click", () => showEditOption(msg));
+  }
+
+  chatContainer.appendChild(msg);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  return msg;
+}
+
+// --- Show edit option on click ---
+function showEditOption(msgElement) {
+  // Avoid multiple edit buttons
+  if (msgElement.querySelector(".edit-btn")) return;
+
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.className = "edit-btn";
+  editBtn.style.margin = "5px";
+  editBtn.style.background = "#222";
+  editBtn.style.border = "none";
+  editBtn.style.color = "#fff";
+  editBtn.style.borderRadius = "10px";
+  editBtn.style.padding = "4px 8px";
+  editBtn.style.cursor = "pointer";
+  editBtn.style.fontSize = "0.8rem";
+
+  msgElement.appendChild(editBtn);
+
+  editBtn.addEventListener("click", () => {
+    input.value = msgElement.textContent.replace("Edit", "").trim(); // Put message back into input
+    msgElement.remove(); // Remove the old message
+  });
+}
+
+// --- AI semantic comparison using embeddings ---
+async function getSemanticSimilarity(userText, topicText) {
+  const res = await fetch("https://openrouter.ai/api/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "text-embedding-3-small",
+      input: [userText, topicText]
+    })
+  });
+
+  const data = await res.json();
+  const [userVec, topicVec] = data.data.map(d => d.embedding);
+
+  // Compute cosine similarity
+  const dot = userVec.reduce((sum, v, i) => sum + v * topicVec[i], 0);
+  const normUser = Math.sqrt(userVec.reduce((sum, v) => sum + v*v, 0));
+  const normTopic = Math.sqrt(topicVec.reduce((sum, v) => sum + v*v, 0));
+  return dot / (normUser * normTopic);
+}
+
+async function findClosestTopic(userText) {
+  let bestScore = 0;
+  let bestTopic = null;
+
+  for (const topic of topics) {
+    const score = await getSemanticSimilarity(userText, topic.question);
+    if (score > bestScore) {
+      bestScore = score;
+      bestTopic = topic;
+    }
+  }
+
+  return bestScore >= 0.82 ? bestTopic : null;
+}
+
+async function sendMessage(text) {
+  if (!text.trim()) return;
+  document.getElementById("welcome").style.display = "none";
+  const userMsg = addMessage(text, "user");
+  input.value = "";
+
+  const match = await findClosestTopic(text);
+  if (match) {
+    addMessage(match.answer, "bot");
+    return;
+  }
+
+  const thinking = addMessage("Typing...", "bot");
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.1-8b-instruct",
+        messages: [{ role: "user", content: text }]
+      })
+    });
+    const data = await response.json();
+    thinking.textContent = data.choices[0].message.content.trim();
+  } catch (err) {
+    thinking.textContent = "Network Error — Try again";
+  }
+}
+
+// --- Event listeners ---
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") sendMessage(input.value);
+});
+document.querySelector(".voice-btn").addEventListener("click", () => sendMessage(input.value));
+</script>
+</body>
+</html>

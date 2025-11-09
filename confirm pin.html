@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>enter PIN</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000000;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100%;
+      padding-top: 60px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #aaa;
+      text-align: center;
+      font-size: 14px;
+      max-width: 300px;
+      margin-bottom: 40px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 50px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #333;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .key {
+      width: 80px;
+      height: 80px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .key:active {
+      background-color: #222;
+    }
+
+    /* Slide-up popup notification */
+    .bottom-popup {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #b00020;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 14px;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: bottom 0.35s ease;
+      z-index: 999;
+    }
+
+    .bottom-popup.show {
+      bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Enter PIN</h1>
+  <p>Please enter your 4-digit access PIN</p>
+
+  <div class="dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="keypad">
+    <button class="key">1</button>
+    <button class="key">2</button>
+    <button class="key">3</button>
+    <button class="key">4</button>
+    <button class="key">5</button>
+    <button class="key">6</button>
+    <button class="key">7</button>
+    <button class="key">8</button>
+    <button class="key">9</button>
+    <button class="key cancel">C</button>
+    <button class="key">0</button>
+    <div></div>
+  </div>
+
+  <!-- Bottom Popup -->
+  <div id="bottomPopup" class="bottom-popup">Incorrect PIN. Try again.</div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+  <script>
+    const keys = document.querySelectorAll('.key');
+    const dots = document.querySelectorAll('.dot');
+    const popup = document.getElementById('bottomPopup');
+    let pin = '';
+
+    function updateDots() {
+      dots.forEach((dot, index) => {
+        dot.style.backgroundColor = index < pin.length ? '#fff' : '#333';
+      });
+    }
+
+    function resetPin() {
+      pin = '';
+      updateDots();
+    }
+
+    function showPopup(message) {
+      popup.textContent = message;
+      popup.classList.add('show');
+
+      setTimeout(() => {
+        popup.classList.remove('show');
+      }, 3000);
+    }
+
+    keys.forEach(key => {
+      key.addEventListener('click', () => {
+        const value = key.textContent;
+
+        if (key.classList.contains('cancel')) {
+          pin = pin.slice(0, -1);
+          updateDots();
+          return;
+        }
+
+        if (pin.length < 4 && /^\d$/.test(value)) {
+          pin += value;
+          updateDots();
+        }
+
+        if (pin.length === 4) {
+          const storedPin = localStorage.getItem("userPIN");
+
+          if (pin === storedPin) {
+            localStorage.setItem("signed-in", "true");
+            setTimeout(() => {
+              window.location.href = "new password.html"; // Change this if needed
+            }, 300);
+          } else {
+            showPopup("Incorrect PIN. Try again.");
+            resetPin();
+          }
+        }
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', resetPin);
+  </script>
+
+  <script src="disable-zoom.js"></script>
+</body>
+</html>

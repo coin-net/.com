@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Create a PIN</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000000;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100%;
+      padding-top: 60px;
+    }
+
+    .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #aaa;
+      text-align: center;
+      font-size: 14px;
+      max-width: 300px;
+      margin-bottom: 40px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 50px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #333;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 80px);
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .key {
+      width: 80px;
+      height: 80px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+
+    .key:active {
+      background-color: #222;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Create a PIN</h1>
+  <p>This is for app access and ensuring the safety of your assets</p>
+
+  <div class="dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="keypad">
+  <button class="key">1</button>
+  <button class="key">2</button>
+  <button class="key">3</button>
+  <button class="key">4</button>
+  <button class="key">5</button>
+  <button class="key">6</button>
+  <button class="key">7</button>
+  <button class="key">8</button>
+  <button class="key">9</button>
+  <button class="key cancel">C</button> <!-- Cancel button -->
+  <button class="key">0</button>
+  <div></div>
+</div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+<script>
+  const keys = document.querySelectorAll('.key');
+  const dots = document.querySelectorAll('.dot');
+  let pin = '';
+
+  function updateDots() {
+    dots.forEach((dot, index) => {
+      dot.style.backgroundColor = index < pin.length ? '#fff' : '#333';
+    });
+  }
+
+  keys.forEach(key => {
+    key.addEventListener('click', () => {
+      const value = key.textContent;
+
+      if (key.classList.contains('cancel')) {
+        // Cancel button logic - delete last digit
+        pin = pin.slice(0, -1);
+        updateDots();
+        return;
+      }
+
+      if (pin.length < 4 && /^\d$/.test(value)) {
+        pin += value;
+        updateDots();
+      }
+
+      if (pin.length === 4) {
+        // Save PIN to localStorage
+        localStorage.setItem("userPIN", pin);
+
+        // Mark user as signed in
+        localStorage.setItem("signed-in", "true");
+
+        // Redirect to next page
+        setTimeout(() => {
+          window.location.href = 'set profile.html'; // Change to your next page
+        }, 300);
+      }
+    });
+  });
+</script>
+<script src="disable-zoom.js"></script>
+</body>
+</html>

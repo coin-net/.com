@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #000000;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .top-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid white;
+    }
+
+    .top-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .greeting-text {
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .card-container {
+      max-width: 400px;
+      margin: 0 auto 30px;
+    }
+
+    .debit-card {
+      background: #000000;
+      border-radius: 20px;
+      padding: 15px;
+      color: #fff;
+      position: relative;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
+    }
+
+    .card-balance {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .amount-large {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .amount-small {
+      font-size: 16px;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+
+    .toggle-icon {
+      width: 20px;
+      height: 20px;
+      cursor: none;
+      filter: invert(100%);
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .label {
+      color: #aaa;
+      font-size: 12px;
+      margin-bottom: 2px;
+    }
+
+    .bottom-logo {
+      width: 100%;
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .bottom-logo img {
+      width: 180px;
+      height: 150px;
+    }
+
+    .mining-section {
+      max-width: 400px;
+      margin: 40px auto;
+    }
+
+    .tab-content p {
+      color: #ccc;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+  .spinner {
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+  </style>
+</head>
+<body>
+ 
+  <!-- Top Section: Avatar and Greeting -->
+  <a href="setting.html" style="cursor: none;">
+    <div class="top-header">
+      <div class="top-avatar">
+        <img id="userAvatarDisplay" src="profile.png" alt="User Avatar" />
+      </div>
+  </a>
+      <div class="greeting-text">
+        <div id="greetingLine1">Good day</div>
+        <div id="greetingLine2">User</div>
+      </div>
+    </div>
+
+<!-- Debit Card Section -->
+<div class="card-container">
+  <div class="debit-card">
+
+<style>
+  /* Overlay */
+  .balance-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 99999;
+  }
+  .balance-overlay.active { opacity: 1; pointer-events: auto; }
+
+  /* Popup container */
+  .balance-popup {
+    background: #000;
+    width: 100%;
+    max-width: 420px;
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    padding: 18px 16px 25px;
+    transform: translateY(100%);
+    transition: transform 0.4s ease;
+    color: #fff;
+  }
+  .balance-overlay.active .balance-popup { transform: translateY(0); }
+
+  /* Handle bar */
+  .handle-bar {
+    width: 45px;
+    height: 4px;
+    background: #333;
+    border-radius: 3px;
+    margin: 0 auto 12px;
+  }
+
+  /* Available Balance */
+  .available-header {
+    background: #fff;
+    color: #000;
+    border-radius: 15px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+  .available-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .available-header h4 i {
+    font-size: 25px;
+    cursor: none;
+    transition: 0.3s;
+  }
+  .available-header h2 {
+    font-size: 23px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  /* Dual Balance Section */
+  .balance-dual {
+    background: #111;
+    border-radius: 15px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .balance-box {
+    flex: 1;
+    text-align: center;
+    color: #ccc;
+  }
+  .balance-box h5 {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .balance-box p {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+</style>
+
+<!-- Popup -->
+<div id="balanceOverlay" class="balance-overlay">
+  <div class="balance-popup">
+    <div class="handle-bar"></div>
+
+    <!-- STEP 1: Available Balance -->
+    <div id="balanceHome">
+      <div class="available-header">
+        <h4>
+          Available Balance
+          <i class="bi bi-eye" id="toggleVisibility"></i>
+        </h4>
+        <h2 id="availableBalance">₦0.00</h2>
+      </div>
+
+      <div class="balance-dual">
+        <div class="balance-box">
+          <h5>Main Balance</h5>
+          <p id="mainBalanceValue">₦0.00</p>
+        </div>
+        <div class="balance-box">
+          <h5>Portfolio Balance</h5>
+          <p id="portfolioBalanceValue">₦0.00</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("balanceOverlay");
+  const availableBalance = document.getElementById("availableBalance");
+  const mainBalanceValue = document.getElementById("mainBalanceValue");
+  const portfolioBalanceValue = document.getElementById("portfolioBalanceValue");
+  const toggleVisibility = document.getElementById("toggleVisibility");
+
+  let visible = true;
+
+  // --- Give user $500 reward if not already paid ---
+  if (!localStorage.getItem("paid")) {
+    localStorage.setItem("portfolioBalance", "500.00");
+    localStorage.setItem("paid", "true");
+    console.log("$500 portfolio reward granted.");
+  }
+
+  // Retrieve stored currency and balance
+  const currency = JSON.parse(localStorage.getItem("preferredCurrency")) || { symbol: "$", code: "usd" };
+  const userBalance = parseFloat(localStorage.getItem("userBalance") || "0.00");
+  const portfolioBalance = parseFloat(localStorage.getItem("portfolioBalance") || "0.00");
+
+  // --- Format number with commas ---
+  function formatNumber(num) {
+    return parseFloat(num)
+      .toFixed(2)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  // --- Currency conversion using CoinGecko ---
+  async function convertCurrency(amountUSD, toCurrencyCode) {
+    try {
+      const res = await fetch("https://api.coingecko.com/api/v3/exchange_rates");
+      const data = await res.json();
+
+      const rate = data.rates[toCurrencyCode.toLowerCase()];
+      if (!rate) return amountUSD;
+
+      const usdToBtc = 1 / data.rates["usd"].value;
+      const usdInBtc = amountUSD * usdToBtc;
+      const finalAmount = usdInBtc * rate.value;
+
+      return finalAmount;
+    } catch (err) {
+      console.error("Conversion failed:", err);
+      return amountUSD;
+    }
+  }
+
+  // --- Update all balance displays ---
+  async function updateBalances() {
+    const mainConverted = await convertCurrency(userBalance, currency.code);
+    const portfolioConverted = await convertCurrency(portfolioBalance, currency.code);
+    const total = mainConverted + portfolioConverted;
+
+    availableBalance.textContent = `${currency.symbol}${formatNumber(total)}`;
+    mainBalanceValue.textContent = `${currency.symbol}${formatNumber(mainConverted)}`;
+    portfolioBalanceValue.textContent = `${currency.symbol}${formatNumber(portfolioConverted)}`;
+  }
+
+  // Initial update
+  updateBalances();
+
+  // --- Toggle visibility (hide/show balances) ---
+  toggleVisibility.addEventListener("click", () => {
+    visible = !visible;
+    if (visible) {
+      toggleVisibility.classList.replace("bi-eye-slash", "bi-eye");
+      updateBalances();
+    } else {
+      toggleVisibility.classList.replace("bi-eye", "bi-eye-slash");
+      availableBalance.textContent = "****";
+      mainBalanceValue.textContent = "****";
+      portfolioBalanceValue.textContent = "****";
+    }
+  });
+
+  // --- Popup open/close ---
+  document.getElementById("userBalance").addEventListener("click", async () => {
+    await updateBalances();
+    overlay.classList.add("active");
+  });
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.classList.remove("active");
+  });
+});
+</script>
+
+    <!-- User Balance -->
+    <div class="card-balance chip">
+      <div id="balanceLoader" class="spinner"></div> <!-- Spinner shown initially -->
+      <span id="userBalance" style="display: none;">
+        <span class="amount-large">****</span>
+        <span class="amount-small"></span>
+      </span>
+      <img id="toggleBalance" class="toggle-icon" src="https://img.icons8.com/ios-filled/50/visible.png" alt="Toggle Balance" title="Show/Hide Balance"/>
+    </div>
+
+    <!-- User Details -->
+    <div class="card-footer">
+      <div>
+        <div class="label">Account Holder</div>
+        <div id="nameLoader" class="spinner"></div> <!-- Spinner shown initially -->
+        <div id="user_name_display" style="display: none;">Unknown</div> <!-- Actual content shown later -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Simulate loading delay
+    setTimeout(() => {
+      // Hide spinners
+      const balanceLoader = document.getElementById("balanceLoader");
+      const nameLoader = document.getElementById("nameLoader");
+      if (balanceLoader) balanceLoader.style.display = "none";
+      if (nameLoader) nameLoader.style.display = "none";
+
+      // Show actual content
+      const userBalance = document.getElementById("userBalance");
+      const userNameDisplay = document.getElementById("user_name_display");
+      if (userBalance) userBalance.style.display = "inline-block";
+      if (userNameDisplay) userNameDisplay.style.display = "block";
+    }, 2000); // Delay for 2 seconds
+  });
+</script>
+
+<div style="position: relative; display: flex; align-items: center; gap: 0px; margin-top: 20%; flex-direction: column; justify-content: center;">
+
+  <!-- Center Icon Circle -->
+  <a href="#" id="withdrawBtn">
+    <div style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff; background: #000; display: flex; justify-content: center; align-items: center; color: #fff; cursor: none; box-shadow: 0 0 35px rgba(255, 255, 255, 0.35);">
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-send-check-fill" viewBox="0 0 16 16">
+        <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 1.59 2.498C8 14 8 13 8 12.5a4.5 4.5 0 0 1 5.026-4.47zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+        <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0m-1.993-1.679a.5.5 0 0 0-.686.172l-1.17 1.95-.547-.547a.5.5 0 0 0-.708.708l.774.773a.75.75 0 0 0 1.174-.144l1.335-2.226a.5.5 0 0 0-.172-.686"/>
+      </svg>
+    </div>
+  </a>
+
+  <!-- Text directly under circle -->
+  <div style="color: #fff; font-size: 14px; margin-top: 4px; text-align: center; cursor: default;">
+    Withdraw 
+  </div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const withdrawBtn = document.getElementById("withdrawBtn");
+
+  withdrawBtn.addEventListener("click", async (e) => {
+    e.preventDefault(); // stop default link behavior
+
+    const balance = parseFloat(localStorage.getItem("userBalance") || "0.00");
+    const currency = JSON.parse(localStorage.getItem("preferredCurrency")) || { symbol: "$", code: "usd" };
+
+    if (balance > 0) {
+      try {
+        const converted = await convertCurrency(balance, currency.code.toLowerCase());
+        const message = `Your balance is ${currency.symbol}${converted} (${currency.code.toUpperCase()}). Withdrawals are locked until you purchase a share with your own money.`;
+        showPopupWithButton(message);
+      } catch (err) {
+        showPopup("Failed to get balance. Please try again.");
+      }
+    } else {
+      showPopup("You have no available balance to withdraw.");
+    }
+  });
+
+  // Convert USD to preferred currency using CoinGecko API
+  async function convertCurrency(amount, toCurrencyCode) {
+    const res = await fetch("https://api.coingecko.com/api/v3/exchange_rates");
+    const data = await res.json();
+
+    const rate = data.rates[toCurrencyCode];
+    if (!rate) throw new Error("Currency not found");
+
+    const usdToBtc = 1 / data.rates["usd"].value;
+    const usdInBtc = amount * usdToBtc;
+    const finalAmount = usdInBtc * rate.value;
+
+    return finalAmount.toFixed(2);
+  }
+
+  // Text-only popup (no button)
+  function showPopup(text) {
+    const popup = document.createElement("div");
+    stylePopup(popup);
+    popup.innerText = text;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 10000);
+  }
+
+  // Popup with OK button (closes popup only)
+  function showPopupWithButton(text) {
+    const popup = document.createElement("div");
+    stylePopup(popup);
+
+    const msg = document.createElement("div");
+    msg.innerText = text;
+    msg.style.marginBottom = "12px";
+
+    const button = document.createElement("button");
+    button.innerText = "Okay";
+    button.style.padding = "8px 20px";
+    button.style.background = "#fff";
+    button.style.color = "#000";
+    button.style.border = "none";
+    button.style.borderRadius = "6px";
+    button.style.cursor = "none";
+
+    button.onclick = () => {
+      clearTimeout(autoClose);
+      popup.remove();
+    };
+
+    popup.appendChild(msg);
+    popup.appendChild(button);
+    document.body.appendChild(popup);
+
+    const autoClose = setTimeout(() => {
+      popup.remove();
+    }, 10000);
+  }
+
+  // Shared popup styling
+  function stylePopup(popup) {
+    popup.style.position = "fixed";
+    popup.style.bottom = "20%";
+    popup.style.left = "50%";
+    popup.style.transform = "translateX(-50%)";
+    popup.style.background = "#000";
+    popup.style.color = "#fff";
+    popup.style.padding = "20px";
+    popup.style.border = "1px solid #fff";
+    popup.style.borderRadius = "10px";
+    popup.style.fontSize = "14px";
+    popup.style.zIndex = "9999";
+    popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+    popup.style.textAlign = "center";
+    popup.style.minWidth = "250px";
+  }
+});
+</script>
+
+  <!-- Centered logo below card -->
+  <div class="bottom-logo">
+    <img src="svg.png" alt="Card Logo">
+  </div>
+
+<style>
+  .font-semibold {
+    display: flex;
+    justify-content: center;  /* Horizontal center */
+    align-items: center;      /* Vertical center */
+    text-align: center;
+}
+
+  .big {
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .small {
+    font-size: 20px;
+    font-weight: 500;
+    opacity: 0.7;
+    vertical-align: top;
+  }
+</style>
+
+<!-- Profit Display Section -->
+<div id="myProfitDisplay" style="margin: 20px 0; padding: 12px;"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+  const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+
+  const display = document.getElementById("myProfitDisplay");
+
+  if (Object.keys(purchasedShares).length > 0) {
+    const companyNames = Object.keys(purchasedShares);
+
+    companyNames.forEach(company => {
+      const profit = profits[company];
+      const logo = purchasedShares[company]?.logo || "";
+
+      if (profit !== undefined && display) {
+        const formattedPrice = "$" + Math.abs(profit).toLocaleString(); // No trailing zeros
+
+        const percent = ((Math.random() * 10).toFixed(2)) + "%"; // Dummy change
+        const isPositive = profit >= 0;
+        const percentColor = isPositive ? "#00ff77" : "red";
+        const textColor = "#ffffff";
+
+        const wrapper = document.createElement("div");
+        wrapper.style.display = "flex";
+        wrapper.style.justifyContent = "space-between";
+        wrapper.style.alignItems = "center";
+        wrapper.style.padding = "10px 0";
+        wrapper.style.borderBottom = "1px solid #333";
+
+        wrapper.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="${logo}" style="width: 35px; height: 35px; border-radius: 15%; object-fit: cover; background: none;"/>
+            <div>
+              <div style="font-weight: bold; color: #fff;">${company}</div>
+              <div style="font-size: 13px; color: #aaa;">$${(Math.random() * 100).toFixed(2)}M</div>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <div style="color: ${textColor}; font-weight: bold;">${formattedPrice}</div>
+            <div style="font-size: 13px; color: ${percentColor};">${isPositive ? "+" : "-"}${percent}</div>
+          </div>
+        `;
+
+        display.appendChild(wrapper);
+      }
+    });
+  } else {
+    if (display) {
+      display.innerHTML = `<p style="color:gray; font-size:14px;">No purchased shares found.</p>`;
+    }
+  }
+});
+</script>
+  
+<!-- Floating and Draggable Tool -->
+<a href="ai.html" style="color: #ffffff;"><div id="draggableTool" style="
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 70px;
+  text-align: center;
+  z-index: 9999;
+  cursor: grab;
+  user-select: none;
+  animation: floatY 3s ease-in-out infinite;
+">
+
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-incognito" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="m4.736 1.968-.892 3.269-.014.058C2.113 5.568 1 6.006 1 6.5 1 7.328 4.134 8 8 8s7-.672 7-1.5c0-.494-1.113-.932-2.83-1.205l-.014-.058-.892-3.27c-.146-.533-.698-.849-1.239-.734C9.411 1.363 8.62 1.5 8 1.5s-1.411-.136-2.025-.267c-.541-.115-1.093.2-1.239.735m.015 3.867a.25.25 0 0 1 .274-.224c.9.092 1.91.143 2.975.143a30 30 0 0 0 2.975-.143.25.25 0 0 1 .05.498c-.918.093-1.944.145-3.025.145s-2.107-.052-3.025-.145a.25.25 0 0 1-.224-.274M3.5 10h2a.5.5 0 0 1 .5.5v1a1.5 1.5 0 0 1-3 0v-1a.5.5 0 0 1 .5-.5m-1.5.5q.001-.264.085-.5H2a.5.5 0 0 1 0-1h3.5a1.5 1.5 0 0 1 1.488 1.312 3.5 3.5 0 0 1 2.024 0A1.5 1.5 0 0 1 10.5 9H14a.5.5 0 0 1 0 1h-.085q.084.236.085.5v1a2.5 2.5 0 0 1-5 0v-.14l-.21-.07a2.5 2.5 0 0 0-1.58 0l-.21.07v.14a2.5 2.5 0 0 1-5 0zm8.5-.5h2a.5.5 0 0 1 .5.5v1a1.5 1.5 0 0 1-3 0v-1a.5.5 0 0 1 .5-.5"/>
+</svg>
+  <div style="font-size: 12px; color: #ccc; margin-top: 5px;"> Chat AI </div>
+</div></a>
+
+<style>
+  @keyframes floatY {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+  }
+</style>
+
+<!-- Footer Section -->
+<div style="
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  font-family: 'Roboto', sans-serif;
+  pointer-events: none;
+  z-index: 999;
+">
+  © 2025 Official Blockchain — All rights reserved · Coin_net.com
+</div>
+
+  <!-- TAB Switch Script -->
+ <script>
+  // Show greeting + avatar + username
+  document.addEventListener("DOMContentLoaded", () => {
+    const username = localStorage.getItem('userUsername') || 'User';
+    const avatar = localStorage.getItem('userAvatar');
+    const hour = new Date().getHours();
+    let greeting = "Hello";
+
+    if (hour >= 5 && hour < 12) greeting = "Good morning";
+    else if (hour >= 12 && hour < 17) greeting = "Good afternoon";
+    else greeting = "Good night";    
+
+    document.getElementById('greetingLine1').textContent = greeting;
+    document.getElementById('greetingLine2').textContent = username;
+    document.getElementById('user_name_display').textContent = username;
+
+    if (avatar) {
+      document.getElementById('userAvatarDisplay').src = avatar;
+    }
+  });
+</script>
+
+<script>
+  const dragTarget = document.getElementById('draggableTool');
+  let isDragging = false;
+  let offsetX, offsetY;
+
+  dragTarget.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - dragTarget.getBoundingClientRect().left;
+    offsetY = e.clientY - dragTarget.getBoundingClientRect().top;
+    dragTarget.style.cursor = 'grabbing';
+    dragTarget.style.animation = 'none'; // stop floating during drag
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+
+    const newX = e.clientX - offsetX;
+    const newY = e.clientY - offsetY;
+
+    dragTarget.style.left = `${newX}px`;
+    dragTarget.style.top = `${newY}px`;
+    dragTarget.style.bottom = 'auto';
+    dragTarget.style.right = 'auto';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      dragTarget.style.animation = 'floatY 3s ease-in-out infinite'; // resume floating
+    }
+    isDragging = false;
+    dragTarget.style.cursor = 'grab';
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const balanceEl = document.getElementById("userBalance");
+  const toggleBtn = document.getElementById("toggleBalance");
+
+  let isVisible = false;
+
+  // Helper: Format balance with styled big/small parts
+  function formatDisplay(amount, symbol) {
+    const formatted = amount.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    const match = formatted.match(/^(\d{1,3})([.,\d]*)$/);
+    let bigPart = "", smallPart = "";
+
+    if (match) {
+      bigPart = match[1];
+      smallPart = match[2];
+    } else {
+      bigPart = formatted;
+    }
+
+    return `${symbol}<span class="big">${bigPart}</span><span class="small">${smallPart}</span>`;
+  }
+
+  // Get user currency info
+  const savedCurrency = JSON.parse(localStorage.getItem("preferredCurrency") || "{}");
+  const userCode = savedCurrency.code?.toLowerCase() || "usd";
+  const userSymbol = savedCurrency.symbol || "$";
+
+  // Show balance with conversion
+  async function displayConvertedBalance() {
+    const rawBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+
+    // Strip any sign from display
+    const positiveBalance = Math.abs(rawBalance);
+
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=tether&vs_currencies=${userCode}`);
+      const data = await res.json();
+      const rate = data.tether?.[userCode] || 1;
+      const converted = positiveBalance * rate;
+
+      const finalDisplay = formatDisplay(converted, userSymbol);
+      balanceEl.innerHTML = isVisible
+        ? `<span class="amount-large">${finalDisplay}</span>`
+        : `<span class="amount-large">****</span>`;
+    } catch {
+      balanceEl.innerHTML = isVisible
+        ? `<span class="amount-large">${userSymbol}${positiveBalance.toFixed(2)}</span>`
+        : `<span class="amount-large">****</span>`;
+    }
+  }
+
+  // Toggle balance visibility
+  toggleBtn.addEventListener("click", () => {
+    isVisible = !isVisible;
+    displayConvertedBalance();
+
+    toggleBtn.src = isVisible
+      ? "https://img.icons8.com/ios-filled/50/invisible.png"
+      : "https://img.icons8.com/ios-filled/50/visible.png";
+  });
+
+  // Apply profit once per minute
+  async function applyProfitIfDue() {
+    const lastUpdate = parseInt(localStorage.getItem("lastProfitUpdate") || "0");
+    const now = Date.now();
+
+    const FIVE_HOURS = 1000 * 60 * 60 * 5;
+if (now - lastUpdate < FIVE_HOURS) return;
+
+    const shares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+    const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+    let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+
+    let totalProfit = 0;
+    Object.keys(shares).forEach(company => {
+      const profit = parseFloat(profits[company]) || 0;
+      totalProfit += profit;
+    });
+
+    userBalance += totalProfit;
+    localStorage.setItem("userBalance", userBalance.toFixed(2));
+    localStorage.setItem("lastProfitUpdate", now.toString());
+
+    await displayConvertedBalance();
+    console.log("Profit applied. New balance:", userBalance.toFixed(2));
+  }
+
+  // Initial display and profit check
+  await displayConvertedBalance();
+  applyProfitIfDue();
+  setInterval(applyProfitIfDue, FIVE_HOURS); // Every 5 hours
+});
+</script>
+  <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+</body>
+</html>

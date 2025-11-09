@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>About Us</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fff;
+      color: #000;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 20px 20px;
+      border-bottom: 2px solid #000;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+
+    section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      border-bottom: 1px solid #000;
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    h2 {
+      font-size: 1.8em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: square;
+      padding-left: 20px;
+    }
+
+    .highlight {
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.9em;
+      border-top: 2px solid #000;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      body {
+        padding: 15px;
+      }
+    }
+    
+    .how-it-works {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.step {
+  flex: 1 1 220px;
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+}
+
+.step-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 15px;
+  filter: grayscale(100%);
+}
+
+.why-choose {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.reason {
+  flex: 1 1 220px;
+  background: #fff;
+  border: 1px solid #000;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  transition: transform 0.2s ease;
+}
+
+.reason:hover {
+  transform: translateY(-5px);
+}
+
+.reason-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+  filter: grayscale(100%);
+}
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>About Us</h1>
+    <p>Your Gateway to Smart Online Investing</p>
+  </header>
+
+  <section>
+    <h2>What We Do</h2>
+    <p>
+      At <span class="highlight">Coin-net.com</span>, we make it easy for anyone to invest in major global companies like Amazon, Apple, and Tesla. 
+      Buy shares directly from our platform and start earning profits every <strong>5 hours</strong> based on the value of your investment.
+    </p>
+  </section>
+
+<section>
+  <h2>How It Works</h2>
+  <div class="how-it-works">
+    <div class="step">
+      <img src="https://img.icons8.com/ios-filled/100/000000/user.png" alt="Create Account" class="step-icon" />
+      <p><strong>Create an account</strong><br>Sign up and access your secure dashboard.</p>
+    </div>
+    <div class="step">
+      <img src="https://img.icons8.com/ios-filled/100/000000/domain.png" alt="Select Company" class="step-icon" />
+      <p><strong>Select a company</strong><br>Choose from top brands like Amazon, Netflix, and more.</p>
+    </div>
+    <div class="step">
+      <img src="https://img.icons8.com/ios-filled/100/000000/buy.png" alt="Buy Shares" class="step-icon" />
+      <p><strong>Buy shares</strong><br>Make a payment and get your payment ID to start investing with your selected company</p>
+    </div>
+    <div class="step">
+      <img src="https://img.icons8.com/ios-filled/100/000000/clock--v1.png" alt="Earn Hourly" class="step-icon" />
+      <p><strong>Earn every 5 hours</strong><br>Profits are calculated and added automatically to your main balance.</p>
+    </div>
+    <div class="step">
+      <img src="https://img.icons8.com/ios-filled/100/000000/money-transfer.png" alt="Withdraw" class="step-icon" />
+      <p><strong>Withdraw anytime</strong><br>Your balance is yours to manage anytime.</p>
+    </div>
+  </div>
+</section>
+
+  <section>
+    <h2>Safe & Secure</h2>
+    <p>
+      We use the latest encryption and payout systems to keep your investments and data safe. Your trust and security are our priority.
+    </p>
+  </section>
+
+ <section>
+  <h2>Why Choose Us?</h2>
+  <div class="why-choose">
+    <div class="reason">
+      <img src="https://img.icons8.com/ios-filled/50/000000/clock.png" alt="Fast hourly returns" class="reason-icon" />
+      <p><strong>Fast hourly returns</strong></p>
+    </div>
+    <div class="reason">
+      <img src="https://img.icons8.com/ios-filled/50/000000/brain.png" alt="Smart passive income" class="reason-icon" />
+      <p><strong>Smart passive income</strong></p>
+    </div>
+    <div class="reason">
+      <img src="https://img.icons8.com/ios-filled/50/000000/domain.png" alt="Trusted global companies" class="reason-icon" />
+      <p><strong>Trusted global companies</strong></p>
+    </div>
+    <div class="reason">
+      <img src="https://img.icons8.com/ios-filled/50/000000/smartphone-tablet.png" alt="Mobile-friendly" class="reason-icon" />
+      <p><strong>Mobile-friendly interface</strong></p>
+    </div>
+    <div class="reason">
+      <img src="https://img.icons8.com/ios-filled/50/000000/customer-support.png" alt="24/7 support" class="reason-icon" />
+      <p><strong>24/7 customer support</strong></p>
+    </div>
+  </div>
+</section>
+
+  <section>
+    <h2>Need Help?</h2>
+    <p>
+      Have questions or need assistance? Our friendly <a href="https://wa.me/+16725390560" style="cursor: none;" target="_blank">support team</a> is here for you, 24/7. 
+    </p>
+  </section>
+
+  <footer>
+    &copy; 2025 @ Coin net.com. All rights reserved.
+  </footer>
+
+</body>
+</html>

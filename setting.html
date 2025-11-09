@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>settings</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-white font-sans min-h-screen">
+
+<style>
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 22px;    
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    background-color: #ccc;
+    border-radius: 34px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: .4s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+  }
+
+  input:checked + .slider {
+    background-color: #4ade80; /* green */
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+
+  .slider.round {
+    border-radius: 34px;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal.show {
+    display: flex;
+  }
+
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 300px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .modal-content .buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .modal-content button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .modal-content .danger {
+    background-color: #dc2626;
+    color: #fff;
+  }
+
+  .modal-content button:not(.danger) {
+    background-color: #e5e5e5;
+    color: #111;
+  }
+
+  /* Notification */
+  .pattern-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+  }
+
+  .pattern-notification.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .pattern-notification.success { background: #10b981; }
+  .pattern-notification.error { background: #ef4444; }
+  .pattern-notification.info { background: #3b82f6; }
+
+  .pattern-notification.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+</style>
+
+  <!-- Header -->
+  <div class="flex items-center gap-3 p-4">
+    <button onclick="goBack()">
+      <svg class="w-6 h-6 text-white" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <h1 class="text-xl font-semibold">Settings</h1>
+  </div>
+
+<script>
+    function goBack() {
+      window.history.back();
+    }
+</script>
+ <!-- User Info -->
+<div class="px-6 mt-4 mb-6">
+  <div class="flex items-center gap-4">
+    <!-- Avatar container -->
+    <a href="upload profile.html"><div class="w-[45px] h-[45px] rounded-full overflow-hidden bg-none p-[2px]" style="border: 1px solid white;">
+      <img id="userAvatarDisplay" src="profile.png" alt="User Avatar" class="w-full h-full object-cover rounded-full" />
+    </div></a>
+  
+    <!-- User text info -->
+    <div>
+      <p class="text-lg font-semibold" id="user_name_display"></p>
+      <p class="text-gray-400 text-sm" id="user_email_display"></p>
+    </div>
+  </div>
+</div>
+
+  <!-- Settings Menu -->
+  <div class="px-6 space-y-6 text-sm" style="margin-top: 55px;">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="openModal('plus')">      
+    
+        
+  <a href="change pin.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+    </svg>
+    <p id="patternSwitchLabel" style="font-weight:600;">Pattern Lock OFF</p>
+  </div>
+
+  <!-- Right arrow icon -->  
+   <label class="switch">
+    <input type="checkbox" id="switch-1" onchange="handlePatternSwitchChange()">
+    <span class="slider round"></span>
+  </label>  
+</a>
+
+
+  
+<!-- Confirmation Modal -->
+<div id="confirmModal" class="modal">
+  <div class="modal-content">
+    <p>Are you sure you want to turn OFF Pattern Lock?</p>
+    <div class="buttons">
+      <button id="confirmDeleteBtn" class="danger">Yes, Turn Off</button>
+      <button id="cancelDeleteBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pattern Notification -->
+<div id="patternNotification" class="pattern-notification hidden"></div>
+    </div>
+    
+    <a href="new pattern.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-fill-lock" viewBox="0 0 16 16">
+  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
+</svg>
+    <p>New Pattern</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+   
+   <a href="confirm pin.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+  <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+</svg>
+    <p>Change Password</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+   
+  <a href="javascript:void(0)" onclick="openCurrencyPopup()" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+ <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-currency-exchange" viewBox="0 0 16 16">
+  <path d="M0 5a5 5 0 0 0 4.027 4.905 6.5 6.5 0 0 1 .544-2.073C3.695 7.536 3.132 6.864 3 5.91h-.5v-.426h.466V5.05q-.001-.07.004-.135H2.5v-.427h.511C3.236 3.24 4.213 2.5 5.681 2.5c.316 0 .59.031.819.085v.733a3.5 3.5 0 0 0-.815-.082c-.919 0-1.538.466-1.734 1.252h1.917v.427h-1.98q-.004.07-.003.147v.422h1.983v.427H3.93c.118.602.468 1.03 1.005 1.229a6.5 6.5 0 0 1 4.97-3.113A5.002 5.002 0 0 0 0 5m16 5.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0m-7.75 1.322c.069.835.746 1.485 1.964 1.562V14h.54v-.62c1.259-.086 1.996-.74 1.996-1.69 0-.865-.563-1.31-1.57-1.54l-.426-.1V8.374c.54.06.884.347.966.745h.948c-.07-.804-.779-1.433-1.914-1.502V7h-.54v.629c-1.076.103-1.808.732-1.808 1.622 0 .787.544 1.288 1.45 1.493l.358.085v1.78c-.554-.08-.92-.376-1.003-.787zm1.96-1.895c-.532-.12-.82-.364-.82-.732 0-.41.311-.719.824-.809v1.54h-.005zm.622 1.044c.645.145.943.38.943.796 0 .474-.37.8-1.02.86v-1.674z"/>
+</svg>
+    <p>Preferred Currency</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+   
+
+<!-- Fullscreen Currency Selector Popup -->
+<div id="currencyPopup" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-end" style="border-radius: 50px;">
+  <div class="w-full bg-black rounded-t-3xl p-5 max-h-[85vh] overflow-hidden animate-slideUp flex flex-col">
+
+    <div class="flex justify-between items-center mb-4 shrink-0">
+      <h2 class="text-lg font-semibold text-white">Select Preferred Currency</h2>
+      <button onclick="closeCurrencyPopup()" class="text-[#CDCDCD] hover:text-white text-3xl leading-none">&times;</button>
+    </div>
+
+    <input id="currencySearch" placeholder="Search by country..."
+      class="w-full px-4 py-3 mb-4 border border-[#1A1A1A] rounded-xl bg-black text-white placeholder-[#7F7F7F] focus:outline-none focus:border-white shrink-0">
+
+    <div id="currencyListContainer" class="flex flex-col gap-2 overflow-y-auto pb-4"></div>
+
+  </div>
+</div>
+
+
+<!-- Confirmation Popup -->
+<div id="confirmationPopup"
+  class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl text-sm shadow-md z-[10000] animate-fadeIn">
+  Currency set to <span id="selectedCurrencyLabel" class="font-semibold"></span>
+</div>
+
+
+<!-- Currency Logic Script -->
+<script>
+const currencyList = [
+  { "country": "Afghanistan", "code": "AFN", "symbol": "؋" },
+  { "country": "Armenia", "code": "AMD", "symbol": "֏" },
+  { "country": "Azerbaijan", "code": "AZN", "symbol": "₼" },
+  { "country": "Bahamas", "code": "BSD", "symbol": "$" },
+  { "country": "Bahrain", "code": "BHD", "symbol": ".د.ب" },
+  { "country": "Barbados", "code": "BBD", "symbol": "$" },
+  { "country": "Belarus", "code": "BYN", "symbol": "Br" },
+  { "country": "Belize", "code": "BZD", "symbol": "$" },
+  { "country": "Bhutan", "code": "BTN", "symbol": "Nu." },
+  { "country": "Bolivia", "code": "BOB", "symbol": "Bs." },
+  { "country": "Bosnia and Herzegovina", "code": "BAM", "symbol": "KM" },
+  { "country": "Botswana", "code": "BWP", "symbol": "P" },
+  { "country": "Brunei", "code": "BND", "symbol": "$" },
+  { "country": "Bulgaria", "code": "BGN", "symbol": "лв" },
+  { "country": "Burundi", "code": "BIF", "symbol": "FBu" },
+  { "country": "Cambodia", "code": "KHR", "symbol": "៛" },
+  { "country": "Cape Verde", "code": "CVE", "symbol": "$" },
+  { "country": "Central African Republic", "code": "XAF", "symbol": "FCFA" },
+  { "country": "Chad", "code": "XAF", "symbol": "FCFA" },
+  { "country": "Comoros", "code": "KMF", "symbol": "CF" },
+  { "country": "Costa Rica", "code": "CRC", "symbol": "₡" },
+  { "country": "Croatia", "code": "EUR", "symbol": "€" },
+  { "country": "Cuba", "code": "CUP", "symbol": "$" },
+  { "country": "Djibouti", "code": "DJF", "symbol": "Fdj" },
+  { "country": "Dominican Republic", "code": "DOP", "symbol": "RD$" },
+  { "country": "Eritrea", "code": "ERN", "symbol": "Nkf" },
+  { "country": "Eswatini", "code": "SZL", "symbol": "E" },
+  { "country": "Ethiopia", "code": "ETB", "symbol": "Br" },
+  { "country": "Fiji", "code": "FJD", "symbol": "$" },
+  { "country": "Georgia", "code": "GEL", "symbol": "₾" },
+  { "country": "Guatemala", "code": "GTQ", "symbol": "Q" },
+  { "country": "Guyana", "code": "GYD", "symbol": "$" },
+  { "country": "Haiti", "code": "HTG", "symbol": "G" },
+  { "country": "Honduras", "code": "HNL", "symbol": "L" },
+  { "country": "Iceland", "code": "ISK", "symbol": "kr" },
+  { "country": "Jamaica", "code": "JMD", "symbol": "J$" },
+  { "country": "Jordan", "code": "JOD", "symbol": "د.ا" },
+  { "country": "Kazakhstan", "code": "KZT", "symbol": "₸" },
+  { "country": "Laos", "code": "LAK", "symbol": "₭" },
+  { "country": "Lebanon", "code": "LBP", "symbol": "ل.ل" },
+  { "country": "Lesotho", "code": "LSL", "symbol": "L" },
+  { "country": "Liberia", "code": "LRD", "symbol": "$" },
+  { "country": "Libya", "code": "LYD", "symbol": "ل.د" },
+  { "country": "Madagascar", "code": "MGA", "symbol": "Ar" },
+  { "country": "Malawi", "code": "MWK", "symbol": "MK" },
+  { "country": "Maldives", "code": "MVR", "symbol": "Rf" },
+  { "country": "Mauritania", "code": "MRU", "symbol": "UM" },
+  { "country": "Mauritius", "code": "MUR", "symbol": "₨" },
+  { "country": "Moldova", "code": "MDL", "symbol": "L" },
+  { "country": "Mongolia", "code": "MNT", "symbol": "₮" },
+  { "country": "Mozambique", "code": "MZN", "symbol": "MT" },
+  { "country": "Myanmar", "code": "MMK", "symbol": "K" },
+  { "country": "Namibia", "code": "NAD", "symbol": "$" },
+  { "country": "Nepal", "code": "NPR", "symbol": "₨" },
+  { "country": "Nicaragua", "code": "NIO", "symbol": "C$" },
+  { "country": "North Macedonia", "code": "MKD", "symbol": "ден" },
+  { "country": "Oman", "code": "OMR", "symbol": "ر.ع." },
+  { "country": "Panama", "code": "PAB", "symbol": "B/." },
+  { "country": "Paraguay", "code": "PYG", "symbol": "₲" },
+  { "country": "Rwanda", "code": "RWF", "symbol": "FRw" },
+  { "country": "Samoa", "code": "WST", "symbol": "T" },
+  { "country": "Serbia", "code": "RSD", "symbol": "дин" },
+  { "country": "Seychelles", "code": "SCR", "symbol": "₨" },
+  { "country": "Sierra Leone", "code": "SLL", "symbol": "Le" },
+  { "country": "Solomon Islands", "code": "SBD", "symbol": "$" },
+  { "country": "Somalia", "code": "SOS", "symbol": "Sh" },
+  { "country": "Sudan", "code": "SDG", "symbol": "£" },
+  { "country": "Suriname", "code": "SRD", "symbol": "$" },
+  { "country": "Syria", "code": "SYP", "symbol": "£" },
+  { "country": "Tajikistan", "code": "TJS", "symbol": "ЅМ" },
+  { "country": "Tanzania", "code": "TZS", "symbol": "Sh" },
+  { "country": "Tonga", "code": "TOP", "symbol": "T$" },
+  { "country": "Trinidad and Tobago", "code": "TTD", "symbol": "TT$" },
+  { "country": "Turkmenistan", "code": "TMT", "symbol": "m" },
+  { "country": "Uganda", "code": "UGX", "symbol": "USh" },
+  { "country": "Uruguay", "code": "UYU", "symbol": "$U" },
+  { "country": "Uzbekistan", "code": "UZS", "symbol": "so'm" },
+  { country: "United States", code: "USD", symbol: "$" },  
+  { country: "Canada", code: "CAD", symbol: "$" },  
+  { country: "United Kingdom", code: "GBP", symbol: "£" },  
+  { country: "European Union", code: "EUR", symbol: "€" },  
+  { country: "Japan", code: "JPY", symbol: "¥" },  
+  { country: "Nigeria", code: "NGN", symbol: "₦" },  
+  { country: "India", code: "INR", symbol: "₹" },  
+  { country: "China", code: "CNY", symbol: "¥" },  
+  { country: "South Korea", code: "KRW", symbol: "₩" },  
+  { country: "Russia", code: "RUB", symbol: "₽" },  
+  { country: "Brazil", code: "BRL", symbol: "R$" },  
+  { country: "Mexico", code: "MXN", symbol: "$" },  
+  { country: "Australia", code: "AUD", symbol: "$" },  
+  { country: "South Africa", code: "ZAR", symbol: "R" },  
+  { country: "Saudi Arabia", code: "SAR", symbol: "﷼" },  
+  { country: "Turkey", code: "TRY", symbol: "₺" },  
+  { country: "Switzerland", code: "CHF", symbol: "Fr" },  
+  { country: "Sweden", code: "SEK", symbol: "kr" },  
+  { country: "Norway", code: "NOK", symbol: "kr" },  
+  { country: "Denmark", code: "DKK", symbol: "kr" },  
+  { country: "Poland", code: "PLN", symbol: "zł" },  
+  { country: "Argentina", code: "ARS", symbol: "$" },  
+  { country: "Egypt", code: "EGP", symbol: "£" },  
+  { country: "Ghana", code: "GHS", symbol: "₵" },  
+  { country: "Kenya", code: "KES", symbol: "Sh" },  
+  { country: "Indonesia", code: "IDR", symbol: "Rp" },  
+  { country: "Philippines", code: "PHP", symbol: "₱" },  
+  { country: "Malaysia", code: "MYR", symbol: "RM" },  
+  { country: "Thailand", code: "THB", symbol: "฿" },  
+  { country: "Vietnam", code: "VND", symbol: "₫" },  
+  { country: "Pakistan", code: "PKR", symbol: "₨" },  
+  { country: "Bangladesh", code: "BDT", symbol: "৳" },  
+  { country: "Sri Lanka", code: "LKR", symbol: "Rs" },  
+  { country: "United Arab Emirates", code: "AED", symbol: "د.إ" },  
+  { country: "Israel", code: "ILS", symbol: "₪" },  
+  { country: "Qatar", code: "QAR", symbol: "﷼" },  
+  { country: "Kuwait", code: "KWD", symbol: "د.ك" },  
+  { country: "Iraq", code: "IQD", symbol: "ع.د" },  
+  { country: "Iran", code: "IRR", symbol: "﷼" },  
+  { country: "Ukraine", code: "UAH", symbol: "₴" },  
+  { country: "Hungary", code: "HUF", symbol: "Ft" },  
+  { country: "Czech Republic", code: "CZK", symbol: "Kč" },  
+  { country: "Romania", code: "RON", symbol: "lei" },  
+  { country: "Chile", code: "CLP", symbol: "$" },  
+  { country: "Colombia", code: "COP", symbol: "$" },  
+  { country: "Peru", code: "PEN", symbol: "S/." },  
+  { country: "Venezuela", code: "VES", symbol: "Bs.S" },  
+  { country: "New Zealand", code: "NZD", symbol: "$" },  
+  { country: "Singapore", code: "SGD", symbol: "$" },  
+  { country: "Hong Kong", code: "HKD", symbol: "$" },  
+  { country: "Taiwan", code: "TWD", symbol: "NT$" },  
+  { country: "Morocco", code: "MAD", symbol: "د.م." },  
+  { country: "Tunisia", code: "TND", symbol: "د.ت" },  
+  { country: "Algeria", code: "DZD", symbol: "د.ج" },
+  { "country": "Vanuatu", "code": "VUV", "symbol": "VT" },
+  { "country": "Yemen", "code": "YER", "symbol": "﷼" },
+  { "country": "Zambia", "code": "ZMW", "symbol": "ZK" },
+  { "country": "Zimbabwe", "code": "ZWL", "symbol": "$" }
+];
+
+function openCurrencyPopup() {
+  document.getElementById("currencyPopup").style.display = "flex";
+  displayCurrencyList(currencyList);
+}
+
+function closeCurrencyPopup() {
+  document.getElementById("currencyPopup").style.display = "none";
+}
+
+function displayCurrencyList(list) {
+  const container = document.getElementById("currencyListContainer");
+  container.innerHTML = "";
+
+  list.forEach(currency => {
+    const item = document.createElement("div");
+    item.className =
+      "flex items-center justify-between p-4 rounded-xl border border-[#1A1A1A] bg-[#0A0A0A] hover:bg-[#1C1C1C] transition cursor-pointer";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "text-[#CDCDCD]";
+    nameSpan.textContent = currency.country;
+
+    const codeSymbolSpan = document.createElement("span");
+    codeSymbolSpan.className = "text-white font-semibold";
+    codeSymbolSpan.textContent = `${currency.code} ${currency.symbol}`;
+
+    item.appendChild(nameSpan);
+    item.appendChild(codeSymbolSpan);
+
+    item.onclick = () => {
+      localStorage.setItem("preferredCurrency", JSON.stringify(currency));
+      showConfirmation(currency);
+      closeCurrencyPopup();
+    };
+
+    container.appendChild(item);
+  });
+}
+
+
+function showConfirmation(currency) {
+  const popup = document.getElementById("confirmationPopup");
+  document.getElementById("selectedCurrencyLabel").textContent = `${currency.country} ${currency.code} ${currency.symbol}`;
+  popup.style.display = "block";
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 2500);
+}
+
+document.getElementById("currencySearch").addEventListener("input", function () {
+  const searchTerm = this.value.toLowerCase();
+  const filtered = currencyList.filter(c =>
+    c.country.toLowerCase().includes(searchTerm) ||
+    c.code.toLowerCase().includes(searchTerm)
+  );
+  displayCurrencyList(filtered);
+});
+</script>
+   
+   <a href="change pin.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+      <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+    </svg>
+    <p>Change PIN</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+
+
+<a href="shares_list.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M0 0h1v15h15v1H0zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5"/>
+</svg>
+    <p>Buy Shares</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+
+
+<a href="save card.html" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+  <div class="flex items-center gap-4">
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
+  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+  <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+</svg>
+    <p>Payment Method</p>
+  </div>
+
+  <!-- Right arrow icon -->
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M6.646 14.354a.5.5 0 0 1 0-.708L10.293 10 6.646 6.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708 0"/>
+  </svg>
+</a>
+  
+  
+  <div onclick="openDeletePopup()" class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white" style="color: red; margin-bottom: 5%;">
+  <div class="flex items-center gap-4">
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="25" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+</svg>
+    <p>Delete Account</p>      
+</div>
+ </div>
+ 
+ 
+  <div class="flex items-center justify-between gap-4 cursor-pointer w-full px-4 py-3 bg-[none] rounded-lg shadow-md text-white">
+
+ </div>
+ 
+  <!-- Modal -->
+  <div id="popupModal" class="fixed inset-0 hidden bg-black bg-opacity-80 flex items-center justify-center z-50">
+    <div class="bg-white text-black p-6 rounded-xl w-11/12 max-w-sm relative">
+      <button onclick="closeModal()" class="absolute top-2 right-3 text-black text-xl">&times;</button>
+      <h2 id="popupTitle" class="text-xl font-semibold mb-2">Title</h2>
+      <p id="popupText" class="text-sm">none</p>
+    </div>
+  </div>
+  
+<!-- Footer Section -->
+<div style="
+  position: fixed;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 13px;
+  color: #aaa;
+  font-family: 'Roboto', sans-serif;
+  pointer-events: none;
+  z-index: 999;
+">
+  © 2025 Official Blockchain — All rights reserved · Coin_net.com
+</div>
+
+<!-- Confirm Deletion Popup -->
+<div id="deletePopupBackdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:10px; padding:16px; width:90%; max-width:320px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+    <h3 style="font-size:16px; font-weight:600; color:#111;">Delete Account</h3>
+    <p style="font-size:14px; color:#444; margin-bottom:16px;">
+      This will permanently delete your coin_net account, profile, wallet balance, and all order activities linked to this account would be lost forever.
+    </p>
+    <div style="display:flex; justify-content:center; gap:10px;">
+      <button onclick="confirmAccountDelete()" style="background:#dc2626; color:#fff; border:none; padding:10px 15px; border-radius:10px;">Delete</button>
+      <button onclick="closeDeletePopup()" style="background:#e5e5e5; color:#111; border:none; padding:10px 15px; border-radius:10px;">Cancel</button>
+    </div>
+  </div>
+</div>
+   
+    <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script> 
+
+<!-- Display Account Details Script -->
+  <script>
+      const savedAvatar = localStorage.getItem('userAvatar');
+    if (savedAvatar) {
+      document.getElementById('userAvatarDisplay').src = savedAvatar;
+    }    
+    
+  // Get data from localStorage
+  const storedUsername = localStorage.getItem('userUsername');
+  const storedEmail = localStorage.getItem('userEmail');
+  const storedPassword = localStorage.getItem('userPassword');
+
+  // Display data using new IDs
+  document.getElementById('user_name_display').textContent = storedUsername || 'Not found';
+  document.getElementById('user_email_display').textContent = storedEmail || 'No email found. Please sign up first.';
+  document.getElementById('user_pass_display').textContent = storedPassword || 'Not found';
+</script>
+
+<!-- Delete Accounts Script -->
+<script>
+function confirmAccountDelete() {
+  // 1. PIN Pattern
+  localStorage.removeItem("userPIN");
+  localStorage.removeItem("signed-in");
+
+  // 2. Profile Picture
+  localStorage.removeItem('userAvatar');
+  const currentAvatar = document.getElementById('currentAvatar');
+  const fallbackIcon = document.getElementById('fallbackIcon');
+  if (currentAvatar) currentAvatar.src = '';
+  if (currentAvatar) currentAvatar.style.display = 'none';
+  if (fallbackIcon) fallbackIcon.style.display = 'block';
+
+  // 3. Pattern Lock
+  localStorage.removeItem('savedPatternCode');
+  const statusText = document.getElementById('lockStatus');
+  if (statusText) {
+    statusText.textContent = 'Account has been deleted';
+    statusText.className = 'info';
+  }
+
+  // 4. User Info
+  localStorage.removeItem('userUsername');
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('userPassword');
+  localStorage.removeItem('signup-success');
+
+  // 5. Balance
+  localStorage.removeItem('userBalance');
+  const balanceDisplay = document.getElementById("displayBalanceFive");
+  if (balanceDisplay) balanceDisplay.innerText = "0";
+
+  // ✅ 5B. Delete Portfolio and Reward Flags
+  localStorage.removeItem("portfolioBalance");
+  localStorage.removeItem("paid");
+
+  // 6. Trade History
+  localStorage.removeItem('balanceHistory');
+  const container = document.getElementById('historyTableContainer');
+  const completedCount = document.getElementById('completedCount');
+  if (container) {
+    container.innerHTML = `
+      <div style="text-align:center; margin-top:20px;">
+        <svg style="width:24px; height:24px; stroke:#333;" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <p style="font-weight:600;">No mining history</p>
+        <p style="font-size:13px; color:gray;">Your completed mining profit will appear here.</p>
+      </div>
+    `;
+  }
+  if (completedCount) completedCount.textContent = "0";
+
+  // 7. Currency Preference (store fallback in localStorage)
+  const fallbackCurrency = {
+    country: "Default Currency",
+    code: "USD",
+    symbol: "$"
+  };
+  localStorage.setItem("preferredCurrency", JSON.stringify(fallbackCurrency));
+  const label = document.getElementById("selectedCurrencyLabel");
+  if (label) {
+    label.textContent = `${fallbackCurrency.code} ${fallbackCurrency.symbol}`;
+  }
+
+  // 8. Mining Popup Flag
+  localStorage.removeItem("miningPopupDismissed");
+
+  // 9. Reward Claim Flags (Days 1 to 7)
+  for (let i = 1; i <= 7; i++) {
+    localStorage.removeItem(`claimed_day_${i}`);
+    localStorage.removeItem(`claimed_day_${i}_timestamp`);
+  }
+
+  // 10. Entry Popup Flag (existing)
+  localStorage.removeItem("popupDismissed");
+
+  // 11. Entry Popup Flag (new error popup flag)
+  localStorage.removeItem("errorPopupDismissed");
+
+  // ✅ 12. Delete saved company shares and access codes
+  const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+  Object.keys(purchasedShares).forEach(company => {
+    localStorage.removeItem(`accessCode_${company}`);
+  });
+  localStorage.removeItem("purchasedShares");
+
+  // 13. Close Popup and Show Success Message
+  closeDeletePopup();
+  showSuccessPopup();
+
+  // 14. Redirect after 2.5 seconds
+  setTimeout(() => {
+    window.location.href = "delete.html"; // Change this to your desired redirect page
+  }, 2500);
+}
+</script>
+
+<!-- Delete Accounts Pattern Script -->
+<script>
+    function openDeletePopup() {
+    const popup = document.getElementById('deletePopupBackdrop');
+    if (popup) popup.style.display = 'flex';
+  }
+
+  function closeDeletePopup() {
+    const popup = document.getElementById('deletePopupBackdrop');
+    if (popup) popup.style.display = 'none';
+  }
+
+  function showSuccessPopup() {
+    // Optional: You can skip or implement this function
+  }
+  
+  let togglePending = null;
+
+  // On page load, set toggle based on whether a saved pattern exists
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedPattern = localStorage.getItem('savedPatternCode');
+    const toggle = document.getElementById('switch-1');
+    const label = document.getElementById('patternSwitchLabel');
+
+    if (savedPattern) {
+      toggle.checked = true;
+      label.innerText = "Pattern Lock ON";
+    } else {
+      toggle.checked = false;
+      label.innerText = "Pattern Lock OFF";
+    }
+
+    // Attach modal buttons
+    document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+    document.getElementById('cancelDeleteBtn').addEventListener('click', cancelDelete);
+  });
+
+  function handlePatternSwitchChange() {
+    const toggle = document.getElementById('switch-1');
+    const label = document.getElementById('patternSwitchLabel');
+
+    if (!toggle.checked) {
+      togglePending = toggle;
+      document.getElementById('confirmModal').classList.add('show');
+    } else {
+      // Only enable if a saved pattern exists
+      const savedPattern = localStorage.getItem('savedPatternCode');
+      if (savedPattern) {
+        label.innerText = "Pattern ON";
+        showPatternNotification("Pattern Lock is active.", "info");
+      } else {
+        // No saved pattern found — revert to OFF
+        toggle.checked = false;
+        label.innerText = "Pattern OFF";
+        showPatternNotification("No saved pattern found. Please set a pattern first.", "error");
+      }
+    }
+  }
+
+  function confirmDelete() {
+    localStorage.removeItem('savedPatternCode');
+    document.getElementById('patternSwitchLabel').innerText = "Pattern Lock OFF";
+    document.getElementById('confirmModal').classList.remove('show');
+    showPatternNotification("Saved pattern deleted.", "success");
+
+    // Do NOT re-enable the switch
+    togglePending = null;
+  }
+
+  function cancelDelete() {
+    if (togglePending) {
+      togglePending.checked = true;
+      togglePending = null;
+    }
+    document.getElementById('confirmModal').classList.remove('show');
+    showPatternNotification("Deletion cancelled.", "info");
+  }
+
+  function showPatternNotification(message, type = 'info') {
+    const notification = document.getElementById('patternNotification');
+    notification.className = `pattern-notification show ${type}`;
+    notification.innerHTML = message;
+
+    setTimeout(() => {
+      notification.className = 'pattern-notification hidden';
+    }, 3000);
+  }
+</script>
+</body>
+</html>

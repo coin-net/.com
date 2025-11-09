@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+  <title>Sign Up</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: #000;
+      color: #fff;
+    }
+
+    a {
+      text-decoration: none;
+      color: #fff;
+      cursor: none;
+    }
+
+    .login-screen {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+    }
+
+    .top h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .create-now {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .form-group {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .input {
+      width: 100%;
+      height: 48px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background-color: #111;
+      color: white;
+      font-size: 16px;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: none;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .buttons {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sign-in {
+      width: 100%;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: none;
+    }
+
+    .sign-in:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .google {
+      width: 100%;
+      background-color: #111;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: white;
+      font-size: 16px;
+      cursor: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .google img {
+      width: 20px;
+      height: 20px;
+      filter: grayscale(100%);
+    }
+
+    .terms {
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+      line-height: 1.4;
+      margin-top: 35px;
+    }
+
+    /* Popup styles */
+    .popup-backdrop {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(2px);
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 1000;
+    }
+
+    .popup {
+      margin-top: -200px;
+      max-width: 90%;
+      width: 330px;
+      padding: 24px;
+      border-radius: 16px;
+      background-color: #111;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(255, 255, 255, 0.05);
+      opacity: 0;
+      border: 2px solid #fff;
+    }
+
+    .popup h4 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .popup p {
+      font-size: 16px;
+      line-height: 1.45;
+      word-break: break-word;
+      color: white;
+    }
+
+    @keyframes slideDown {
+      from {
+        margin-top: -200px;
+        opacity: 0;
+      }
+      to {
+        margin-top: 40px;
+        opacity: 1;
+      }
+    }
+
+    .popup-backdrop.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup-backdrop.show .popup {
+      animation: slideDown 0.35s ease forwards;
+    }
+
+    .spinner {
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-screen">
+    <div class="top">
+      <h1>Create an account</h1>
+      <p class="create-now">Already have? <a href="login.html">Sign in</a></p>
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="username" placeholder="Enter your username" class="input"/>
+      <input type="email" id="email" placeholder="Enter your Email" class="input" />
+      <div class="password-wrapper">
+        <input type="password" id="password" placeholder="Enter your Password" class="input" required />
+        <button id="togglePassword" class="toggle-password" aria-label="Toggle Password Visibility" type="button">
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="sign-in" id="signInBtn">Sign Up</button>
+      <button class="google" id="googleBtn">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G"/> Sign in with Google
+      </button>
+    </div>
+
+    <p class="terms">
+      <a onclick="history.back()">Back to previous page</a>
+    </p>
+  </div>
+
+  <div id="popupBackdrop" class="popup-backdrop" role="alert" aria-live="polite" aria-hidden="true">
+    <div id="popup" class="popup">
+      <h4 id="popupTitle"></h4>
+      <p id="popupMessage"></p>
+    </div>
+  </div>
+
+ <script>
+  // Cache DOM
+  const usernameInput = document.getElementById('username');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const signBtn = document.getElementById('signInBtn');
+  const toggleBtn = document.getElementById('togglePassword');
+  const eyeIcon = document.getElementById('eyeIcon');
+  const googleBtn = document.getElementById('googleBtn');
+
+  const popupBackdrop = document.getElementById('popupBackdrop');
+  const popup = document.getElementById('popup');
+  const popTitle = document.getElementById('popupTitle');
+  const popMsg = document.getElementById('popupMessage');
+
+  // Eye icon paths
+  const eyePaths = [
+    "M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+    "M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"
+  ];
+  const eyeOffPaths = [
+    "M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.98 9.98 0 012.224-3.592m3.292-2.356A9.953 9.953 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.968 9.968 0 01-4.032 5.225M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+    "M3 3l18 18"
+  ];
+
+  // Toggle password visibility
+  let visible = false;
+  toggleBtn.addEventListener('click', () => {
+    visible = !visible;
+    passwordInput.type = visible ? 'text' : 'password';
+    const paths = eyeIcon.querySelectorAll('path');
+    paths[0].setAttribute('d', visible ? eyeOffPaths[0] : eyePaths[0]);
+    paths[1].setAttribute('d', visible ? eyeOffPaths[1] : eyePaths[1]);
+  });
+
+  function showPopup(mode, title, msg) {
+    popup.classList.remove('error', 'success', 'google');
+    popup.classList.add(mode);
+
+    popTitle.textContent = title;
+    popMsg.innerHTML = msg;
+
+    popupBackdrop.classList.add('show');
+    popupBackdrop.setAttribute('aria-hidden', 'false');
+
+    setTimeout(() => {
+      popupBackdrop.classList.remove('show');
+      popupBackdrop.setAttribute('aria-hidden', 'true');
+      popTitle.textContent = '';
+      popMsg.innerHTML = '';
+    }, 3000);
+  }
+
+  // Clear inputs on load
+  window.addEventListener('DOMContentLoaded', () => {
+    usernameInput.value = '';
+    emailInput.value = '';
+    passwordInput.value = '';
+  });
+
+  // Sign up button handler with spinner
+  signBtn.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    const email = emailInput.value.trim();
+    const pwd = passwordInput.value.trim();
+
+    if (!username || !email || !pwd) {
+      showPopup('error', 'Missing Info', 'Please enter <strong>username</strong>, email, and password.');
+      return;
+    }
+
+    if (!/^@[\w]{5,}$/.test(username)) {
+      showPopup('error', 'Invalid Username', 'Username must start with <strong>@</strong> and contain at least 6 characters (e.g., @king1235).');
+      return;
+    }
+
+    if (!/^[\w.+-]+@(gmail\.com|email\.com)$/.test(email)) {
+      showPopup('error', 'Invalid Email', 'Email must end with <strong>@gmail.com</strong> or <strong>@email.com</strong>.');
+      return;
+    }
+
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{10,}$/.test(pwd)) {
+      showPopup('error', 'Weak Password', 'Password must be at least 10 characters, with upper & lower case letters, a digit, and a special character.');
+      return;
+    }
+
+    const existingEmail = localStorage.getItem('userEmail');
+    if (existingEmail && existingEmail === email) {
+      showPopup(
+        'error',
+        'Account Exists',
+        'This email is already <strong>signed up</strong> on the blockchain.<br>Please <strong>log in</strong> instead.'
+      );
+      return;
+    }
+
+    // Show spinner
+    signBtn.disabled = true;
+    const originalContent = signBtn.innerHTML;
+    signBtn.innerHTML = '<span class="spinner" style="border-color: #000; border-top-color: transparent;"></span>';
+
+    fetch('https://database-65ur.onrender.com/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: username, email: email, password: pwd })
+    })
+    .then(response => {
+      if (response.status === 409) throw new Error('Email already exists on the server.');
+      return response.text();
+    })
+    .then(result => {
+      if (result === 'signup-success') {
+        localStorage.setItem('signup-success', 'true');
+        localStorage.setItem('userUsername', username);
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userPassword', pwd);
+
+        showPopup('success', 'Success!', 'Sign up successful! Redirecting...');
+        setTimeout(() => {
+          window.location.href = 'create pin.html';
+        }, 3000);
+      } else {
+        throw new Error('Signup failed.');
+      }
+    })
+    .catch(error => {
+      showPopup('error', 'Error', error.message);
+    })
+    .finally(() => {
+      signBtn.disabled = false;
+      signBtn.innerHTML = originalContent;
+    });
+  });
+
+  googleBtn.addEventListener('click', () => {
+    showPopup(
+      'google',
+      '',
+      `<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:24px; height:24px; vertical-align:middle; margin-right:8px;">
+       Please activate Google sign-up from your phone settings to continue.`
+    );
+  });
+</script>
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+</body>
+</html>

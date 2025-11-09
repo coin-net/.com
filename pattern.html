@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const signupSuccess = localStorage.getItem('signup-success');
+      if (!signupSuccess || signupSuccess !== 'true') {
+        window.location.href = 'singup.html';
+      }
+    });
+  </script>
+  <title>pattern lock</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000000;
+      text-align: center;
+      padding-top: 60px;
+      margin: 0;
+      color: #fff;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    #lockStatus {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #lockStatus.success {
+      color: #fff;
+    }
+
+    #lockStatus.error {
+      color: #fff;
+    }
+
+    canvas {
+      margin-top: 60px;
+      touch-action: none;
+      background: transparent;
+    }
+
+    /* Popup Modal Styles */
+    .popup-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      background: #000;
+      color: #fff;
+      padding: 25px;
+      width: 80%;
+      max-width: 350px;
+      border: 1px solid #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 0 2px #fff;
+      text-align: center;
+    }
+
+    .popup-content h3 {
+      margin-bottom: 10px;
+    }
+
+    .popup-content p {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .popup-content button {
+      padding: 10px 20px;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: none;
+      height: 40px;
+      width: 50%;
+    }
+
+    .popup-content button:hover {
+      background-color: #fff;
+      opacity: 0.8;
+    }
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Modal -->
+  <div id="firstVisitModal" class="popup-modal" style="display:none;">
+    <div class="popup-content">
+      <h3><i class="bi bi-exclamation-triangle-fill"></i> Important</h3>
+      <p>Please register a pattern. This will be used to log into your account.</p>
+      <button onclick="closePopup()">OK</button>
+    </div>
+  </div>
+
+  <h2><i class="bi bi-shield-lock-fill"></i> Draw Your Pattern</h2>
+  <p style="color: #fff;">Please connect at least 4 dots</p>
+
+  <canvas id="dotArea" width="300" height="300"></canvas>
+
+  <p id="forgotText" style="color: #fff; margin-top: 10px;">
+    Forgotten pattern? Please <a style="cursor: none;" href="login.html">login in.</a>
+  </p>
+
+  <div id="lockStatus"></div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+  
+  <script>
+ const canvas = document.getElementById('dotArea');
+const context = canvas.getContext('2d');
+const statusText = document.getElementById('lockStatus');
+
+const gridSize = 3;
+const dotRadius = 6;
+const dotGrid = [];
+const drawnPattern = [];
+let isDrawing = false;
+
+// Show modal on first visit
+window.addEventListener('DOMContentLoaded', () => {
+  if (!localStorage.getItem('savedPatternCode')) {
+    document.getElementById('firstVisitModal').style.display = 'flex';
+  }
+});
+
+function closePopup() {
+  document.getElementById('firstVisitModal').style.display = 'none';
+}
+
+// Setup grid
+for (let row = 0; row < gridSize; row++) {
+  for (let col = 0; col < gridSize; col++) {
+    dotGrid.push({
+      x: 50 + col * 100,
+      y: 50 + row * 100,
+      touched: false,
+      id: row * gridSize + col
+    });
+  }
+}
+
+// Throttled render with requestAnimationFrame
+let renderPending = false;
+function renderGridThrottled() {
+  if (!renderPending) {
+    renderPending = true;
+    requestAnimationFrame(() => {
+      renderGrid();
+      renderPending = false;
+    });
+  }
+}
+
+function renderGrid() {
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  for (const dot of dotGrid) {
+    context.beginPath();
+    context.arc(dot.x, dot.y, dotRadius, 0, Math.PI * 2);
+    context.fillStyle = dot.touched ? '#fff' : '#fff';
+    context.fill();
+  }
+
+  if (drawnPattern.length > 0) {
+    context.beginPath();
+    context.moveTo(dotGrid[drawnPattern[0]].x, dotGrid[drawnPattern[0]].y);
+    for (let i = 1; i < drawnPattern.length; i++) {
+      const dot = dotGrid[drawnPattern[i]];
+      context.lineTo(dot.x, dot.y);
+    }
+    context.strokeStyle = '#fff';
+    context.lineWidth = 2;
+    context.stroke();
+  }
+}
+
+function getTouchedDot(x, y) {
+  for (const dot of dotGrid) {
+    const dx = dot.x - x;
+    const dy = dot.y - y;
+    if (Math.sqrt(dx * dx + dy * dy) < dotRadius + 15 && !dot.touched) {
+      return dot;
+    }
+  }
+  return null;
+}
+
+canvas.addEventListener('pointerdown', (event) => {
+  isDrawing = true;
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  const touchedDot = getTouchedDot(x, y);
+  if (touchedDot) {
+    touchedDot.touched = true;
+    drawnPattern.push(touchedDot.id);
+    renderGridThrottled();
+  }
+});
+
+canvas.addEventListener('pointermove', (event) => {
+  if (!isDrawing || drawnPattern.length === 0) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  const lastDot = dotGrid[drawnPattern[drawnPattern.length - 1]];
+  const dx = x - lastDot.x;
+  const dy = y - lastDot.y;
+  const distance = Math.hypot(dx, dy);
+  const steps = Math.ceil(distance / 10);
+
+  for (let i = 1; i <= steps; i++) {
+    const stepX = lastDot.x + (dx * i) / steps;
+    const stepY = lastDot.y + (dy * i) / steps;
+    const touchedDot = getTouchedDot(stepX, stepY);
+    if (touchedDot) {
+      touchedDot.touched = true;
+      drawnPattern.push(touchedDot.id);
+    }
+  }
+
+  renderGridThrottled();
+});
+
+canvas.addEventListener('pointerup', () => {
+  isDrawing = false;
+  validatePattern();
+});
+
+function validatePattern() {
+  statusText.className = '';
+
+  if (drawnPattern.length < 4) {
+    statusText.innerHTML = `<i class="bi bi-x-circle-fill"></i> Minimum 4 dots required`;
+    statusText.classList.add('error');
+    resetPattern();
+    return;
+  }
+
+  const savedPattern = localStorage.getItem('savedPatternCode');
+  const currentInput = drawnPattern.join('-');
+  const redirectURL = "dashboard.html";
+
+  if (!savedPattern) {
+    localStorage.setItem('savedPatternCode', currentInput);
+    statusText.innerHTML = `<i class="bi bi-check-circle-fill"></i> Pattern saved successfully!`;
+    statusText.classList.add('success');
+  } else if (savedPattern === currentInput) {
+    statusText.innerHTML = `<i class="bi bi-check-circle-fill"></i> Pattern matched. Redirecting...`;
+    statusText.classList.add('success');
+    setTimeout(() => {
+      window.location.href = redirectURL;
+    }, 1200);
+  } else {
+    statusText.innerHTML = `<i class="bi bi-x-circle-fill"></i> Incorrect pattern. Try again.`;
+    statusText.classList.add('error');
+  }
+
+  setTimeout(resetPattern, 1200);
+}
+
+function resetPattern() {
+  for (const dot of dotGrid) dot.touched = false;
+  drawnPattern.length = 0;
+  renderGrid();
+}
+
+renderGrid();
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>upload profile picture</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    body {
+      background-color: #000000;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 1rem;
+    }
+    .skip {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      text-align: center;
+      cursor: none;
+    }
+    .skip p {
+      font-size: 15px;
+    }
+    .container {
+      max-width: 400px;
+      text-align: center;
+    }
+    .title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .avatar-display {
+      margin-bottom: 1.5rem;
+    }
+    .avatar-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #currentAvatar,
+    #fallbackImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+    }
+    #currentAvatar {
+      display: none;
+    }
+    #fallbackImage {
+      display: none;
+    }
+    .change-btn,
+    .done-btn {
+      background: #fff;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      margin-top: 1rem;
+      cursor: none;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .error-msg {
+      color: red;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .popup-backdrop,
+    .avatar-options-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .popup-backdrop.show,
+    .avatar-options-backdrop.show {
+      display: flex;
+    }
+    .popup,
+    .option-box {
+      background: #111;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-sizing: border-box;
+      width: 320px;
+      max-width: 90vw;
+    }
+    .popup h3 {
+      margin-bottom: 10px;
+    }
+    .popup img {
+      width: 60px;
+      height: 60px;
+      margin: 8px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      object-fit: cover;
+      cursor: none;
+    }
+    .popup img.selected {
+      border-color: #fff;
+    }
+    .option-box button {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 10px 15px;
+      margin: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: none;
+    }
+    .option-box input[type="file"] {
+      display: none;
+    }
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+    #message-box.show {
+      opacity: 1;
+    }
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .loading-overlay.show {
+      display: flex;
+    }
+    .loading-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .spinner {
+      border: 6px solid #ccc;
+      border-top: 6px solid #fff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+    .loading-text {
+      margin-top: 15px;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Skip Icon -->
+  <div class="skip" onclick="handleSkipClick()">
+    <p>Skip</p>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <div class="title">
+      <i class="fa-solid fa-image"></i>
+      <span>Upload Profile Picture</span>
+    </div>
+
+    <div class="avatar-display">
+      <div class="avatar-wrapper">
+        <img id="currentAvatar" src="" alt="Profile" onload="hideFallback()" onerror="showFallback()" />
+        <img id="fallbackImage" src="profile.png" alt="Default" />
+      </div>
+    </div>
+
+    <button class="change-btn" onclick="openAvatarOptions()">Upload Profile Picture</button>
+    <button class="done-btn" onclick="handleDoneClick()">Done</button>
+    <div class="error-msg" id="errorMsg"></div>
+  </div>
+
+  <!-- Avatar Selection Popup -->
+  <div class="popup-backdrop" id="popup" onclick="closeOnBackdrop(event, 'popup')">
+    <div class="popup" onclick="event.stopPropagation()">
+      <h3>Select Avatar</h3>
+      <div>
+        <img src="profile1.png" onclick="selectAvatar(this)" />
+        <img src="profile2.png" onclick="selectAvatar(this)" />
+        <img src="profile3.png" onclick="selectAvatar(this)" />
+        <img src="profile4.png" onclick="selectAvatar(this)" />
+        <img src="profile5.png" onclick="selectAvatar(this)" />
+        <img src="profile6.png" onclick="selectAvatar(this)" />
+        <img src="profile7.png" onclick="selectAvatar(this)" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Avatar Options -->
+  <div class="avatar-options-backdrop" id="avatarOptions" onclick="closeOnBackdrop(event, 'avatarOptions')">
+    <div class="option-box" onclick="event.stopPropagation()">
+      <h3>Choose Option</h3>
+      <button onclick="togglePopup()">Use Avatar</button>
+      <button onclick="document.getElementById('fileInput').click()">Upload from Gallery</button>
+      <input type="file" id="fileInput" accept="image/*" />
+      <button onclick="deleteProfile()">Remove Profile Picture</button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p class="loading-text">Welcome...</p>
+    </div>
+  </div>
+
+  <div id="message-box"></div>
+
+  <script>
+    const popup = document.getElementById('popup');
+    const avatarOptions = document.getElementById('avatarOptions');
+    const currentAvatar = document.getElementById('currentAvatar');
+    const fallbackImage = document.getElementById('fallbackImage');
+    const fileInput = document.getElementById('fileInput');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function togglePopup() {
+      popup.classList.add('show');
+      avatarOptions.classList.remove('show');
+    }
+
+    function openAvatarOptions() {
+      avatarOptions.classList.add('show');
+    }
+
+    function closeOnBackdrop(event, id) {
+      if (event.target.id === id) {
+        document.getElementById(id).classList.remove('show');
+      }
+    }
+
+    function selectAvatar(imgElement) {
+      const all = popup.querySelectorAll('img');
+      all.forEach(img => img.classList.remove('selected'));
+      imgElement.classList.add('selected');
+
+      fetch(imgElement.src)
+        .then(res => res.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = function () {
+            const base64data = reader.result;
+            currentAvatar.src = base64data;
+            localStorage.setItem('userAvatar', base64data);
+            popup.classList.remove('show');
+            hideFallback();
+            errorMsg.textContent = "";
+          };
+          reader.readAsDataURL(blob);
+        });
+    }
+
+    function showFallback() {
+      currentAvatar.style.display = "none";
+      fallbackImage.style.display = "block";
+    }
+
+    function hideFallback() {
+      currentAvatar.style.display = "block";
+      fallbackImage.style.display = "none";
+    }
+
+    fileInput.addEventListener('change', function () {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const base64 = e.target.result;
+        currentAvatar.src = base64;
+        localStorage.setItem('userAvatar', base64);
+        hideFallback();
+        errorMsg.textContent = "";
+      };
+      reader.readAsDataURL(file);
+    });
+
+    window.onload = () => {
+      const savedAvatar = localStorage.getItem('userAvatar');
+      if (savedAvatar) {
+        currentAvatar.src = savedAvatar;
+      } else {
+        showFallback();
+      }
+    };
+
+    function handleDoneClick() {
+      const avatar = localStorage.getItem('userAvatar');
+      if (avatar && avatar.startsWith('data:image')) {
+        showLoader();
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 1200);
+      } else {
+        errorMsg.textContent = "No profile detected!!";
+      }
+    }
+
+    function handleSkipClick() {
+      showLoader();
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1200);
+    }
+
+    function showLoader() {
+      document.getElementById('loadingOverlay').classList.add('show');
+    }
+
+    function deleteProfile() {
+      localStorage.removeItem('userAvatar');
+      currentAvatar.src = '';
+      showFallback();
+      popup.classList.remove('show');
+      avatarOptions.classList.remove('show');
+    }
+
+    const messageBox = document.getElementById('message-box');
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+</body>
+</html>

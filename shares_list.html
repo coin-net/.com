@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Investment Centre</title>
+ <style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #000;
+  }
+
+  header {
+    background: #000;
+    color: #fff;
+    padding: 16px 16px 18px;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 17px;
+  }
+
+  header p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: #ccc;
+    line-height: 1.4;
+  }
+
+  .investment-list {
+    padding: 16px;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    background: #f9f9f9;
+  }
+
+  .investment {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 0;
+  }
+
+  .investment-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #ccc;
+    margin-right: 12px;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .investment-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .investment-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .company-name {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .investment-desc {
+    font-size: 12px;
+    color: #444;
+    margin-top: 2px;
+  }
+
+  .investment-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+
+  .amount-invested {
+    font-size: 11px;
+    color: #555;
+  }
+
+  .profit-today {
+    font-weight: bold;
+    font-size: 12px;
+    color: green;
+  }
+
+  /* Wallet summary inside header */
+  .summary-block {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .summary-box {
+    flex: 1;
+    background: #111;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .summary-box .label {
+    font-size: 12px;
+    color: #bbb;
+  }
+
+  .summary-box .value {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 2px;
+  }
+
+  .wallet-balance-label {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .wallet-balance {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 2px;
+  }
+  
+  #walletBalance {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#walletBalance .decimals {
+  font-size: 14px;
+  vertical-align: super;
+  margin-left: 2px;
+}
+</style>
+
+<header style="background: #000; color: #fff; padding: 24px 20px; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px;">
+  <div style="margin-bottom: 18px;">
+    <div style="font-size: 14px; color: #aaa;">Total Wallet Balance</div>
+    
+    <div id="balance" style="font-size: 24px; font-weight: bold;"></div>
+    
+  </div>
+  <div style="display: flex; justify-content: space-between; gap: 12px;">
+    <div style="flex: 1; background: #111; padding: 10px 10px; border-radius: 25px; text-align: center;">
+      <div style="font-size: 13px; color: #ccc;">Total Profit</div>
+      <div style="font-size: 16px; color: #0f0; font-weight: bold;" id="balanceSecondary">$0.00</div>
+      
+    </div>
+    <div style="flex: 1; background: #111; padding: 10px 10px; border-radius: 25px; text-align: center;">
+      <div style="font-size: 13px; color: #ccc;">Total Loss</div>
+      <div id="balance" style="font-size: 16px; font-weight: bold; color: #d20009;">$0.00-</div>
+    </div>
+  </div>
+</header>
+
+
+  
+<!-- Auto-update balance from profits every 1 minute -->
+<script>
+// Currency conversion using CoinGecko
+async function convertCurrencyLive(amountInUSD, toCurrencyCode) {
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=usd&vs_currencies=${toCurrencyCode}`);
+    const data = await res.json();
+    const rate = data.usd[toCurrencyCode.toLowerCase()];
+    if (!rate) throw new Error("Live rate not found");
+
+    return (amountInUSD * rate).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  } catch (err) {
+    console.error("Live conversion error:", err);
+    throw err;
+  }
+}
+
+// Display user balance in header
+async function updateBalanceDisplay() {
+  const preferredCurrency = JSON.parse(localStorage.getItem("preferredCurrency")) || {
+    code: "usd",
+    symbol: "$"
+  };
+
+  let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+  userBalance = Math.abs(userBalance); // Just for display (no negative)
+
+  try {
+    const converted = await convertCurrencyLive(userBalance, preferredCurrency.code);
+    const balanceEl = document.getElementById("balance");
+    if (balanceEl) {
+      balanceEl.innerText = `${preferredCurrency.symbol}${converted}`;
+    }
+  } catch {
+    const balanceEl = document.getElementById("balance");
+    if (balanceEl) {
+      balanceEl.innerText = "$0.00";
+    }
+  }
+}
+
+// Apply profit only if 5 hours have passed since last update
+async function applyProfitToBalanceIfDue() {
+  const lastUpdate = parseInt(localStorage.getItem("lastProfitUpdate") || "0");
+  const now = Date.now();
+  const FIVE_HOURS = 1000 * 60 * 60 * 5;
+
+  if (now - lastUpdate < FIVE_HOURS) {
+    console.log("Profit update skipped (not due yet).");
+    return;
+  }
+
+  const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+  const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+  let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+
+  let totalProfit = 0;
+  Object.keys(purchasedShares).forEach(company => {
+    const profit = parseFloat(profits[company]) || 0;
+    totalProfit += profit;
+  });
+
+  userBalance += totalProfit;
+  localStorage.setItem("userBalance", userBalance.toFixed(2));
+  localStorage.setItem("lastProfitUpdate", now.toString());
+
+  await updateBalanceDisplay();
+  console.log("Balance updated from shares:", userBalance.toFixed(2));
+}
+
+// Run after page load
+window.addEventListener("load", () => {
+  updateBalanceDisplay();                          // Show balance always
+  applyProfitToBalanceIfDue();                     // Apply profit if due
+  setInterval(applyProfitToBalanceIfDue, 1000 * 60 * 60 * 5); // Every 5 hours
+});
+</script>
+
+<!-- Everything above remains unchanged -->
+
+<script>
+// Currency conversion using CoinGecko
+async function convertCurrencyLiveSecondary(amountInUSD, toCurrencyCode) {
+  try {
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=usd&vs_currencies=${toCurrencyCode}`);
+    const data = await res.json();
+    const rate = data.usd[toCurrencyCode.toLowerCase()];
+    if (!rate) throw new Error("Live rate not found");
+
+    return (amountInUSD * rate).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  } catch (err) {
+    console.error("Live conversion error (Secondary):", err);
+    throw err;
+  }
+}
+
+// Display user balance in secondary location
+async function updateBalanceDisplaySecondary() {
+  const preferredCurrency = JSON.parse(localStorage.getItem("preferredCurrency")) || {
+    code: "usd",
+    symbol: "$"
+  };
+
+  let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+  userBalance = Math.abs(userBalance); // Just for display
+
+  try {
+    const converted = await convertCurrencyLiveSecondary(userBalance, preferredCurrency.code);
+    const balanceEl = document.getElementById("balanceSecondary");
+    if (balanceEl) {
+      balanceEl.innerText = `${preferredCurrency.symbol}${converted}`;
+    }
+  } catch {
+    const balanceEl = document.getElementById("balanceSecondary");
+    if (balanceEl) {
+      balanceEl.innerText = "$0.00";
+    }
+  }
+}
+
+// Apply profit (shared logic, call both update functions)
+async function applyProfitToBalanceIfDueSecondary() {
+  const lastUpdate = parseInt(localStorage.getItem("lastProfitUpdate") || "0");
+  const now = Date.now();
+  const FIVE_HOURS = 1000 * 60 * 60 * 5;
+
+  if (now - lastUpdate < FIVE_HOURS) {
+    console.log("Secondary profit update skipped (not due yet).");
+    return;
+  }
+
+  const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+  const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+  let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+
+  let totalProfit = 0;
+  Object.keys(purchasedShares).forEach(company => {
+    const profit = parseFloat(profits[company]) || 0;
+    totalProfit += profit;
+  });
+
+  userBalance += totalProfit;
+  localStorage.setItem("userBalance", userBalance.toFixed(2));
+  localStorage.setItem("lastProfitUpdate", now.toString());
+
+  await updateBalanceDisplaySecondary();
+  console.log("Secondary balance updated from shares:", userBalance.toFixed(2));
+}
+
+// Run after page load
+window.addEventListener("load", () => {
+  updateBalanceDisplaySecondary();                          // Show balance in secondary element
+  applyProfitToBalanceIfDueSecondary();                     // Apply profit if due
+  setInterval(applyProfitToBalanceIfDueSecondary, 1000 * 60 * 60 * 5); // Every 5 hours
+});
+</script>
+
+
+
+<div class="investment-list">
+
+  <!-- Apple -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/apple.com" alt="Apple" /></div>
+    <div class="investment-info">
+      <div class="company-name">Apple Inc.</div>
+      <div class="investment-desc">Tech stock with strong growth and dividends</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $1,000</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tesla -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/tesla.com" alt="Tesla" /></div>
+    <div class="investment-info">
+      <div class="company-name">Tesla Motors</div>
+      <div class="investment-desc">Electric vehicle innovation and long-term growth</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $2,000</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Microsoft -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/microsoft.com" alt="Microsoft" /></div>
+    <div class="investment-info">
+      <div class="company-name">Microsoft</div>
+      <div class="investment-desc">Cloud and enterprise software leader</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $500</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amazon -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/amazon.com" alt="Amazon" /></div>
+    <div class="investment-info">
+      <div class="company-name">Amazon</div>
+      <div class="investment-desc">E-commerce and cloud services giant</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $1,200</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coinbase -->
+  <div class="investment">
+    <div class="investment-logo"><img src="coinbase-logo.png" alt="Coinbase" /></div>
+    <div class="investment-info">
+      <div class="company-name">Coinbase</div>
+      <div class="investment-desc">Top crypto exchange with growth potential</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $500</div>
+        <div class="profit-today" style="color:red;">– $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopify -->
+  <div class="investment">
+    <div class="investment-logo" style="background: none;"><img src="https://logo.clearbit.com/shopify.com" alt="Shopify" /></div>
+    <div class="investment-info">
+      <div class="company-name">Shopify</div>
+      <div class="investment-desc">Leading e-commerce platform for online stores</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $2,300</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Netflix -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/netflix.com" alt="Netflix" /></div>
+    <div class="investment-info">
+      <div class="company-name">Netflix</div>
+      <div class="investment-desc">Global streaming platform and content creator</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $2,000</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+   <!-- CoinNet -->
+  <div class="investment">
+    <div class="investment-logo" style="background: #000000; border-radius: 35px;"><img src="logo.png" alt="Apple" /></div>
+    <div class="investment-info">
+      <div class="company-name">Coin net.com</div>
+      <div class="investment-desc">Crypto Investment platform with great partnership</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $600</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+  <!-- Meta -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/meta.com" alt="Meta" /></div>
+    <div class="investment-info">
+      <div class="company-name">Meta Platforms</div>
+      <div class="investment-desc">Social media giant investing in the metaverse</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $2,000</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nvidia -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/nvidia.com" alt="Nvidia" /></div>
+    <div class="investment-info">
+      <div class="company-name">Nvidia</div>
+      <div class="investment-desc">Leader in GPUs and AI chipsets</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $1,500</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PayPal -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/paypal.com" alt="PayPal" /></div>
+    <div class="investment-info">
+      <div class="company-name">PayPal</div>
+      <div class="investment-desc">Online payments and digital wallets</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $900</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+  
+  
+    <!-- Apple -->
+  <div class="investment">
+    <div class="investment-logo"><img src="https://logo.clearbit.com/home.com" alt="Apple" /></div>
+    <div class="investment-info">
+      <div class="company-name">Drizzle Ltd.</div>
+      <div class="investment-desc">Fast-growing tech company with strong performance</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $1,000</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tesla -->
+  <div class="investment">
+    <div class="investment-logo" style="background: none;"><img src="https://logo.clearbit.com/black.com" alt="Tesla" /></div>
+    <div class="investment-info">
+      <div class="company-name">Aduela Ltd.</div>
+      <div class="investment-desc">Fastest worldwide exchange platform</div>
+      <div class="investment-meta">
+        <div class="amount-invested">Invest: $2,500</div>
+        <div class="profit-today">+ $0 today</div>
+      </div>
+    </div>
+  </div>
+  
+
+<button id="clearProfitsBtn" style="padding: 10px 20px; margin-top: 10px; background: #000; color: #fff; border: none; border-radius: 8px; cursor: none;">
+  Refresh Page
+</button>
+
+<script> document.getElementById("clearProfitsBtn").addEventListener("click", function () {
+    const btn = this;
+    btn.innerHTML = `<span class="spinner"></span> Clearing...`;
+    btn.disabled = true;
+
+    // Clear localStorage data
+    setTimeout(() => {
+      localStorage.removeItem("investmentProfits");
+      localStorage.removeItem("profitsLastUpdated");
+      location.reload(); // Refresh the page
+    }, 1000); // Simulate delay
+  });
+
+  // Add spinner style
+  const style = document.createElement("style");
+  style.textContent = `
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #fff;
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+  
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const companies = [
+    "Apple Inc.", "Tesla Motors", "Microsoft", "Amazon", "Coinbase",
+    "Shopify", "Netflix", "Meta Platforms", "Nvidia", "PayPal",
+    "Drizzle Ltd.", "Aduela Ltd.", "Coin net.com"
+  ];
+
+  const storageKey = "investmentProfits";
+  const lastUpdatedKey = "profitsLastUpdated";
+  const FIVE_HOURS = 1000 * 60 * 60 * 5;
+
+  const now = Date.now();
+  const lastUpdated = parseInt(localStorage.getItem(lastUpdatedKey) || "0");
+  let profits = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+  // Generate weighted random amount between $50 and $500 (very hard to reach $500)
+  function generateProfitValue() {
+    const r = Math.random();
+    let value;
+
+    if (r < 0.6) value = 50 + Math.random() * 100;     // $50–$150 → very common
+    else if (r < 0.9) value = 150 + Math.random() * 100; // $150–$250 → less common
+    else if (r < 0.98) value = 250 + Math.random() * 200; // $250–$450 → rare
+    else value = 450 + Math.random() * 50;                // $450–$500 → very rare
+
+    return Math.round(value);
+  }
+
+  // Generate or update profits
+  if (now - lastUpdated > FIVE_HOURS || Object.keys(profits).length === 0) {
+    profits = {};
+    companies.forEach(name => {
+      const value = generateProfitValue();
+      const sign = Math.random() > 0.5 ? 1 : -1;
+      profits[name] = value * sign;
+    });
+
+    localStorage.setItem(storageKey, JSON.stringify(profits));
+    localStorage.setItem(lastUpdatedKey, now.toString());
+  }
+
+  // Update DOM
+  document.querySelectorAll(".investment").forEach(el => {
+    const name = el.querySelector(".company-name")?.innerText.trim();
+    const profitValue = profits[name];
+
+    if (profitValue !== undefined) {
+      const profitEl = el.querySelector(".profit-today");
+      profitEl.textContent =
+        (profitValue >= 0 ? "+ $" : "– $") + Math.abs(profitValue).toLocaleString(undefined, { minimumFractionDigits: 2 });
+      profitEl.style.color = profitValue >= 0 ? "green" : "red";
+    }
+  });
+});
+</script>
+
+<!-- Popup Container -->
+<div id="investmentPopup" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 999; align-items: center; justify-content: center;">
+  <div style="background: #fff; border-radius: 20px; max-width: 90%; width: 340px; padding: 20px; text-align: center; position: relative;">
+    <div id="popupLogo" style="width: 60px; height: 60px; border-radius: 12px; overflow: hidden; margin: 0 auto 12px;">
+      <img src="" alt="Logo" style="width: 100%; height: 100%; object-fit: cover; background: #000000;">
+    </div>
+    <div id="popupCompany" style="font-weight: bold; font-size: 18px; margin-bottom: 4px;"></div>
+    <div style="font-size: 13px; color: #444; margin-bottom: 12px;">
+        You have initiated a share purchase request. Kindly enter your Payment ID to continue, or click on<a href="#" id="generateCodeLink" style="font-size: 13px; color: #007BFF; text-decoration: underline; cursor: none;"> Make Payment</a> to make a payment and get an ID.
+    </div>
+    
+        
+   <!-- Investment Validation Switch -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+  <label for="validateSwitch" style="font-size: 13px; font-weight: bold;">Invest with portfolio <b style="color: green;" id="portfolioDisplay">Loading...</b></label>
+  <label class="switch">
+    <input type="checkbox" id="validateSwitch">
+    <span class="slider"></span>
+  </label>
+</div>
+   <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      // --- Set a default portfolio if not already stored ---
+      if (!localStorage.getItem("portfolioBalance")) {
+        localStorage.setItem("portfolioBalance", "500.00");
+      }
+
+      // --- Retrieve stored currency and balances ---
+      const currency = JSON.parse(localStorage.getItem("preferredCurrency")) || { symbol: "$", code: "usd" };
+      const portfolioBalance = parseFloat(localStorage.getItem("portfolioBalance") || "0.00");
+
+      // --- Format number with commas ---
+      function formatNumber(num) {
+        return parseFloat(num)
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      // --- Currency conversion using CoinGecko ---
+      async function convertCurrency(amountUSD, toCurrencyCode) {
+        try {
+          const res = await fetch("https://api.coingecko.com/api/v3/exchange_rates");
+          const data = await res.json();
+
+          const rate = data.rates[toCurrencyCode.toLowerCase()];
+          if (!rate) return amountUSD;
+
+          const usdToBtc = 1 / data.rates["usd"].value;
+          const usdInBtc = amountUSD * usdToBtc;
+          const finalAmount = usdInBtc * rate.value;
+
+          return finalAmount;
+        } catch (err) {
+          console.error("Conversion failed:", err);
+          return amountUSD;
+        }
+      }
+
+      // --- Convert and display portfolio balance ---
+      async function displayPortfolio() {
+        const converted = await convertCurrency(portfolioBalance, currency.code);
+        document.getElementById("portfolioDisplay").textContent =
+          `${currency.symbol}${formatNumber(converted)}`;
+      }
+
+      // --- Run display function ---
+      displayPortfolio();
+    });
+  </script>
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: none;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px; width: 18px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #4caf50;
+}
+input:checked + .slider:before {
+  transform: translateX(18px);
+}
+</style>
+
+<script>
+document.getElementById("validateSwitch").addEventListener("change", function() {
+  const isOn = this.checked;
+  if (!isOn) return; // Do nothing when switched off
+
+  const companyName = document.getElementById("popupCompany")?.innerText.trim();
+  const investmentEl = [...document.querySelectorAll(".investment")].find(el =>
+    el.querySelector(".company-name")?.innerText.trim() === companyName
+  );
+
+  if (!investmentEl) {
+    alert("Unable to locate investment data.");
+    this.checked = false;
+    return;
+  }
+
+  // Extract amount
+  const amountText = investmentEl.querySelector(".amount-invested")?.innerText.replace(/[^\d.]/g, "") || "0";
+  const amountInvested = parseFloat(amountText);
+  if (isNaN(amountInvested) || amountInvested <= 0) {
+    alert("Invalid investment amount.");
+    this.checked = false;
+    return;
+  }
+
+  // Limit to ≤ $500
+  if (amountInvested > 500) {
+    alert("Investment cannot exceed $500.");
+    this.checked = false;
+    return;
+  }
+
+  // Check balance
+  const portfolioBalance = parseFloat(localStorage.getItem("portfolioBalance") || "0.00");
+  if (portfolioBalance < amountInvested) {
+    alert("Insufficient portfolio balance to validate this investment.");
+    this.checked = false;
+    return;
+  }
+
+  // Deduct cost from portfolio
+  localStorage.setItem("portfolioBalance", (portfolioBalance - amountInvested).toFixed(2));
+
+  // Now run your purchase logic
+  const logoImg = investmentEl.querySelector("img")?.src || "";
+
+  const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+
+  // Only add profit if this company hasn't already been purchased
+  if (!purchasedShares[companyName]) {
+    const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+    const companyProfit = parseFloat(profits[companyName]) || 0;
+
+    // Update balance
+    let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+    userBalance += companyProfit;
+    localStorage.setItem("userBalance", userBalance.toFixed(2));
+
+    // Save ownership
+    purchasedShares[companyName] = { logo: logoImg };
+    localStorage.setItem("purchasedShares", JSON.stringify(purchasedShares));
+
+    alert(`Access granted! You now own shares in ${companyName} and earned $${companyProfit.toFixed(2)} profit.`);
+  } else {
+    alert(`You already own shares in ${companyName}.`);
+  }
+
+  // Optional: Update displays
+  if (typeof updateBalanceDisplay === "function") updateBalanceDisplay();
+  if (typeof updateBalanceDisplaySecondary === "function") updateBalanceDisplaySecondary();
+});
+</script>
+
+
+   <input type="text" id="accessCodeInput" placeholder="Enter your payment ID"
+  style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 14px; margin-bottom: 15px;"/>
+    
+   <div style="display: flex; justify-content: space-between; gap: 14px;">
+  <!-- Cancel Button -->
+  <button onclick="closePopup()"
+    style="flex: 1; height: 48px; background: #f0f0f0; border: none; border-radius: 100px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: background 0.3s;">
+   <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-escape" viewBox="0 0 16 16">
+  <path d="M8.538 1.02a.5.5 0 1 0-.076.998 6 6 0 1 1-6.445 6.444.5.5 0 0 0-.997.076A7 7 0 1 0 8.538 1.02"/>
+  <path d="M7.096 7.828a.5.5 0 0 0 .707-.707L2.707 2.025h2.768a.5.5 0 1 0 0-1H1.5a.5.5 0 0 0-.5.5V5.5a.5.5 0 0 0 1 0V2.732z"/>
+</svg>
+  </button>
+
+<!-- Confirm Button -->
+<button id="confirmCodeBtn"
+  style="flex: 1; height: 48px; background: #000; border: none; border-radius: 100px; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-patch-check" viewBox="0 0 16 16" style="color: #ffffff;">
+  <path fill-rule="evenodd" d="M10.354 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+  <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+</svg>
+</button>
+</div>
+
+  </div>
+</div>
+
+
+<!-- Floating and Draggable Tool -->
+<a href="about.html" style="color: #ffffff;"><div id="draggableTool" style="
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 70px;
+  text-align: center;
+  z-index: 9999;
+  cursor: grab;
+  user-select: none;
+  animation: floatY 3s ease-in-out infinite;
+">
+ <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-patch-question" style="color: #000000;" viewBox="0 0 16 16">
+  <path d="M8.05 9.6c.336 0 .504-.24.554-.627.04-.534.198-.815.847-1.26.673-.475 1.049-1.09 1.049-1.986 0-1.325-.92-2.227-2.262-2.227-1.02 0-1.792.492-2.1 1.29A1.7 1.7 0 0 0 6 5.48c0 .393.203.64.545.64.272 0 .455-.147.564-.51.158-.592.525-.915 1.074-.915.61 0 1.03.446 1.03 1.084 0 .563-.208.885-.822 1.325-.619.433-.926.914-.926 1.64v.111c0 .428.208.745.585.745"/>
+  <path d="m10.273 2.513-.921-.944.715-.698.622.637.89-.011a2.89 2.89 0 0 1 2.924 2.924l-.01.89.636.622a2.89 2.89 0 0 1 0 4.134l-.637.622.011.89a2.89 2.89 0 0 1-2.924 2.924l-.89-.01-.622.636a2.89 2.89 0 0 1-4.134 0l-.622-.637-.89.011a2.89 2.89 0 0 1-2.924-2.924l.01-.89-.636-.622a2.89 2.89 0 0 1 0-4.134l.637-.622-.011-.89a2.89 2.89 0 0 1 2.924-2.924l.89.01.622-.636a2.89 2.89 0 0 1 4.134 0l-.715.698a1.89 1.89 0 0 0-2.704 0l-.92.944-1.32-.016a1.89 1.89 0 0 0-1.911 1.912l.016 1.318-.944.921a1.89 1.89 0 0 0 0 2.704l.944.92-.016 1.32a1.89 1.89 0 0 0 1.912 1.911l1.318-.016.921.944a1.89 1.89 0 0 0 2.704 0l.92-.944 1.32.016a1.89 1.89 0 0 0 1.911-1.912l-.016-1.318.944-.921a1.89 1.89 0 0 0 0-2.704l-.944-.92.016-1.32a1.89 1.89 0 0 0-1.912-1.911z"/>
+  <path d="M7.001 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0"/>
+</svg>
+  <div style="font-size: 12px; color: #000000; margin-top: 5px;">Need help</div>
+</div></a>
+<script>
+  function closePopup() {
+    document.getElementById("investmentPopup").style.display = "none";
+  }
+
+  document.querySelectorAll(".investment").forEach(investment => {
+    investment.addEventListener("click", () => {
+      const logo = investment.querySelector(".investment-logo img")?.src || "";
+      const name = investment.querySelector(".company-name")?.innerText || "Company";
+
+      document.querySelector("#popupLogo img").src = logo;
+      document.getElementById("popupCompany").innerText = name;
+      document.getElementById("investmentPopup").style.display = "flex";
+    });
+  });
+</script>
+
+
+<!----generate unique code.------>
+<script>
+  const emailTo = "coinnet50@gmail.com"; // Your real email
+  const whatsappLink = "https://wa.me/+16725390560?text=Good%20day%20I%20am%20kindly%20requesting%20a%20one-time%20payment%20code%20as%20I%20am%20looking%20to%20invest.%20Thank%20you."; // Your WhatsApp link
+
+  function generateUniqueCode(companyName) {
+    const code = `${companyName.replace(/\s+/g, "").toUpperCase()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+    localStorage.setItem(`accessCode_${companyName}`, code);
+    return code;
+  }
+
+  document.getElementById("generateCodeLink").addEventListener("click", async function (e) {
+    e.preventDefault();
+    
+    const companyName = document.getElementById("popupCompany").innerText;
+    const accessCode = generateUniqueCode(companyName);
+
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/" + emailTo, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          Company: companyName,
+          "Access Code": accessCode
+        })
+      });
+
+      if (response.ok) {
+        // Success: Now redirect to WhatsApp
+        window.location.href = whatsappLink;
+      } else {
+        alert("Failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("FormSubmit error:", err);
+      alert("Error occurred. Try again later.");
+    }
+  });
+</script>
+
+<!-------Confirm valued access key---------->
+<script>
+document.getElementById("confirmCodeBtn").addEventListener("click", () => {
+  const inputCode = document.getElementById("accessCodeInput").value.trim();
+  const companyName = document.getElementById("popupCompany").innerText;
+  const logoImg = document.querySelector("#popupLogo img")?.src || "";
+
+  const codeKey = `accessCode_${companyName}`;
+  const savedCode = localStorage.getItem(codeKey);
+
+  if (inputCode === savedCode) {
+    // ✅ Delete used code
+    localStorage.removeItem(codeKey);
+
+    // ✅ Store purchased share with logo
+    const purchasedShares = JSON.parse(localStorage.getItem("purchasedShares") || "{}");
+
+    // Only add profit if this company hasn't already been purchased
+    if (!purchasedShares[companyName]) {
+      const profits = JSON.parse(localStorage.getItem("investmentProfits") || "{}");
+      const companyProfit = parseFloat(profits[companyName]) || 0;
+
+      // ✅ Update balance
+      let userBalance = parseFloat(localStorage.getItem("userBalance") || "0");
+      userBalance += companyProfit;
+      localStorage.setItem("userBalance", userBalance.toFixed(2));
+
+      // ✅ Save ownership
+      purchasedShares[companyName] = { logo: logoImg };
+      localStorage.setItem("purchasedShares", JSON.stringify(purchasedShares));
+
+      alert(`Access granted! You now own shares in ${companyName} and earned $${companyProfit.toFixed(2)} profit.`);
+    } else {
+      alert(`You've already purchased shares in ${companyName}.`);
+    }
+
+    closePopup(); // Optional
+  } else {
+    alert("Invalid Payment ID: Please verify and try again.");
+  }
+});
+</script>
+</body>
+</html>

