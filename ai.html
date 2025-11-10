@@ -228,9 +228,8 @@
     </div>
   </div>
 </div>
-
 <script>
-const API_KEY = "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"; // Replace with your key
+const API_KEY = "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"; // Replace with your key
 const chatContainer = document.getElementById("chatContainer");
 const input = document.getElementById("userInput");
 
@@ -364,18 +363,32 @@ async function sendMessage(text) {
         messages: [{ role: "user", content: text }]
       })
     });
+
+    // --- NEW DAILY LIMIT CHECK ---
+    if (response.status === 429) {
+      thinking.textContent = "You've reached today's usage limit. Please try again later.";
+      return;
+    }
+
     const data = await response.json();
+
+    // If API returns error field
+    if (data.error) {
+      thinking.textContent = `Error: ${data.error.message}`;
+      return;
+    }
+
     thinking.textContent = data.choices[0].message.content.trim();
+
   } catch (err) {
     thinking.textContent = "Network Error — Try again";
   }
 }
-
 // --- Event listeners ---
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage(input.value);
 });
 document.querySelector(".voice-btn").addEventListener("click", () => sendMessage(input.value));
-</script>
+ </script>
 </body>
 </html>
